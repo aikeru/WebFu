@@ -1,0 +1,28 @@
+C:\VSProjects\WebFormsUtilities2008\WebFormsUtilities\WebFormsUtilities.Tests\obj\Debug\ResolveAssemblyReference.cache
+C:\VSProjects\WebFormsUtilities2008\WebFormsUtilities\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll
+C:\VSProjects\WebFormsUtilities2008\WebFormsUtilities\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.pdb
+C:\VSProjects\WebFormsUtilities2008\WebFormsUtilities\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.dll
+C:\VSProjects\WebFormsUtilities2008\WebFormsUtilities\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.pdb
+C:\VSProjects\WebFormsUtilities2008\WebFormsUtilities\WebFormsUtilities.Tests\obj\Debug\WebFormsUtilities.Tests.dll
+C:\VSProjects\WebFormsUtilities2008\WebFormsUtilities\WebFormsUtilities.Tests\obj\Debug\WebFormsUtilities.Tests.pdb
+C:\VSProjects\WebFormsUtilities2008\WFU 2.0\WebFormsUtilities\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll
+C:\VSProjects\WebFormsUtilities2008\WFU 2.0\WebFormsUtilities\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.pdb
+C:\VSProjects\WebFormsUtilities2008\WFU 2.0\WebFormsUtilities\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.dll
+C:\VSProjects\WebFormsUtilities2008\WFU 2.0\WebFormsUtilities\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.pdb
+C:\VSProjects\WebFormsUtilities2008\WFU 2.0\WebFormsUtilities\WebFormsUtilities.Tests\obj\Debug\ResolveAssemblyReference.cache
+C:\VSProjects\WebFormsUtilities2008\WFU 2.0\WebFormsUtilities\WebFormsUtilities.Tests\obj\Debug\WebFormsUtilities.Tests.dll
+C:\VSProjects\WebFormsUtilities2008\WFU 2.0\WebFormsUtilities\WebFormsUtilities.Tests\obj\Debug\WebFormsUtilities.Tests.pdb
+C:\VSProjects\WebFormsUtilities2\WebFormsUtilities\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll
+C:\VSProjects\WebFormsUtilities2\WebFormsUtilities\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.pdb
+C:\VSProjects\WebFormsUtilities2\WebFormsUtilities\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.dll
+C:\VSProjects\WebFormsUtilities2\WebFormsUtilities\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.pdb
+C:\VSProjects\WebFormsUtilities2\WebFormsUtilities\WebFormsUtilities.Tests\obj\Debug\ResolveAssemblyReference.cache
+C:\VSProjects\WebFormsUtilities2\WebFormsUtilities\WebFormsUtilities.Tests\obj\Debug\WebFormsUtilities.Tests.dll
+C:\VSProjects\WebFormsUtilities2\WebFormsUtilities\WebFormsUtilities.Tests\obj\Debug\WebFormsUtilities.Tests.pdb
+C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll
+C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.pdb
+C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.dll
+C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.pdb
+C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\obj\Debug\ResolveAssemblyReference.cache
+C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\obj\Debug\WebFormsUtilities.Tests.dll
+C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\obj\Debug\WebFormsUtilities.Tests.pdb
