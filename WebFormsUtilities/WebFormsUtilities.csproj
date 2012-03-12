@@ -61,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataAnnotations\DisplayAttribute.cs" />
     <Compile Include="DataAnnotations\IWFClientValidatable.cs" />
     <Compile Include="DataAnnotations\XmlDataAnnotationsRuleSet.cs" />
     <Compile Include="Handlers\ScriptResourceHandler.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="ValueProviders\WFPageControlsValueProvider.cs" />
     <Compile Include="ValueProviders\WFSmartServerControlRequestValueProvider.cs" />
     <Compile Include="WebControls\EnableClientValidationControl.cs" />
+    <Compile Include="WebControls\LabelFor.cs" />
     <Compile Include="WebControls\RenderControl.cs" />
     <Compile Include="DataAnnotations\IWFValidationAttribute.cs" />
     <Compile Include="DataAnnotations\WFDataAnnotationsModelValidatorBase.cs" />
@@ -99,6 +101,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebControls\DataAnnotationValidatorControl.cs" />
+    <Compile Include="WebControls\WFWebControl.cs" />
     <Compile Include="WebControlUtilities.cs" />
     <Compile Include="WFJScriptMethodAttribute.cs" />
     <Compile Include="WFModelMetaData.cs" />
@@ -132,6 +135,10 @@
     <Content Include="JScript\jqueryValidateUnobtrusive.js" />
     <Content Include="JScript\SetupClientValidation.js" />
     <Content Include="JScript\WFUtilitiesJquery.js" />
+    <Content Include="Resources\jquery.validate.unobtrusive.js.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="MVC2\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

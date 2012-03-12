@@ -9,6 +9,9 @@ using WebFormsUtilities.Json;
 using System.Reflection;
 using System.Linq;
 using System.Collections;
+using WebFormsUtilities.Tests.Properties;
+using WebFormsUtilities.ValueProviders;
+using WebFormsUtilities.RuleProviders;
 
 
 namespace WebFormsUtilities.Tests
@@ -73,6 +76,25 @@ namespace WebFormsUtilities.Tests
         #endregion
 
 
+        [TestMethod()]
+        public void TestWFErrorMessage() {
+            string resourceErrorMessage = Resources.FirstName_ErrorMessage_Test1;
+
+            TestParticipantClass tpc = new TestParticipantClass();
+
+            WFModelMetaData metadata = new WFModelMetaData();
+
+            WFUtilities.TryValidateModel(tpc, "", new WFObjectValueProvider(tpc, ""), metadata, new WFTypeRuleProvider(typeof(ProxyMessageFromValidator)));
+            Assert.AreEqual("The FirstName field is required.", metadata.Errors[0]);
+            metadata = new WFModelMetaData();
+            WFUtilities.TryValidateModel(tpc, "", new WFObjectValueProvider(tpc, ""), metadata, new WFTypeRuleProvider(typeof(ProxyMessageFromConstant)));
+            Assert.AreEqual("This is a constant error.", metadata.Errors[0]);
+            metadata = new WFModelMetaData();
+            WFUtilities.TryValidateModel(tpc, "", new WFObjectValueProvider(tpc, ""), metadata, new WFTypeRuleProvider(typeof(ProxyMessageFromResource)));
+            Assert.AreEqual("This value from resource.", metadata.Errors[0]);
+            metadata = new WFModelMetaData();
+        }
+
         /// <summary>
         ///A test for TryValidateModel
         ///</summary>
@@ -95,7 +117,8 @@ namespace WebFormsUtilities.Tests
             model.Price = 999; //Invalid price
             model.NoErrorMessage = ""; //Required - no error message defined
 
-            actual = WFUtilities.TryValidateModel(model, "", modelType, out errors, ref metadata);
+            actual = WFUtilities.TryValidateModel(model, "", new WFObjectValueProvider(model, ""), metadata, new WFTypeRuleProvider(modelType));
+            errors = metadata.Errors;
 
             Assert.AreEqual(errors.Count, 6);
             //Generated error messages on standard annotations
@@ -123,7 +146,6 @@ namespace WebFormsUtilities.Tests
         {
             TestWidget model = new TestWidget();
             Type modelType = model.GetType();
-            List<string> errors = null;
             WFModelMetaData metadata = new WFModelMetaData();
             WFModelMetaData metadataExpected = new WFModelMetaData();
             bool actual;
@@ -135,10 +157,10 @@ namespace WebFormsUtilities.Tests
             model.Price = 0.99d; //Good price
             model.NoErrorMessage = "reqmsg"; //Required - no error message defined
 
-            actual = WFUtilities.TryValidateModel(model, "", modelType, out errors, ref metadata);
+            actual = WFUtilities.TryValidateModel(model, "", new WFObjectValueProvider(model, ""), metadata, new WFTypeRuleProvider(modelType));
 
             //No Errors
-            Assert.AreEqual(errors.Count, 0);
+            Assert.AreEqual(metadata.Errors.Count, 0);
             
             //Properties are not collected when an error does not exist
             //The reason is because there is no page to collect them for
@@ -152,7 +174,6 @@ namespace WebFormsUtilities.Tests
         {
             ClassAttributeTestWidget model = new ClassAttributeTestWidget();
             Type modelType = model.GetType();
-            List<string> errors = null;
             WFModelMetaData metadata = new WFModelMetaData();
             WFModelMetaData metadataExpected = new WFModelMetaData();
             bool actual;
@@ -165,10 +186,10 @@ namespace WebFormsUtilities.Tests
             model.NoErrorMessage = "reqmsg"; //Required - no error message defined
             model.Password = "somepass";
             model.ConfirmPassword = "notthesame";
-            actual = WFUtilities.TryValidateModel(model, "", modelType, out errors, ref metadata);
+            actual = WFUtilities.TryValidateModel(model, "", new WFObjectValueProvider(model, ""), metadata, new WFTypeRuleProvider(modelType));
 
             //There should be one error from the model attribute
-            Assert.AreEqual(errors.Count, 1);
+            Assert.AreEqual(metadata.Errors.Count, 1);
 
             //Properties are not collected when an error does not exist
             //The reason is because there is no page to collect them for
@@ -194,9 +215,9 @@ namespace WebFormsUtilities.Tests
             values.Add("model_Email", "bademail"); //bad email
             values.Add("model_Price", "999"); //bad price
             // NoErrorMessage property is NOT added and should NOT be present
-            
-            actual = WFUtilities.TryValidateModel(model, "model_", values, out errors);
 
+            actual = WFUtilities.TryValidateModel(model, "model_", new WFDictionaryValueProvider(values), metadata, new WFTypeRuleProvider(modelType));
+            errors = metadata.Errors;
             Assert.AreEqual(errors.Count, 4);
 
             Assert.AreEqual(errors[0], "Max length 10 characters");
@@ -216,8 +237,8 @@ namespace WebFormsUtilities.Tests
             fc.LastName = "onereallybiglongstringthatkeepsgoing"; // break validation
             List<string> errors = null;
             WFModelMetaData metadata = new WFModelMetaData();
-            bool didValidate = WFUtilities.TryValidateModel(fc, "", typeof(FriendlyClass), out errors, ref metadata);
-
+            bool didValidate = WFUtilities.TryValidateModel(fc, "", new WFObjectValueProvider(fc, ""), metadata, new WFTypeRuleProvider(typeof(FriendlyClass)));
+            errors = metadata.Errors;
             Assert.AreEqual(false, didValidate);
             Assert.AreEqual(2, errors.Count);
             Assert.AreEqual("The FirstName field is required.", errors[0]);
@@ -405,10 +426,13 @@ namespace WebFormsUtilities.Tests
         public String ConfirmPassword { get; set; }
     }
 
-    public class PropertiesMustMatchAttribute : ValidationAttribute, IWFValidationAttribute
+    public class PropertiesMustMatchAttribute : ValidationAttribute, IWFClientValidatable
     {
         public String FirstPropertyName { get; set; }
         public String SecondPropertyName { get; set; }
+
+        public PropertiesMustMatchAttribute() {
+        }
 
         public PropertiesMustMatchAttribute(String firstPropertyName, string secondPropertyName)
         {
@@ -431,21 +455,39 @@ namespace WebFormsUtilities.Tests
                 return true;
             }
             //Could derive from displaynameattribute, too
-            ErrorMessage = props[0].Name + " and " + props[1].Name + " don't match.";
+            if (String.IsNullOrEmpty(ErrorMessage)) {
+                ErrorMessage = props[0].Name + " and " + props[1].Name + " don't match.";
+            } 
+            
             return false;
         }
 
-        #region IWFValidationAttribute Members
+        #region IWFClientValidatable Members
 
-        public Type GetValidatorType()
-        {
-            return typeof(PropertiesMustMatchValidator);
+        public IEnumerable<WFModelClientValidationRule> GetClientValidationRules() {
+            var rule = new WFModelClientValidationRule
+            {
+                ErrorMessage = ErrorMessage,
+                ValidationType = "propsmatch"
+            };
+            rule.ValidationParameters.Add("firstProp", FirstPropertyName);
+            rule.ValidationParameters.Add("secondProp", SecondPropertyName);
+            return new[] { rule };
+        }
+
+        public WFModelMetaProperty MetaProperty {
+            get {
+                throw new NotImplementedException();
+            }
+            set {
+                throw new NotImplementedException();
+            }
         }
 
         #endregion
     }
 
-    public class PriceAttribute : ValidationAttribute, IWFValidationAttribute
+    public class PriceAttribute : ValidationAttribute, IWFClientValidatable
     {
         public double MinPrice { get; set; }
         public override bool IsValid(object value)
@@ -468,62 +510,26 @@ namespace WebFormsUtilities.Tests
             return true;
         }
 
-        #region IWFValidationAttribute Members
+        #region IWFClientValidatable Members
 
-        public Type GetValidatorType()
-        {
-            return typeof(PriceValidator);
+        public IEnumerable<WFModelClientValidationRule> GetClientValidationRules() {
+            var rule = new WFModelClientValidationRule {
+                ErrorMessage = ErrorMessage,
+                ValidationType = "price"
+            };
+            rule.ValidationParameters.Add("min", MinPrice);
+
+            return new[] { rule };
+        }
+
+        private WFModelMetaProperty _MetaProperty = null;
+
+        public WFModelMetaProperty MetaProperty {
+            get { return _MetaProperty; }
+            set { _MetaProperty = value; }
         }
 
         #endregion
-    }
-
-    public class PropertiesMustMatchValidator : WFDataAnnotationsModelValidatorBase
-    {
-        private string _message;
-        private string _firstProp;
-        private string _secondProp;
-        public PropertiesMustMatchValidator(PropertiesMustMatchAttribute attribute, WFModelMetaProperty prop)
-            : base(attribute, prop)
-        {
-            _message = attribute.ErrorMessage;
-            _firstProp = attribute.FirstPropertyName;
-            _secondProp = attribute.SecondPropertyName;
-        }
-        public override IEnumerable<WFModelClientValidationRule> GetClientValidationRules()
-        {
-            var rule = new WFModelClientValidationRule
-            {
-                ErrorMessage = _message,
-                ValidationType = "propsmatch"
-            };
-            rule.ValidationParameters.Add("firstProp", _firstProp);
-            rule.ValidationParameters.Add("secondProp", _secondProp);
-            return new[] { rule };
-        }
-    }
-
-    public class PriceValidator : WFDataAnnotationsModelValidatorBase
-    {
-        double _minPrice;
-        string _message;
-        public PriceValidator(PriceAttribute attribute, WFModelMetaProperty prop) :
-            base(attribute, prop)
-        {
-            _minPrice = attribute.MinPrice;
-            _message = attribute.ErrorMessage;
-        }
-        public override IEnumerable<WFModelClientValidationRule> GetClientValidationRules()
-        {
-            var rule = new WFModelClientValidationRule
-            {
-                ErrorMessage = _message,
-                ValidationType = "price"
-            };
-            rule.ValidationParameters.Add("min", _minPrice);
-
-            return new[] { rule };
-        }
     }
 
 }

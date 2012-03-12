@@ -17,10 +17,10 @@ namespace WebFormsUtilities
     /// Call methods from the WFPageUtilities static class. Inheriting from this class can simplify some aspects.
     /// (ie: declaring HtmlHelper)
     /// </summary>
-    public class WFPageBase : Page, IWebFormsView<WFPageBase>
+    public class WFPageBase : Page, IWebFormsView<object>
     {
         private WFModelMetaData _WFMetaData = new WFModelMetaData();
-        private HtmlHelper<WFPageBase> _Html = null;
+        private HtmlHelper<object> _Html = null;
         public virtual object Model { get; set; }
         public string EnableClientValidation()
         {
@@ -56,12 +56,12 @@ namespace WebFormsUtilities
             }
         }
 
-        public HtmlHelper<WFPageBase> Html
+        public HtmlHelper<object> Html
         {
             get
             {
                 if (_Html == null)
-                { _Html = new HtmlHelper<WFPageBase>(this, Model, WFMetaData); }
+                { _Html = new HtmlHelper<object>(this, (object)Model, WFMetaData); }
                 return _Html;
             }
             set
@@ -71,6 +71,7 @@ namespace WebFormsUtilities
         }
 
         #endregion
+
     }
     /// <summary>
     /// This class is no longer necessary for any WebFormsUtilities functionality.
@@ -121,7 +122,7 @@ namespace WebFormsUtilities
             get
             {
                 if (_Html == null)
-                { _Html = new HtmlHelper<WFPageBase>(this, Model, WFMetaData); }
+                { _Html = new HtmlHelper<WFPageBase>(this, (WFPageBase)Model, WFMetaData); }
                 return _Html;
             }
             set

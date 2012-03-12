@@ -3,255 +3,45 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.UI;
-using System.IO;
 using System.Web;
 using System.Reflection;
 using System.ComponentModel.DataAnnotations;
 using WebFormsUtilities.Json;
 using System.ComponentModel;
 using WebFormsUtilities.DataAnnotations;
+using System.Xml;
+using System.Web.Configuration;
+using System.Configuration;
+using System.IO;
+using System.Resources;
+using System.Linq.Expressions;
+using WebFormsUtilities.RuleProviders;
 
-namespace WebFormsUtilities
-{
-    public static class WFUtilities
-    {
-        /// <summary>
-        /// Build and return script and JSON objects to enable client validation.
-        /// This should be called from WFPageBase or WFUserControlBase
-        /// </summary>
-        /// <param name="metadata"></param>
-        /// <returns></returns>
-        public static string EnableClientValidationScript(WFModelMetaData metadata)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("if(!window.wfuClientValidationMetadata) { window.wfuClientValidationMetadata = []; }\r\n");
-            sb.Append("window.wfuClientValidationMetadata.push(");
-
-            List<JSONObject> fields = new List<JSONObject>();
-            foreach (WFModelMetaProperty prop in metadata.Properties)
-            {
-                JSONObject field = new JSONObject();
-                field.Attr("FieldName", prop.MarkupName);
-                field.Attr("ReplaceValidationMessageContents", true);
-                if (!String.IsNullOrEmpty(prop.OverriddenSpanID))
-                {
-                    field.Attr("ValidationMessageId", prop.OverriddenSpanID);
+namespace WebFormsUtilities {
+    public static class WFUtilities {
+        private static bool _HandlerChecked = false;
+        private static bool _HandlerRegistered = false;
+        public static bool HandlerRegistered {
+            get {
+                if (!_HandlerChecked) {
+                    _HandlerChecked = true;
+                    if (String.IsNullOrEmpty(ConfigurationManager.AppSettings["WFUseHandler"])
+                        || ConfigurationManager.AppSettings["WFUseHandler"].ToUpper() != "TRUE") {
+                        _HandlerRegistered = false;
+                    } else {
+                        _HandlerRegistered = true;
+                    }
                 }
-                else
-                {
-                    field.Attr("ValidationMessageId", prop.MarkupName + "_validationMessage");
-                }
-
-                List<JSONObject> validationRules = new List<JSONObject>();
-                foreach (object oVal in prop.ValidationAttributes)
-                {
-                    ValidationAttribute val = oVal as ValidationAttribute;
-                    JSONObject valRule = new JSONObject();
-                    JSONObject valParms = new JSONObject();
-                    Type valType = oVal.GetType();
-                    if (!String.IsNullOrEmpty(prop.OverriddenErrorMessage))
-                    {
-                        valRule.Attr("ErrorMessage", prop.OverriddenErrorMessage);
-                    }
-                    else
-                    {
-                        valRule.Attr("ErrorMessage", val.FormatErrorMessage(prop.DisplayName));
-                    }
-
-                    if (valType == typeof(StringLengthAttribute) || valType.IsSubclassOf(typeof(StringLengthAttribute)))
-                    {
-                        valParms.Attr("maximumLength", ((StringLengthAttribute)oVal).MaximumLength);
-                        valParms.Attr("minimumLength", 0);
-                        valRule.Attr("ValidationType", "stringLength");
-                        valRule.Attr("ValidationParameters", valParms);
-                    }
-                    else if (valType == typeof(RequiredAttribute) || valType.IsSubclassOf(typeof(RequiredAttribute)))
-                    {
-                        valRule.Attr("ValidationType", "required");
-                        valRule.Attr("ValidationParameters", new JSONObjectEmpty());
-                    }
-                    else if (valType == typeof(RangeAttribute) || valType.IsSubclassOf(typeof(RangeAttribute)))
-                    {
-                        valParms.Attr("minimum", ((RangeAttribute)oVal).Minimum);
-                        valParms.Attr("maximum", ((RangeAttribute)oVal).Maximum);
-                        valRule.Attr("ValidationType", "range");
-                        valRule.Attr("ValidationParameters", valParms);
-
-                        //Create an additional 'number' validation
-                        JSONObject numRule = new JSONObject();
-                        JSONObject numParms = new JSONObject();
-                        numRule.Attr("ErrorMessage", "The field " + prop.DisplayName + " must be a number.");
-                        numRule.Attr("ValidationParameters", new JSONObjectEmpty());
-                        numRule.Attr("ValidationType", "number");
-                        validationRules.Add(numRule);
-                    }
-                    else if (valType == typeof(RegularExpressionAttribute) || valType.IsSubclassOf((typeof(RegularExpressionAttribute))))
-                    {
-                        valRule.Attr("ValidationType", "regularExpression");
-                        valRule.Attr("ValidationParameters", new JSONObject(new { pattern = ((RegularExpressionAttribute)oVal).Pattern }));
-                    }
-                    else //Custom Validator
-                    {
-                        if (val as IWFValidationAttribute == null)
-                        {
-                            throw new Exception("Custom validators must implement the IWFValidationAttribute interface so that the type of validator can be determined.\r\nThis type must inherit from WFDataAnnotationsModelValidatorBase.");
-                        }
-                        else
-                        {
-                            IWFValidationAttribute valAttr = (IWFValidationAttribute)val;
-                            WFDataAnnotationsModelValidatorBase valBase = Activator.CreateInstance(valAttr.GetValidatorType(), new object[] { val, prop }) as WFDataAnnotationsModelValidatorBase;
-                            var cvrs = valBase.GetClientValidationRules();
-                            if (cvrs != null)
-                            {
-                                bool firstRule = true;
-                                foreach (var cvr in valBase.GetClientValidationRules())
-                                {
-                                    if (firstRule)
-                                    {
-                                        valRule.Attr("ValidationType", cvr.ValidationType);
-                                        foreach (KeyValuePair<string, object> kvp in cvr.ValidationParameters)
-                                        {
-                                            valParms.Attr(kvp.Key, kvp.Value);
-                                        }
-                                        valRule.Attr("ValidationParameters", valParms);
-                                        firstRule = false;
-                                    }
-                                    else
-                                    {
-                                        JSONObject vrx = new JSONObject();
-                                        JSONObject vrxParms = new JSONObject();
-                                        vrx.Attr("ErrorMessage", cvr.ErrorMessage);
-                                        vrx.Attr("ValidationType", cvr.ValidationType);
-
-                                        foreach (KeyValuePair<string, object> kvp in cvr.ValidationParameters)
-                                        {
-                                            vrxParms.Attr(kvp.Key, kvp.Value);
-                                        }
-                                        vrx.Attr("ValidationParameters", vrxParms);
-                                        validationRules.Add(vrx);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    validationRules.Add(valRule);
-                }
-                field.Attr("ValidationRules", validationRules);
-                fields.Add(field);
+                return _HandlerRegistered;
             }
-            JSONObject jo = new JSONObject(new { Fields = fields, FormId = "form1", ReplaceValidationSummary = false });
-
-            sb.Append(jo.Render());
-
-            sb.Append(");");
-            return sb.ToString();
         }
-        /// <summary>
-        /// This method should only be called by Html.&lt;control&gt;For() methods.
-        /// It registers metadata for model properties if they do not exist for controls on the form and informs the control if there is an error.
-        /// </summary>
-        /// <param name="metadata"></param>
-        /// <param name="Model"></param>
-        /// <param name="tag"></param>
-        /// <param name="propertyName"></param>
-        /// <returns></returns>
-        public static bool CheckPropertyError(WFModelMetaData metadata, object Model, HtmlTag tag, string markupName, string reflectName)
-        {
-            if (reflectName == "") { reflectName = markupName; }
-            if (Model == null || String.IsNullOrEmpty(markupName) || tag == null || metadata == null) { return false; }
-            WFModelMetaProperty metaprop = null;
-            string lcName = markupName.ToLower();
-            for (int i = 0; i < metadata.Properties.Count; i++)
-            {
-                //if (metadata.Properties[i].ModelObject == Model && metadata.Properties[i].MarkupName.ToLower() == lcName)
-                if (metadata.Properties[i].MarkupName.ToLower() == lcName)
-                {
-                    metaprop = metadata.Properties[i];
-                    break;
-                }
-            }
-            if (metaprop == null)
-            {
-                //Create a meta property if it does not exist  
-                metaprop = GetMetaProperty(metadata, markupName, Model, reflectName, null);
-                metadata.Properties.Add(metaprop);
-            }
-            if (metaprop.HasError)
-            {
-                tag.AddClass("input-validation-error");
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// This method is used internally to find or create meta properties in validation data.
-        /// </summary>
-        /// <param name="metadata">The metadata object.</param>
-        /// <param name="markupName">The name of the property in markup.</param>
-        /// <param name="model">The model object in memory the property belongs to.</param>
-        /// <param name="reflectName">The reflected property name.</param>
-        /// <param name="context">The current HTTP context.</param>
-        /// <returns>Returns a WFModelMetaProperty class.</returns>
-        public static WFModelMetaProperty GetMetaProperty(WFModelMetaData metadata, string markupName, object model, string reflectName, HttpContext context)
-        {
-
-            Type tx = model.GetType();
-            WFModelMetaProperty metaprop = null;
-            foreach (PropertyInfo pi in tx.GetProperties())
-            {
-                if (pi.Name == reflectName)
-                {
-                    object[] attribs = pi.GetCustomAttributes(false);
-                    var displayNameAttr = pi.GetCustomAttributes(typeof(DisplayNameAttribute), true).OfType<DisplayNameAttribute>().FirstOrDefault();
-                    string displayName = displayNameAttr == null ? pi.Name : displayNameAttr.DisplayName;
-                    foreach (object o in attribs)
-                    {
-                        Type oType = o.GetType();
-                        if (oType.IsSubclassOf(typeof(ValidationAttribute)))
-                        {
-                            var oVal = (ValidationAttribute)o;
-                            if (metaprop == null) // Try to find it ...
-                            {
-                                foreach (WFModelMetaProperty mx in metadata.Properties)
-                                {
-                                    if (mx.ModelObject == model && pi.Name.ToLower() == mx.PropertyName.ToLower())
-                                    {
-                                        metaprop = mx;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (metaprop == null) // Make a new one ...
-                            {
-                                metaprop = new WFModelMetaProperty();
-                            }
-                            metaprop.ModelObject = model;
-                            metaprop.PropertyName = pi.Name;
-                            metaprop.DisplayName = displayName;
-                            metaprop.MarkupName = markupName;
-                            metaprop.ValidationAttributes.Add(oVal);
-
-                            if (context != null && !oVal.IsValid(context.Request[markupName]))
-                            {
-                                metaprop.HasError = true;
-                                metaprop.Errors.Add(oVal.FormatErrorMessage(displayName));
-                            }
-                        }
-                    }
-                }
-            }
-            return metaprop;
-        }
-
 
         /// <summary>
         /// Render a Control (.aspx, .ascx) and return it as a string
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static string RenderControl(string path)
-        {
+        public static string RenderControl(string path) {
             return RenderControl(path, null);
         }
         /// <summary>
@@ -260,8 +50,7 @@ namespace WebFormsUtilities
         /// <param name="path"></param>
         /// <param name="Model"></param>
         /// <returns></returns>
-        public static string RenderControl(string path, object Model)
-        {
+        public static string RenderControl(string path, object Model) {
             return RenderControl(path, Model, null);
         }
         /// <summary>
@@ -271,8 +60,7 @@ namespace WebFormsUtilities
         /// <param name="path"></param>
         /// <param name="pageInstance"></param>
         /// <returns></returns>
-        public static string RenderControl(string path, System.Web.UI.Page pageInstance)
-        {
+        public static string RenderControl(string path, System.Web.UI.Page pageInstance) {
             return RenderControl(path, null, pageInstance);
         }
         /// <summary>
@@ -283,19 +71,15 @@ namespace WebFormsUtilities
         /// <param name="Model"></param>
         /// <param name="pageInstance"></param>
         /// <returns></returns>
-        public static string RenderControl(string path, object Model, System.Web.UI.Page pageInstance)
-        {
+        public static string RenderControl(string path, object Model, System.Web.UI.Page pageInstance) {
             Page wph = pageInstance == null ? new WFPageHolder() as Page : pageInstance;
             Control ctrl = wph.LoadControl(path);
             if (ctrl == null) { return ""; }
 
             PropertyInfo pi = ctrl.GetType().GetProperties().FirstOrDefault(p => p.Name == "Model");
-            if (pi == null && Model != null)
-            {
+            if (pi == null && Model != null) {
                 throw new Exception("Make sure 'Model' is a public property with a 'setter'");
-            }
-            else if (pi != null && Model != null)
-            {
+            } else if (pi != null && Model != null) {
                 pi.SetValue(ctrl, Model, null);
             }
 
@@ -307,411 +91,400 @@ namespace WebFormsUtilities
         }
 
         /// <summary>
-        /// This method can be used to run validation from a [WebMethod] or other AJAX call where a Page instance is not available.
-        /// Controls on the page will not be updated by this method.
-        /// </summary>
-        /// <param name="model"></param>
-        /// <param name="prefix"></param>
-        /// <param name="context"></param>
-        /// <param name="errors"></param>
-        /// <returns></returns>
-        public static bool TryValidateModel(object model, string prefix, Dictionary<string, string> frmValues, out List<string> errors)
-        {
-            WFModelMetaData meta = new WFModelMetaData();
-            meta.PageModel = model;
-            meta.Properties = new List<WFModelMetaProperty>();
-
-            WFPageHolder ph = new WFPageHolder();
-            ph.Model = model;
-            return TryValidateModel(model, prefix, frmValues, out errors, meta);
-        }
-
-        /// <summary>
         /// This method is used to validate class-level attributes
         /// Returns object[] of the model's custom attributes
         /// </summary>
         /// <param name="model"></param>
         /// <param name="modelType"></param>
         /// <param name="errors"></param>
-        private static object[] validateModelAttributes(object model, Type modelType, ref List<string> errors)
-        {
-            object[] modelAttribs = model.GetType().GetCustomAttributes(false);
-            var modelDisplayAttr = model.GetType().GetCustomAttributes(typeof(DisplayNameAttribute), true).OfType<DisplayNameAttribute>().FirstOrDefault();
-            string modelDisplayName = modelDisplayAttr == null ? model.GetType().Name : modelDisplayAttr.DisplayName;
-
-            foreach (object o in modelAttribs)
-            {
+        private static bool validateModelAttributes(object model, IEnumerable<ValidationAttribute> modelAttributes, List<string> errors, string displayName) {
+            foreach (ValidationAttribute o in modelAttributes) {
                 Type oxType = o.GetType();
-                if (oxType.IsSubclassOf(typeof(ValidationAttribute)))
-                {
+                if (oxType.IsSubclassOf(typeof(ValidationAttribute))) {
                     var oVal = (ValidationAttribute)o;
-                    if (!oVal.IsValid(model))
-                    {
-                        errors.Add(oVal.FormatErrorMessage(modelDisplayName));
+                    if (!oVal.IsValid(model)) {
+                        errors.Add(oVal.FormatErrorMessage(displayName));
                     }
                 }
             }
-            return modelAttribs;
+            return errors.Count < 1;
         }
 
-        /// <summary>
-        /// This method is used to validate the model against itself
-        /// </summary>
-        /// <param name="model"></param>
-        /// <param name="modelType"></param>
-        /// <param name="prefix">Optional. A prefix to prepend to property names when searching for them on the model.</param>
-        /// <returns></returns>
-        public static bool TryValidateModel(object model, string prefix, Type modelType, out List<string> errors, ref WFModelMetaData metadata)
-        {
-            IWFValueProvider cp = new WFObjectValueProvider(model, prefix);
-            return TryValidateModel(model, "", cp, out errors, metadata, null);
-        }
 
         /// <summary>
-        /// This method is used by WFPageBase and WFUserControlBase TryValidateModel() method
-        /// </summary>
-        /// <param name="pageinstance"></param>
-        /// <param name="model"></param>
-        /// <param name="prefix"></param>
-        /// <param name="context"></param>
-        /// <param name="errors"></param>
-        /// <param name="metadata"></param>
-        /// <returns></returns>
-        public static bool TryValidateModel(object model, string prefix, HttpContext context, out List<string> errors, WFModelMetaData metadata)
-        {
-            IWFValueProvider cp = new WFHttpContextValueProvider(context);
-            return TryValidateModel(model, prefix, cp, out errors, metadata, null);
-        }
-        public static bool TryValidateModel(object model, string prefix, Dictionary<string, string> frmValues, out List<string> errors, WFModelMetaData metadata)
-        {
-            IWFValueProvider cp = new WFDictionaryValueProvider(frmValues);
-            return TryValidateModel(model, prefix, cp, out errors, metadata, null);
-        }
-
-        /// <summary>
-        /// All other TryValidateModel() methods call this method. Returns false if any validation errors are found.
+        /// Root TryValidateModel() method. Returns false if any validation errors are found.
         /// </summary>
         /// <param name="model">A pointer to the current model object</param>
-        /// <param name="prefix">A prefix to search and filter values from the value provider</param>
+        /// <param name="prefix">Optional. A prefix to search and filter values from the value provider.</param>
         /// <param name="values">A class implementing IWFValueProvider (examples include WFObjectValueProvider and WFHttpContextValueProvider)</param>
-        /// <param name="errors">A simple string list of errors.</param>
-        /// <param name="metadata">Pointer to the metadata object where error information is stored.</param>
-        /// <param name="buddyClass">Can be null. Will be used for validation instead of model.GetType() if specified.</param>
-        /// <returns></returns>
-        public static bool TryValidateModel(object model, string prefix, IWFValueProvider values, out List<string> errors, WFModelMetaData metadata, Type buddyClass)
-        {
+        /// <param name="metadata">Optional. Required to collect error data or show error markup on a page. The current WFModelMetaData object.</param>
+        /// <param name="ruleProvider">A class implementing IWFRuleProvider (examples include WFTypeRuleProvider and WFXmlRuleSetRuleProvider).<br/>
+        /// This object provides the rules (ie: DataAnnotations) that needed to be validated, and which properties to validate them against.<br/>
+        /// All other properties are ignored.</param>
+        /// <returns>Returns false if any validation errors were found.</returns>
+        public static bool TryValidateModel(object model, string prefix, IWFValueProvider values, WFModelMetaData metadata, IWFRuleProvider ruleProvider) {
             bool validated = true;
-            errors = new List<string>();
-            Type tx = model.GetType();
-            Type metaDataType = null;
-            object[] modelAtts = validateModelAttributes(model, tx, ref errors);
-            PropertyInfo[] buddyProps = null;
-            if (buddyClass == null) //If there is no 'buddy class' then use the model's own type
-            {
-                if (modelAtts != null && modelAtts.Length > 0)
-                {
-                    var metaDataAtt = model.GetType().GetCustomAttributes(typeof(MetadataTypeAttribute), true).OfType<MetadataTypeAttribute>().FirstOrDefault();
-                    if (metaDataAtt != null)
-                    {
-                        metaDataType = metaDataAtt == null ? null : metaDataAtt.MetadataClassType;
-                        buddyProps = metaDataType.GetProperties();
-                    }
-                }
-            }
-            else
-            {
-                metaDataType = buddyClass;
-            }
+            //Make sure we have metadata
+            metadata = metadata == null ? metadata = new WFModelMetaData() : metadata;
+            metadata.Errors = new List<string>();
 
-            if (errors.Count > 0) { validated = false; }
+            //Create a rule provider if one was not provided. WFTypeRuleProvider will handle [MetadataType]
+            ruleProvider = ruleProvider == null ? new WFTypeRuleProvider(model) : ruleProvider;
 
-            foreach (PropertyInfo pi in tx.GetProperties())
-            {
-                if (values.ContainsKey(prefix + pi.Name))
-                {
-                    object[] attribs = null;
+            validated = validateModelAttributes(model, ruleProvider.GetClassValidationAttributes(), metadata.Errors, ruleProvider.ModelDisplayName);
 
-                    //Find out if we need to check attributes from the buddy/proxy class
-                    //..if so, contatenate them to attribs, otherwise just use the PropertyInfo from the class.
-                    if (metaDataType != null)
-                    {
-                        PropertyInfo buddyPI = buddyProps.FirstOrDefault(p => p.Name == (prefix + pi.Name));
-                        if (buddyPI != null)
-                        {
-                            object[] custAtts = pi.GetCustomAttributes(false);
-                            object[] buddyAtts = buddyPI.GetCustomAttributes(false);
-                            attribs = new object[buddyAtts.Length + custAtts.Length];
-                            buddyAtts.CopyTo(attribs, 0);
-                            custAtts.CopyTo(attribs, buddyAtts.Length);
-                        }
-                        else
-                        {
-                            attribs = pi.GetCustomAttributes(false);
-                        }
-                    }
-                    else
-                    {
-                        attribs = pi.GetCustomAttributes(false);
-                    }
+            if (metadata.Errors.Count > 0) { validated = false; }
 
-                    if (attribs.Length == 0) { continue; } //no attributes to validate
-
-                    var displayNameAttr = pi.GetCustomAttributes(typeof(DisplayNameAttribute), true).OfType<DisplayNameAttribute>().FirstOrDefault();
-                    string displayName = displayNameAttr == null ? pi.Name : displayNameAttr.DisplayName;
+            foreach (PropertyInfo pi in ruleProvider.GetProperties()) {
+                if (values.ContainsKey(prefix + pi.Name)) {
                     WFModelMetaProperty metaprop = null;
-                    foreach (object o in attribs)
-                    {
-                        Type oType = o.GetType();
-                        if (oType.IsSubclassOf(typeof(ValidationAttribute)))
-                        {
-                            var oVal = (ValidationAttribute)o;
-                            bool isValid = false;
+                    foreach (ValidationAttribute attr in ruleProvider.GetPropertyValidationAttributes(pi.Name)) {
 
-                            //Range attribute may throw a "FormatException" if passing a string to be validated
-                            if (oType == typeof(RangeAttribute))
-                            {
-                                try { isValid = oVal.IsValid(values.KeyValue(prefix + pi.Name)); }
-                                catch (Exception ex)
-                                {
-                                    if (ex.GetType() == typeof(FormatException))
-                                    {
-                                        isValid = false;
-                                    }
-                                    else { throw ex; }
-                                }
+                        string displayName = ruleProvider.GetDisplayNameForProperty(pi.Name);
+                        bool isValid = false;
+                        if (attr.GetType() == typeof(RangeAttribute)) {
+                            try { isValid = attr.IsValid(values.KeyValue(prefix + pi.Name)); } catch (Exception ex) {
+                                if (ex.GetType() == typeof(FormatException)) { isValid = false; } else { throw ex; }
                             }
-                            else
-                            {
-                                isValid = oVal.IsValid(values.KeyValue(prefix + pi.Name));
-                            }
-
-
-                            if (!isValid)
-                            {
-                                validated = false;
-                                errors.Add(oVal.FormatErrorMessage(displayName));
-
-                                if (metaprop == null) // Try to find it ...
-                                {
-                                    foreach (WFModelMetaProperty mx in metadata.Properties)
-                                    {
-                                        if (mx.ModelObject == model && pi.Name.ToLower() == mx.PropertyName.ToLower())
-                                        {
-                                            metaprop = mx;
-                                            break;
-                                        }
-                                    }
-                                }
-                                if (metaprop == null) // Make a new one ...
-                                {
-                                    metaprop = new WFModelMetaProperty();
-                                    metaprop.ModelObject = model;
-                                    metaprop.PropertyName = pi.Name;
-                                    metaprop.DisplayName = displayName;
-                                    metaprop.MarkupName = prefix + pi.Name;
-                                    metaprop.ValidationAttributes.Add(oVal);
-
-                                    metadata.Properties.Add(metaprop);
-                                }
-                                metaprop.HasError = true;
-                                metaprop.Errors.Add(oVal.FormatErrorMessage(displayName));
-
-                            }
+                        } else {
+                            isValid = attr.IsValid(values.KeyValue(prefix + pi.Name));
                         }
+
+                        if (!isValid) {
+                            validated = false;
+                            metadata.Errors.Add(attr.FormatErrorMessage(displayName));
+
+                            if (metaprop == null) // Try to find it ...
+                            {
+                                foreach (WFModelMetaProperty mx in metadata.Properties) {
+                                    if (mx.ModelObject == model && pi.Name.ToLower() == mx.PropertyName.ToLower()) {
+                                        metaprop = mx;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (metaprop == null) // Make a new one ...
+                            {
+                                metaprop = new WFModelMetaProperty();
+                                metaprop.ModelObject = model;
+                                metaprop.PropertyName = pi.Name;
+                                metaprop.DisplayName = displayName;
+                                metaprop.MarkupName = prefix + pi.Name;
+                                metaprop.ValidationAttributes.Add(attr);
+
+                                metadata.Properties.Add(metaprop);
+                            }
+                            metaprop.HasError = true;
+                            metaprop.Errors.Add(attr.FormatErrorMessage(displayName));
+
+                        }
+
                     }
                 }
             }
             return validated;
         }
 
-        public static Dictionary<string, string> UrlDecodeDictionary(string decode)
-        {
+        /// <summary>
+        /// Retrieve the first registered XML rule set that matches the name provided.
+        /// </summary>
+        /// <param name="ruleSetName">The rule set name specified in the XML rule set.</param>
+        /// <returns></returns>
+        public static XmlDataAnnotationsRuleSet GetRuleSetForName(string ruleSetName) {
+            return XmlRuleSets.First(x => x.RuleSetName == ruleSetName);
+        }
+
+        /// <summary>
+        /// Retrieve the first registered XML rule set that matches the type and rule set name.<br/>
+        /// </summary>
+        /// <param name="type">The model type specified in the XML rule set.</param>
+        /// <param name="ruleSetName">The rule set name specified in the XML rule set.</param>
+        /// <returns></returns>
+        public static XmlDataAnnotationsRuleSet GetRuleSetForType(Type type, string ruleSetName) {
+
+            foreach (XmlDataAnnotationsRuleSet ruleset in XmlRuleSets) {
+                if (ruleset.ModelType == type && ruleSetName == ruleset.RuleSetName) {
+                    return ruleset;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Provides a means to dynamically load a resource value at runtime.<br/>
+        /// For example, for globalization of DataAnnotations.
+        /// </summary>
+        /// <param name="resourceProvider">The resource type that is automatically generated by Visual Studio.</param>
+        /// <param name="resourceKey">The key of the resource value to be used.</param>
+        /// <returns>Returns the value of the resource key.</returns>
+        public static string GetResourceValueFromTypeName(Type resourceProvider, string resourceKey) {
+            var properties = resourceProvider.GetProperties(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
+
+            foreach (var staticProperty in properties) {
+                if (staticProperty.PropertyType == typeof(ResourceManager)) {
+                    var rm = (ResourceManager)staticProperty.GetValue(null, null);
+                    return rm.GetString(resourceKey);
+                }
+            }
+            return resourceKey;
+        }
+
+        /// <summary>
+        /// Load the specified XML file into memory as one or more XML rule sets in place of DataAnnotations.<br/>
+        /// Use GetRuleSetForName() and GetRuleSetForType() to retrieve a rule set for validation.<br/>
+        /// The WFXmlRuleSetRuleProvider class with the TryValidateModel() method.
+        /// </summary>
+        public static void RegisterXMLValidationConfiguration(string filename) {
+            XmlDocument doc = new XmlDocument();
+            doc.Load(filename);
+
+            foreach (XmlNode node in doc.SelectNodes("validation/type")) {
+                string assemblyName = node.Attributes["assemblyName"].Value;
+                string name = node.Attributes["name"].Value;
+                foreach (XmlNode ruleSetNode in node.SelectNodes("ruleset")) {
+                    XmlDataAnnotationsRuleSet ruleset = new XmlDataAnnotationsRuleSet();
+                    try {
+                        ruleset.ModelType = Type.GetType(name, true, true);
+                    } catch (Exception ex) {
+                        throw new Exception("Couldn't resolve model type " + name + ". You may need to specify the fully qualified assembly name in the 'name' field. ie: 'MyAssembly.MyClass, MyAssembly'");
+                    }
+                    ruleset.AssemblyName = assemblyName;
+                    ruleset.TypeName = name;
+                    ruleset.Properties = new List<XmlDataAnnotationsRuleSetProperty>();
+                    ruleset.RuleSetName = ruleSetNode.Attributes["name"].Value;
+
+                    XmlAttribute rattr = ruleSetNode.Attributes["DisplayName"];
+                    ruleset.ModelDisplayName = rattr == null ? ruleset.ModelDisplayName : rattr.Value;
+
+                    XmlNode classAttsNode = ruleSetNode.SelectSingleNode("attributes");
+                    if (classAttsNode != null) {
+                        ruleset.ClassValidators = new List<XmlDataAnnotationsValidator>();
+                        foreach (XmlNode classAttr in classAttsNode.SelectNodes("validator")) {
+                            XmlDataAnnotationsValidator val = new XmlDataAnnotationsValidator();
+                            foreach (XmlAttribute attr in classAttr.Attributes) {
+                                if (attr.Name.ToLower() == "negated") {
+                                    val.Negated = Boolean.Parse(attr.Value);
+                                } else if (attr.Name == "type") {
+                                    val.ValidatorTypeName = attr.Name;
+                                    try {
+                                        val.ValidatorType = Type.GetType(attr.Value, true, true);
+                                    } catch (Exception ex) {
+                                        throw new Exception("Couldn't resolve validator type " + attr.Value + ". You may need to specify the fully qualified assembly name in the 'type' field. ie: 'MyAssembly.MyClass, MyAssembly'");
+                                    }
+                                } else {
+                                    val.ValidatorAttributes.Add(attr.Name, attr.Value);
+                                }
+                            }
+                            ruleset.ClassValidators.Add(val);
+                        }
+                    }
+
+                    foreach (XmlNode propertyNode in ruleSetNode.SelectNodes("properties/property")) {
+                        XmlDataAnnotationsRuleSetProperty prop = new XmlDataAnnotationsRuleSetProperty();
+                        prop.ParentRuleSet = ruleset;
+                        prop.PropertyName = propertyNode.Attributes["name"].Value;
+
+                        XmlAttribute xattr = propertyNode.Attributes["DisplayName"];
+                        if (xattr != null) {
+                            prop.DisplayName = xattr.Value;
+                        }
+
+                        XmlAttribute rattrResource = propertyNode.Attributes["DisplayNameResourceName"];
+                        XmlAttribute rattrResourceType = propertyNode.Attributes["DisplayNameResourceType"];
+                        if (rattrResource != null) {
+                            prop.DisplayNameResourceName = rattrResource.Value;
+                        }
+                        if (rattrResourceType != null) {
+                            try {
+                                prop.DisplayNameResourceType = Type.GetType(rattrResourceType.Value, true, true);
+                            } catch (Exception ex) {
+                                throw new Exception("Couldn't resolve resource type " + rattrResourceType.Value + ". You may need to specify the fully qualified assembly name in the 'type' field. ie: 'MyAssembly.MyClass, MyAssembly'");
+                            }
+                        }
+
+                        //Derive from propertyname if a display name was not found
+                        if (xattr == null && rattrResource == null && rattrResourceType == null) {
+                            prop.DisplayName = prop.PropertyName;
+                        }
+
+
+                        prop.Validators = new List<XmlDataAnnotationsValidator>();
+                        foreach (XmlNode validatorNode in propertyNode.SelectNodes("validator")) {
+                            XmlDataAnnotationsValidator validator = new XmlDataAnnotationsValidator();
+                            validator.ParentProperty = prop;
+                            foreach (XmlAttribute attr in validatorNode.Attributes) {
+
+                                if (attr.Name == "ErrorMessageResourceName") {
+                                    validator.ErrorMessageResourceName = attr.Value;
+                                } else if (attr.Name == "ErrorMessageResourceType") {
+                                    try {
+                                        validator.ErrorMessageResourceType = Type.GetType(attr.Value, true, true);
+                                    } catch (Exception ex) {
+                                        throw new Exception("Couldn't resolve resource type " + attr.Value + ". You may need to specify the fully qualified assembly name in the 'type' field. ie: 'MyAssembly.MyClass, MyAssembly'");
+                                    }
+                                } else if (attr.Name == "ErrorMessage") {
+                                    validator.ErrorMessage = attr.Value;
+                                } else if (attr.Name.ToLower() == "negated") {
+                                    validator.Negated = Boolean.Parse(attr.Value);
+                                } else if (attr.Name == "type") {
+                                    validator.ValidatorTypeName = attr.Name;
+                                    if (attr.Value == "RequiredAttribute") {
+                                        validator.ValidatorType = typeof(RequiredAttribute);
+                                    } else if (attr.Value == "StringLengthAttribute") {
+                                        validator.ValidatorType = typeof(StringLengthAttribute);
+                                    } else if (attr.Value == "RegularExpressionAttribute") {
+                                        validator.ValidatorType = typeof(RegularExpressionAttribute);
+                                    } else if (attr.Value == "RangeAttribute") {
+                                        validator.ValidatorType = typeof(RangeAttribute);
+                                    } else {
+                                        try {
+                                            validator.ValidatorType = Type.GetType(attr.Value, true, true);
+                                        } catch (Exception ex) {
+                                            throw new Exception("Couldn't resolve validator type " + attr.Value + ". You may need to specify the fully qualified assembly name in the 'type' field. ie: 'MyAssembly.MyClass, MyAssembly'");
+                                        }
+                                    }
+
+                                } else {
+                                    validator.ValidatorAttributes.Add(attr.Name, attr.Value);
+                                }
+                            }
+
+                            prop.Validators.Add(validator);
+                        }
+                        ruleset.Properties.Add(prop);
+                    }
+                    XmlRuleSets.Add(ruleset);
+                }
+
+            }
+
+        }
+
+        /// <summary>
+        /// The XML rule set collection for all rule sets that have been loaded.<br/>
+        /// Use RegisterXMLValidationConfiguration() to load a configuration into memory.<br/>
+        /// Use GetRuleSetForName() and GetRuleSetForType() to retrieve a rule set for validation.<br/>
+        /// The WFXmlRuleSetRuleProvider class with the TryValidateModel() method.
+        /// </summary>
+        public static List<XmlDataAnnotationsRuleSet> XmlRuleSets = new List<XmlDataAnnotationsRuleSet>();
+
+        /// <summary>
+        /// Decode a post data string (ie: name=value&amp;name2=value2&amp;...) into a Dictionary&lt;string,string&gt;<br/>
+        /// This dictionary could be used like an HttpRequest, ie: requestDictionary["name"]
+        /// </summary>
+        /// <param name="decode"></param>
+        /// <returns></returns>
+        public static Dictionary<string, string> UrlDecodeDictionary(string decode) {
             if (String.IsNullOrEmpty(decode)) { return new Dictionary<string, string>(); }
-            if (decode.Contains('&'))
-            {
+            if (decode.Contains('&')) {
                 string[] strs = decode.Split('&');
                 Dictionary<string, string> reqDict = new Dictionary<string, string>();
-                foreach (string s in strs)
-                {
+                foreach (string s in strs) {
                     string[] sx = s.Split('=');
-                    if (reqDict.ContainsKey(HttpContext.Current.Server.UrlDecode(sx[0])))
-                    {
-                        if (!String.IsNullOrEmpty((reqDict[HttpContext.Current.Server.UrlDecode(sx[0])] ?? "").Trim()))
-                        {
+                    if (reqDict.ContainsKey(HttpContext.Current.Server.UrlDecode(sx[0]))) {
+                        if (!String.IsNullOrEmpty((reqDict[HttpContext.Current.Server.UrlDecode(sx[0])] ?? "").Trim())) {
                             reqDict[HttpContext.Current.Server.UrlDecode(sx[0])] =
                                 reqDict[HttpContext.Current.Server.UrlDecode(sx[0])] + "," + HttpContext.Current.Server.UrlDecode(sx[1]);
-                        }
-                        else
-                        {
+                        } else {
                             reqDict[HttpContext.Current.Server.UrlDecode(sx[0])] = HttpContext.Current.Server.UrlDecode(sx[1]);
 
                         }
-                    }
-                    else
-                    {
+                    } else {
                         reqDict.Add(HttpContext.Current.Server.UrlDecode(sx[0]), HttpContext.Current.Server.UrlDecode(sx[1]));
                     }
                 }
                 return reqDict;
-            }
-            else
-            {
-                if (decode.Contains('='))
-                {
+            } else {
+                if (decode.Contains('=')) {
                     string[] strs = decode.Split('=');
                     return new Dictionary<string, string>() { { HttpContext.Current.Server.UrlDecode(strs[0]), 
                                                                  HttpContext.Current.Server.UrlDecode(strs[1]) } };
-                }
-                else
-                {
+                } else {
                     string d = HttpContext.Current.Server.UrlDecode(decode);
                     return new Dictionary<string, string>() { { d, d } };
                 }
             }
 
         }
-    }
 
-
-    public interface IWFValueProvider
-    {
-        bool ContainsKey(string keyName);
-        object KeyValue(string keyName);
-    }
-
-    /// <summary>
-    /// Caches the page controls on constructor (ByRef) and then provides their values when needed.
-    /// Methods like UpdateModel() use IWFValueProvider's.
-    /// </summary>
-    public class WFPageControlsValueProvider : IWFValueProvider
-    {
-        private Control _Page = null;
-        private string _Prefix = "";
-        private Dictionary<string, Control> _WebControls = new Dictionary<string, Control>();
-        public WFPageControlsValueProvider(Control page, string prefix)
-        {
-            _Page = page;
-            _Prefix = prefix;
-            _WebControls = WebControlUtilities.FlattenPageControls(_Page);
-        }
-
-
-        #region IWFValueProvider Members
-
-        public bool ContainsKey(string keyName)
-        {
-            return _WebControls.ContainsKey(keyName);
-        }
-
-        public object KeyValue(string keyName)
-        {
-            return WebControlUtilities.GetControlValue(_WebControls[keyName]);
-        }
-
-        #endregion
-    }
-
-    public class WFObjectValueProvider : IWFValueProvider
-    {
-        private object _Model = null;
-        private string _Prefix = "";
-        private PropertyInfo[] _Properties = null;
         /// <summary>
-        /// Provide values to validate against from an object (rather than, say, an HTTP request)
+        /// Parse requestValue for the specified nullable type.<br/>
+        /// IE: typeof(Int32?) will use int.Parse(requestValue).<br/>
+        /// If requestValue is null, empty, whitespace or case-insensitive "null", then null is returned.
         /// </summary>
-        /// <param name="model">The object which already has values populated</param>
-        /// <param name="prefix">An optional prefix to prepend when checking property names</param>
-        public WFObjectValueProvider(object model, string prefix)
-        {
-            _Model = model;
-            _Properties = _Model.GetType().GetProperties();
-            _Prefix = prefix;
-        }
-        #region IWFValueProvider Members
+        /// <param name="nullableType">The nullabe type (Int32?, DateTime?, Boolean?)</param>
+        /// <param name="requestValue">The value to be parsed.</param>
+        /// <returns></returns>
+        public static object ParseNullable(Type nullableType, string requestValue) {
 
-        public bool ContainsKey(string keyName)
-        {
-            if (!String.IsNullOrEmpty(_Prefix))
-            {
-                if (_Properties.FirstOrDefault(p => (_Prefix.ToLower() + p.Name.ToLower()) == keyName.ToLower()) != null)
-                {
-                    return true;
+            if (string.IsNullOrEmpty((requestValue ?? "").Trim())) { return null; }
+            if (requestValue.ToLower() == "null") { return null; }
+
+            object outValue = null;
+            object[] requestArr = new object[] { requestValue };
+            outValue = Nullable.GetUnderlyingType(nullableType).GetMethods().First(m => m.Name == "Parse"
+                && m.GetParameters().Count() == 1).Invoke(null, requestArr);
+            return outValue;
+        }
+
+        /// <summary>
+        /// TryParse requestValue for the specified nullable type.<br/>
+        /// IE: typeof(Int32?) will use int.TryParse(requestValue).<br/>
+        /// If TryParse fails, null will be returned.
+        /// </summary>
+        /// <param name="nullableType">The nullabe type (Int32?, DateTime?, Boolean?)</param>
+        /// <param name="requestValue">The value to be parsed.</param>
+        /// <returns></returns>
+        public static object TryParseNullable(Type nonNullableType, string requestValue) {
+            object nonNullableObject = Activator.CreateInstance(nonNullableType);
+            object outValue = null;
+            object[] requestArr = new object[] { requestValue, outValue };
+            bool didParse = (Boolean)nonNullableType.GetMethods().First(m => m.Name == "TryParse"
+                            && m.GetParameters().Count() == 2).Invoke(null, requestArr); //.Invoke(nonNullableObject, requestArr);
+
+            if (didParse) {
+                return requestArr[1];
+            } else {
+                return null;
+            }
+        }
+
+        internal static ValidationAttribute GetValidatorInstanceForXmlDataAnnotationsValidator(XmlDataAnnotationsValidator validator) {
+            if (validator == null) { return null; }
+            ValidationAttribute attr = null;
+            if (validator.ValidatorType == typeof(StringLengthAttribute)) {
+                attr = (ValidationAttribute)new StringLengthAttribute(int.Parse(validator.ValidatorAttributes["maximumLength"]));
+            } else if (validator.ValidatorType == typeof(RangeAttribute)) {
+                attr = (ValidationAttribute)new RangeAttribute(double.Parse(validator.ValidatorAttributes["minimum"]), double.Parse(validator.ValidatorAttributes["maximum"]));
+            } else if (validator.ValidatorType == typeof(RegularExpressionAttribute)) {
+                attr = (ValidationAttribute)new RegularExpressionAttribute(validator.ValidatorAttributes["pattern"]);
+            } else {
+                try {
+                    attr = (ValidationAttribute)Activator.CreateInstance(validator.ValidatorType);
+                } catch (Exception ex) {
+                    throw new Exception("Error trying to create an instance of [" + validator.ValidatorType.Name + "].\r\nIf this validator already has a parameterless constructor defined, see InnerException for more information.", ex);
+                }
+                string currentProperty = "";
+                try {
+                    foreach (KeyValuePair<string, string> kvp in validator.ValidatorAttributes) {
+                        currentProperty = kvp.Key;
+                        PropertyInfo pi = attr.GetType().GetProperty(kvp.Key);
+                        pi.SetValue(attr, Convert.ChangeType(kvp.Value, pi.PropertyType), null);
+                    }
+                } catch (Exception ex) {
+                    throw new Exception("Error setting properties from XML configuration, current property [" + currentProperty + "]. InnerException may have more details.", ex);
                 }
             }
-            else
-            {
-                if (_Properties.FirstOrDefault(p => p.Name.ToLower() == keyName.ToLower()) != null)
-                {
-                    return true;
-                }
+            if (!String.IsNullOrEmpty(validator.ErrorMessage)) {
+                attr.ErrorMessage = validator.ErrorMessage;
             }
-            return false;
-        }
-
-        public object KeyValue(string keyName)
-        {
-            if (_Model == null) { return null; }
-            PropertyInfo pi = null;
-            if (!String.IsNullOrEmpty(_Prefix))
-            {
-                pi = _Properties.First(p => (_Prefix.ToLower() + p.Name.ToLower()) == keyName.ToLower());
+            if (!String.IsNullOrEmpty(validator.ErrorMessageResourceName)) {
+                attr.ErrorMessageResourceName = validator.ErrorMessageResourceName;
             }
-            else
-            {
-                pi = _Properties.First(p => p.Name.ToLower() == keyName.ToLower());
+            if (validator.ErrorMessageResourceType != null) {
+                attr.ErrorMessageResourceType = validator.ErrorMessageResourceType;
             }
-            return pi.GetValue(_Model, null);
+            return attr;
         }
-
-        #endregion
-    }
-    public class WFDictionaryValueProvider : IWFValueProvider
-    {
-        private Dictionary<string, string> StringDictionary = null;
-        public WFDictionaryValueProvider(Dictionary<string, string> dict)
-        {
-            StringDictionary = dict;
-        }
-        #region IWFValueProvider Members
-
-        public bool ContainsKey(string keyName)
-        {
-            return StringDictionary.ContainsKey(keyName);
-        }
-
-        public object KeyValue(string keyName)
-        {
-            return StringDictionary[keyName];
-        }
-
-        #endregion
-    }
-    public class WFHttpContextValueProvider : IWFValueProvider
-    {
-        private HttpContext _HttpContext = null;
-        private HttpRequest _Request = null;
-        public WFHttpContextValueProvider(HttpContext context)
-        {
-            _HttpContext = context;
-            _Request = _HttpContext.Request;
-        }
-        public WFHttpContextValueProvider(HttpRequest request)
-        {
-            _Request = request;
-        }
-
-        #region IWFValueProvider Members
-
-        public bool ContainsKey(string keyName)
-        {
-            return _Request.Form.AllKeys.Contains(keyName);
-        }
-
-        public object KeyValue(string keyName)
-        {
-            return _Request.Form[keyName];
-        }
-
-        #endregion
     }
 }

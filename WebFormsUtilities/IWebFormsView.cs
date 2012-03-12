@@ -13,9 +13,7 @@ namespace WebFormsUtilities
     /// <typeparam name="T"></typeparam>
     public interface IWebFormsView<T>
     {
-        object GetModel();
-        void SetModel(object model);
-        WFModelMetaData WFMetaData { get; set; }
-        HtmlHelper<T> Html { get; set; }
+        T Model { get; set; }
+        HtmlHelper<T> Html { get; }
     }
 }

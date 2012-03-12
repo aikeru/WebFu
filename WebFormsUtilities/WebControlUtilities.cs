@@ -14,6 +14,74 @@ namespace WebFormsUtilities
 {
     public static class WebControlUtilities
     {
+
+        public static HtmlTagBase ApplyTableItemStyleToTag(HtmlTagBase tag, TableItemStyle tis)
+        {
+            if (tis == null) { return tag; }
+
+            if (tis != null)
+            {
+                if (tis.BackColor != null)
+                {
+                    if (tis.BackColor.IsNamedColor)
+                    {
+                        tag.Attr("style", tag.Attr("style") + "background-color:" + tis.BackColor.Name + ";");
+                    }
+                    else
+                    {
+                        tag.Attr("style", tag.Attr("style") + "background-color:#" + tis.BackColor.R.ToString("X") +
+                            tis.BackColor.G.ToString("X") + tis.BackColor.B.ToString("X") + ";");
+                    }
+                }
+                if (tis.ForeColor != null)
+                {
+                    if (tis.ForeColor.IsNamedColor)
+                    {
+                        tag.Attr("style", tag.Attr("style") + "color:" + tis.BackColor.Name + ";");
+                    }
+                    else
+                    {
+                        tag.Attr("style", tag.Attr("style") + "color:#" + tis.BackColor.R.ToString("X") +
+                            tis.BackColor.G.ToString("X") + tis.BackColor.B.ToString("X") + ";");
+                    }
+                }
+                if (tis.BorderColor != null)
+                {
+                }
+                if (tis.BorderStyle != null)
+                {
+                }
+                if (tis.BorderWidth != null)
+                {
+                }
+                if (tis.CssClass != null)
+                {
+                }
+                if (tis.Font != null)
+                {
+                }
+                if (tis.Height != null)
+                {
+                }
+                if (tis.HorizontalAlign != HorizontalAlign.NotSet)
+                {
+                }
+                if (tis.VerticalAlign != VerticalAlign.NotSet)
+                {
+                }
+                if (tis.Width != null)
+                {
+                }
+
+                //tis.Wrap
+
+            }
+
+
+
+            return tag;
+        }
+
         public static Control FindControlRecursive(Control rootControl, string id)
         {
             if (rootControl.ID == id) { return rootControl; }
@@ -62,13 +130,11 @@ namespace WebFormsUtilities
         /// <param name="metadata">The existing metadata to search through.</param>
         /// <returns></returns>
         public static WFModelMetaProperty GetMetaPropertyFromValidator(Control rootControl, DataAnnotationValidatorControl dvc,
-    WFModelMetaData metadata)
-        {
+    WFModelMetaData metadata) {
             Type sourceType = dvc.SourceType;
             Control controlValidating = WebControlUtilities.FindControlRecursive(rootControl, dvc.ControlToValidate);
             WFModelMetaProperty metaproperty = metadata.Properties.FirstOrDefault(m => m.MarkupName == controlValidating.UniqueID);
-            if (metaproperty == null)
-            {
+            if (metaproperty == null) {
                 metaproperty = new WFModelMetaProperty();
                 metadata.Properties.Add(metaproperty);
             }
@@ -76,39 +142,61 @@ namespace WebFormsUtilities
             metaproperty.PropertyName = dvc.PropertyName;
             metaproperty.MarkupName = controlValidating.UniqueID;
 
-            if (String.IsNullOrEmpty(dvc.SourceTypeString))
-            {
-                if (sourceType == null)
-                { throw new Exception("The SourceType and SourceTypeString properties are null/empty on one of the validator controls.\r\nPopulate either property.\r\nie: control.SourceType = typeof(Widget); OR in markup SourceTypeString=\"Assembly.Classes.Widget, Assembly\""); }
-            }
-            else
-            {
-                try
-                {
-                    sourceType = Type.GetType(dvc.SourceTypeString, true, true);
+            if (String.IsNullOrEmpty(dvc.SourceTypeString)) {
+                if (sourceType == null && String.IsNullOrEmpty(dvc.XmlRuleSetName)) {
+                    throw new Exception("The SourceType and SourceTypeString properties are null/empty on one of the validator controls.\r\nPopulate either property.\r\nie: control.SourceType = typeof(Widget); OR in markup SourceTypeString=\"Assembly.Classes.Widget, Assembly\"");
+                } else if (sourceType == null && !String.IsNullOrEmpty(dvc.XmlRuleSetName)) {
+                    sourceType = WFUtilities.GetRuleSetForName(dvc.XmlRuleSetName).ModelType;
                 }
-                catch (Exception ex)
-                {
+            } else {
+                try {
+                    sourceType = Type.GetType(dvc.SourceTypeString, true, true);
+                } catch (Exception ex) {
                     throw new Exception("Couldn't resolve type " + dvc.SourceTypeString + ". You may need to specify the fully qualified assembly name.");
                 }
             }
-            PropertyInfo prop = sourceType.GetProperty(dvc.PropertyName);
-            
-            foreach (var attr in prop.GetCustomAttributes(typeof(ValidationAttribute), true).OfType<ValidationAttribute>())
-            {
-                var displayNameAttr = prop.GetCustomAttributes(typeof(DisplayNameAttribute), true).OfType<DisplayNameAttribute>().FirstOrDefault();
-                string displayName = displayNameAttr == null ? prop.Name : displayNameAttr.DisplayName;
 
-                metaproperty.DisplayName = displayName;
-                metaproperty.ValidationAttributes.Add(attr);
-                if (!attr.IsValid(GetControlValue(controlValidating)))
-                {
-                    metaproperty.HasError = true;
-                    if (metaproperty.Errors == null)
-                    { metaproperty.Errors = new List<string>(); }
-                    metaproperty.Errors.Add(attr.FormatErrorMessage(displayName));
-                    return metaproperty;
+            PropertyInfo prop = sourceType.GetProperty(dvc.PropertyName);
+
+            if (String.IsNullOrEmpty(dvc.XmlRuleSetName)) {
+                foreach (var attr in prop.GetCustomAttributes(typeof(ValidationAttribute), true).OfType<ValidationAttribute>()) {
+                    var displayNameAttr = prop.GetCustomAttributes(typeof(DisplayNameAttribute), true).OfType<DisplayNameAttribute>().FirstOrDefault();
+                    string displayName = displayNameAttr == null ? prop.Name : displayNameAttr.DisplayName;
+
+                    metaproperty.DisplayName = displayName;
+                    metaproperty.ValidationAttributes.Add(attr);
+                    if (!attr.IsValid(GetControlValue(controlValidating))) {
+                        metaproperty.HasError = true;
+                        if (metaproperty.Errors == null) { metaproperty.Errors = new List<string>(); }
+                        metaproperty.Errors.Add(attr.FormatErrorMessage(displayName));
+                    }
                 }
+
+            } else {
+                XmlDataAnnotationsRuleSet ruleset = WFUtilities.GetRuleSetForType(sourceType, dvc.XmlRuleSetName);
+                metaproperty.DisplayName = dvc.PropertyName;
+                try {
+                    foreach (var validator in ruleset.Properties.First(p => p.PropertyName == dvc.PropertyName).Validators) {
+                        ValidationAttribute attr = WFUtilities.GetValidatorInstanceForXmlDataAnnotationsValidator(validator);
+
+                        foreach (var key in validator.ValidatorAttributes.Keys) {
+                            PropertyInfo pi = attr.GetType().GetProperty(key);
+                            if (pi != null) {
+                                pi.SetValue(attr, Convert.ChangeType(validator.ValidatorAttributes[key], pi.PropertyType), null);
+                            }
+                        }
+                        metaproperty.ValidationAttributes.Add(attr);
+                        if (!attr.IsValid(GetControlValue(controlValidating))) {
+                            metaproperty.HasError = true;
+                            if (metaproperty.Errors == null) { metaproperty.Errors = new List<string>(); }
+                            metaproperty.Errors.Add(validator.ErrorMessage);
+
+                        }
+                    }
+                } catch (Exception ex) {
+                    throw new Exception("Error trying to validate " + dvc.PropertyName + ", innerexception may have more details...\r\nMake sure ErrorMessage isn't specified in more than one place.", ex);
+                }
+
             }
             return metaproperty;
         }

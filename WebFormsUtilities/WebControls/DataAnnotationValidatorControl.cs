@@ -8,6 +8,7 @@ using System.Reflection;
 using System.ComponentModel.DataAnnotations;
 using System.Web.UI;
 using System.ComponentModel;
+using WebFormsUtilities.DataAnnotations;
 
 namespace WebFormsUtilities.WebControls
 {
@@ -36,19 +37,36 @@ namespace WebFormsUtilities.WebControls
 
         private bool _HasBeenChecked = false;
 
+
+        private string _XmlRuleSetName = "";
+        /// <summary>
+        /// Apply validation from rules defined in XML validation configuration.
+        /// The XML file(s) may be registered in application start WFUtilities.
+        /// </summary>
+        public string XmlRuleSetName {
+            get { return _XmlRuleSetName; }
+            set { _XmlRuleSetName = value; }
+        }        
+
         protected override bool EvaluateIsValid()
         {
             _HasBeenChecked = true;
             if (String.IsNullOrEmpty(SourceTypeString))
             {
-                if (SourceType == null)
-                { throw new Exception("The SourceType and SourceTypeString properties are null/empty on one of the validator controls.\r\nPopulate either property.\r\nie: control.SourceType = typeof(Widget); OR in markup SourceTypeString=\"Assembly.Classes.Widget, Assembly\""); }
+                if (SourceType == null && String.IsNullOrEmpty(XmlRuleSetName))
+                { 
+                    throw new Exception("The SourceType and SourceTypeString properties are null/empty on one of the validator controls.\r\nPopulate either property.\r\nie: control.SourceType = typeof(Widget); OR in markup SourceTypeString=\"Assembly.Classes.Widget, Assembly\""); } 
+                else if (SourceType == null && !String.IsNullOrEmpty(XmlRuleSetName)) {
+                    //Get the type from the XmlRuleSet
+                    SourceType = WFUtilities.GetRuleSetForName(XmlRuleSetName).ModelType;
+                }
+                
+                
             }
             else
             {
                 try
                 {
-
                     SourceType = Type.GetType(SourceTypeString, true, true);
                 }
                 catch (Exception ex)
@@ -64,18 +82,48 @@ namespace WebFormsUtilities.WebControls
             }
             string controlValue = WebControlUtilities.GetControlValue(validateControl);
 
-            foreach(var attr in prop.GetCustomAttributes(typeof(ValidationAttribute), true).OfType<ValidationAttribute>())
-            {
-                var displayNameAttr = prop.GetCustomAttributes(typeof(DisplayNameAttribute), true).OfType<DisplayNameAttribute>().FirstOrDefault();
-                string displayName = displayNameAttr == null ? prop.Name : displayNameAttr.DisplayName;
-                
-                if (!attr.IsValid(controlValue))
-                {
-                    this.ErrorMessage = attr.FormatErrorMessage(displayName);
-                    return false;
+            if (String.IsNullOrEmpty(XmlRuleSetName)) {
+                foreach (var attr in prop.GetCustomAttributes(typeof(ValidationAttribute), true).OfType<ValidationAttribute>()) {
+                    var displayNameAttr = prop.GetCustomAttributes(typeof(DisplayNameAttribute), true).OfType<DisplayNameAttribute>().FirstOrDefault();
+                    string displayName = displayNameAttr == null ? prop.Name : displayNameAttr.DisplayName;
+
+                    if (!attr.IsValid(controlValue)) {
+                        this.ErrorMessage = attr.FormatErrorMessage(displayName);
+                        return false;
+                    }
                 }
+                return true;
+            } else {
+                XmlDataAnnotationsRuleSet ruleset = WFUtilities.GetRuleSetForType(SourceType, XmlRuleSetName);
+                XmlDataAnnotationsRuleSetProperty property = ruleset.Properties.FirstOrDefault(p => p.PropertyName == PropertyName);
+                if (property != null) {
+                    foreach (XmlDataAnnotationsValidator val in property.Validators) {
+                        ValidationAttribute attr = WFUtilities.GetValidatorInstanceForXmlDataAnnotationsValidator(val);
+
+                        if (!String.IsNullOrEmpty(ErrorMessage)) {
+                            attr.ErrorMessage = ErrorMessage;
+                        }
+
+                        foreach (var key in val.ValidatorAttributes.Keys) {
+                            PropertyInfo pi = attr.GetType().GetProperty(key);
+
+                            string[] excludeProps = new string[] { };
+                            if(attr.GetType() == typeof(StringLengthAttribute)) { excludeProps = new string[] { "maximumLength" }; }
+                            if (attr.GetType() == typeof(RangeAttribute)) { excludeProps = new string[] { "minimum", "maximum" }; }
+                            if(!excludeProps.Contains(key))
+                            {
+                                pi.SetValue(attr, Convert.ChangeType(val.ValidatorAttributes[key], pi.PropertyType), null);
+                            }
+                        }
+                        if (!attr.IsValid(controlValue)) {
+                            this.ErrorMessage = attr.FormatErrorMessage(property.DisplayName ?? "");
+                            return false;
+                        }
+                    }
+                }
+
+                return true;
             }
-            return true;
         }
 
         protected override void Render(HtmlTextWriter writer)

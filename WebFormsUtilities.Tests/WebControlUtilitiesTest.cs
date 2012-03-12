@@ -5,6 +5,8 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.ComponentModel.DataAnnotations;
+using WebFormsUtilities.ValueProviders;
 
 namespace WebFormsUtilities.Tests
 {
@@ -185,7 +187,28 @@ namespace WebFormsUtilities.Tests
         public DateTime? NullDate1 { get; set; }
         public DateTime? NullDate2 { get; set; }
         public DateTime? NullDate3 { get; set; }
+
+        public decimal Price { get; set; }
+
+        public string Password { get; set; }
+        public string ConfirmPassword { get; set; }
+
+        public bool AcceptedRules { get; set; }
     }
+
+    public class ProxyMessageFromValidator {
+        [Required]
+        public string FirstName { get; set; }
+    }
+    public class ProxyMessageFromConstant {
+        [Required(ErrorMessage="This is a constant error.")]
+        public string FirstName { get; set; }
+    }
+    public class ProxyMessageFromResource {
+        [Required(ErrorMessageResourceName = "FirstName_ErrorMessage_Test1", ErrorMessageResourceType = typeof(WebFormsUtilities.Tests.Properties.Resources))]
+        public string FirstName { get; set; }
+    }
+
     public class TestParticipantAddressClass
     {
         public string Address1 { get; set; }

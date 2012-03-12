@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Reflection;
+using System.Web.UI;
 
 namespace WebFormsUtilities
 {
@@ -83,6 +84,47 @@ namespace WebFormsUtilities
             }
             return this;
         }
+
+        /// <summary>
+        /// Adds new properties to the HTML tag and overrides existing properties.
+        /// </summary>
+        /// <param name="attribs">Attributes collected from an ASP.net server control.</param>
+        /// <returns>Returns 'this'.</returns>
+        public virtual HtmlTag MergeObjectProperties(AttributeCollection attribs)
+        {
+            if (attribs == null) { return this; }
+            foreach (var key in attribs.Keys)
+            {
+                if (HTMLProperties.ContainsKey(key.ToString().ToLower()))
+                {
+                    HTMLProperties[key.ToString().ToLower()] = HTMLProperties[key.ToString().ToLower()] + attribs[key.ToString()];
+                }
+                else
+                {
+                    HTMLProperties.Add(key.ToString().ToLower(), attribs[key.ToString()]);
+                }
+            }
+            return this;
+        }
+
+        public virtual HtmlTag MergeObjectProperties(Dictionary<string, object> htmlAttributes)
+        {
+            if (htmlAttributes == null) { return this; }
+            if (htmlAttributes.Count < 1) { return this; }
+            foreach (KeyValuePair<string, object> kvp in htmlAttributes)
+            {
+                if (HTMLProperties.ContainsKey(kvp.Key.ToLower()))
+                {
+                    HTMLProperties[kvp.Key.ToLower()] = htmlAttributes[kvp.Key].ToString();
+                }
+                else
+                {
+                    HTMLProperties.Add(kvp.Key.ToLower(), htmlAttributes[kvp.Key].ToString());
+                }
+            }
+            return this;
+        }
+
         /// <summary>
         /// A class used to render HTML tags. 
         /// </summary>
