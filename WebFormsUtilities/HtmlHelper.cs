@@ -8,25 +8,82 @@ using System.Reflection;
 using System.Web;
 using System.Linq.Expressions;
 using System.ComponentModel;
+using WebFormsUtilities.TagProcessors;
 
 namespace WebFormsUtilities
 {
-    public class HtmlHelper<T>
+    public partial class HtmlHelper<TModel>
     {
         private Control _PageControl = null;
-        private object _Model = null;
+        private TModel _Model = default(TModel);
         private WFModelMetaData _MetaData = null;
-        public HtmlHelper(Control pageControl, object model, WFModelMetaData metadata)
+
+        private List<IHtmlTagPreProcessor> _PreProcessors = new List<IHtmlTagPreProcessor>();
+
+        public WFModelMetaData MetaData
+        {
+            get { return _MetaData; }
+            set { _MetaData = value; }
+        }
+
+        public HtmlHelper(Control pageControl, TModel model)
+        {
+            _MetaData = new WFModelMetaData();
+            _Model = model;
+            _PageControl = pageControl;
+
+            _PreProcessors.Add(new WFValidationPreProcessor());
+        }
+
+        public HtmlHelper(Control pageControl, TModel model, WFModelMetaData metadata)
         {
             _PageControl = pageControl;
             _Model = model;
             _MetaData = metadata;
+
+            _PreProcessors.Add(new WFValidationPreProcessor());
         }
-        public HtmlHelper(IWebFormsView<T> wfv)
+        
+        public HtmlHelper(IWebFormsView<TModel> wfv)
         {
             _PageControl = (Control)wfv;
-            _Model = wfv.GetModel();
-            _MetaData = wfv.WFMetaData;
+            _Model = wfv.Model;
+            //_MetaData = wfv.WFMetaData;
+            _MetaData = new WFModelMetaData();
+
+            _PreProcessors.Add(new WFValidationPreProcessor());
+
+        }
+
+        /// <summary>
+        /// Add an IHtmlTagPreProcessor at page or control level which will be invoked before HtmlHelper methods are rendered.<br/>
+        /// This processor will only be invoked for the HtmlHelper instance of the page or control it has been added for.
+        /// </summary>
+        /// <param name="processor">A class implementing IHtmlTagPreProcessor</param>
+        public void AddPreProcessor(IHtmlTagPreProcessor processor) {
+            _PreProcessors.Add(processor);
+        }
+
+        /// <summary>
+        /// Clear all IHtmlTagPreProcessors. This will also remove the built-in WFValidationPreProcessor.<br/>
+        /// You should not use this unless you want to override the way validation works.
+        /// </summary>
+        public void ClearPreProcessors() {
+            _PreProcessors.Clear();
+        }
+
+        internal HtmlTag PreProcess(HtmlTag tag, WFModelMetaData metadata, TagTypes tagType, string propertyName, PropertyInfo expBody, object model) {
+            foreach (IHtmlTagPreProcessor processor in _PreProcessors) {
+                tag = processor.PreRenderProcess(tag, ref metadata, tagType, propertyName, expBody, model);
+            }
+            return tag;
+        }
+
+        internal HtmlTag PreProcess(HtmlTag tag, WFModelMetaData metadata, TagTypes tagType, string markupName, string reflectName, object model) {
+            foreach (IHtmlTagPreProcessor processor in _PreProcessors) {
+                tag = processor.PreRenderProcess(tag, ref metadata, tagType, markupName, reflectName, model);
+            }
+            return tag;
         }
 
         #region ValidationSummary
@@ -85,6 +142,9 @@ namespace WebFormsUtilities
             //<div class="validation-summary-valid" id="validationSummary"><ul><li style="display:none"></li></ul></div>
 
             div.MergeObjectProperties(htmlProperties);
+
+            div = PreProcess(div, _MetaData, TagTypes.ValidationSummary, "", "", model);
+
             return div.Render();
         }
 
@@ -180,6 +240,8 @@ namespace WebFormsUtilities
             span.MergeObjectProperties(htmlProperties);
             span.AddClass("field-validation-valid");
 
+            span = PreProcess(span, _MetaData, TagTypes.ValidationMessage, markupName, propertyName, model);
+
             return span.Render();
         }
 
@@ -232,7 +294,12 @@ namespace WebFormsUtilities
         {
             HtmlTag rb = new HtmlTag("input", new { type = "radio", name = name, value = (value ?? "").ToString() });
             if (isChecked) { rb.Attr("checked", "checked"); }
-            return rb.MergeObjectProperties(htmlAttributes).Render();
+
+            rb.MergeObjectProperties(htmlAttributes);
+
+            PreProcess(rb, _MetaData, TagTypes.RadioButton, name, "", null);
+
+            return rb.Render();
         }
         /// <summary>
         /// A radio button with validation enabled.
@@ -274,8 +341,12 @@ namespace WebFormsUtilities
         {
             HtmlTag rb = new HtmlTag("input", new { type = "radio", name = markupname, value = (value ?? "").ToString() });
             if (isChecked) { rb.Attr("checked", "checked"); }
-            WFUtilities.CheckPropertyError(_MetaData, model, rb, markupname, name);
-            return rb.MergeObjectProperties(htmlAttributes).Render();
+
+            rb.MergeObjectProperties(htmlAttributes);
+
+            PreProcess(rb, _MetaData, TagTypes.RadioButton, markupname, name, model);
+
+            return rb.Render();
         }
         #endregion
 
@@ -302,7 +373,12 @@ namespace WebFormsUtilities
         public string TextBox(string name, object value, object htmlAttributes)
         {
             HtmlTag tb = new HtmlTag("input", new { type = "text", name = name, value = (value ?? "").ToString(), id = name }, true);
-            return tb.MergeObjectProperties(htmlAttributes).Render();
+
+            tb.MergeObjectProperties(htmlAttributes);
+
+            tb = PreProcess(tb, _MetaData, TagTypes.InputBox, name, "", null);
+
+            return tb.Render();
         }
 
         /// <summary>
@@ -330,8 +406,12 @@ namespace WebFormsUtilities
         public string TextBoxFor(string markupname, string name, object model, object value, object htmlAttributes)
         {
             HtmlTag tb = new HtmlTag("input", new { type = "text", name = markupname, value = (value ?? "").ToString(), id = markupname }, true);
-            WFUtilities.CheckPropertyError(_MetaData, model, tb, markupname, name);
-            return tb.MergeObjectProperties(htmlAttributes).Render();
+
+            tb.MergeObjectProperties(htmlAttributes);
+
+            tb = PreProcess(tb, _MetaData, TagTypes.InputBox, markupname, name, model);
+
+            return tb.Render();
         }
         #endregion
 
@@ -357,7 +437,12 @@ namespace WebFormsUtilities
         public string TextArea(string name, object value, object htmlProperties)
         {
             HtmlTag txa = new HtmlTag("textarea", new { cols = "20", rows = "2", name = name, id = name }) { InnerText = (value ?? "").ToString() };
-            return txa.MergeObjectProperties(htmlProperties).Render();
+
+            txa.MergeObjectProperties(htmlProperties);
+
+            txa = PreProcess(txa, _MetaData, TagTypes.TextArea, name, "", null);
+
+            return txa.Render();
         }
         /// <summary>
         /// A &lt;textarea&gt; element with validation enabled.
@@ -384,7 +469,11 @@ namespace WebFormsUtilities
         public string TextAreaFor(string markupname, string name, object model, object value, object htmlAttributes)
         {
             HtmlTag txa = new HtmlTag("textarea", new { cols = "20", rows = "2", name = markupname, id = markupname }) { InnerText = (value ?? "").ToString() };
-            WFUtilities.CheckPropertyError(_MetaData, model, txa, markupname, name);
+
+            txa.MergeObjectProperties(htmlAttributes);
+
+            txa = PreProcess(txa, _MetaData, TagTypes.TextArea, markupname, name, model);
+
             return txa.MergeObjectProperties(htmlAttributes).Render();
         }
         #endregion
@@ -448,6 +537,9 @@ namespace WebFormsUtilities
             HtmlTag cb = new HtmlTag("input", new { type = "checkbox", id = name, name = name });
             if (isChecked.HasValue && isChecked.Value) { cb.Attr("checked", "checked"); }
             if (htmlProperties != null) { cb.MergeObjectProperties(htmlProperties); }
+
+            cb = PreProcess(cb, _MetaData, TagTypes.Checkbox, name, "", null);
+
             return cb.Render();
         }
         /// <summary>
@@ -489,7 +581,9 @@ namespace WebFormsUtilities
             if (isChecked.HasValue && isChecked.Value)
             { cb.Attr("checked", "checked"); }
             if (htmlProperties != null) { cb.MergeObjectProperties(htmlProperties); }
-            WFUtilities.CheckPropertyError(_MetaData, model, cb, markupname, name);
+
+            cb = PreProcess(cb, _MetaData, TagTypes.Checkbox, markupname, name, model);
+
             return cb.Render();
         }
         #endregion
@@ -524,6 +618,9 @@ namespace WebFormsUtilities
                 sel.Children.Add(opt);
             }
             if (htmlProperties != null) { sel.MergeObjectProperties(htmlProperties); }
+
+            sel = PreProcess(sel, _MetaData, TagTypes.Select, name, "", null);
+
             return sel.Render();
         }
         /// <summary>
@@ -546,6 +643,9 @@ namespace WebFormsUtilities
                 if (si.Selected) { opt.Attr("selected", "selected"); }
                 sel.Children.Add(opt);
             }
+
+            sel = PreProcess(sel, _MetaData, TagTypes.Select, name, "", null);
+
             return sel.Render();
         }
         /// <summary>
@@ -571,6 +671,9 @@ namespace WebFormsUtilities
                 sel.Children.Add(opt);
             }
             if (htmlProperties != null) { sel.MergeObjectProperties(htmlProperties); }
+
+            sel = PreProcess(sel, _MetaData, TagTypes.Select, name, "", null);
+
             return sel.Render();
         }
         /// <summary>
@@ -605,7 +708,9 @@ namespace WebFormsUtilities
                 sel.Children.Add(opt);
             }
             if (htmlProperties != null) { sel.MergeObjectProperties(htmlProperties); }
-            WFUtilities.CheckPropertyError(_MetaData, model, sel, markupname, name);
+
+            sel = PreProcess(sel, _MetaData, TagTypes.Select, markupname, name, model);
+
             return sel.Render();
         }
         /// <summary>
@@ -646,7 +751,9 @@ namespace WebFormsUtilities
                 sel.Children.Add(opt);
             }
             if (htmlProperties != null) { sel.MergeObjectProperties(htmlProperties); }
-            WFUtilities.CheckPropertyError(_MetaData, model, sel, markupname, name);
+
+            sel = PreProcess(sel, _MetaData, TagTypes.Select, markupname, name, model);
+
             return sel.Render();
         }
         #endregion
@@ -804,7 +911,9 @@ namespace WebFormsUtilities
             HtmlTag lbl = new HtmlTag("label", new { For = markupName }) { InnerText = dispName };
             lbl.MergeObjectProperties(htmlProperties);
 
-            return new HtmlTag("label", new { For = markupName }) { InnerText = dispName }.Render();
+            lbl = PreProcess(lbl, _MetaData, TagTypes.Label, markupName, name, model);
+
+            return lbl.Render();
         }
 
         #endregion

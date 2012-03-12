@@ -5,6 +5,12 @@ using System.Text;
 using System.Web;
 using System.Reflection;
 using System.Web.UI;
+using System.Resources;
+using System.IO;
+using WebFormsUtilities.Json;
+using WebFormsUtilities.DataAnnotations;
+using WebFormsUtilities.RuleProviders;
+using WebFormsUtilities.ValueProviders;
 
 namespace WebFormsUtilities
 {
@@ -17,17 +23,9 @@ namespace WebFormsUtilities
         /// <returns>Returns a &lt;script&gt; tag which should be placed in &lt;head&gt; after jQuery.</returns>
         public static string ScriptRegisterClientFunctions()
         {
-            return JSResources.WFUtilitiesJquery;
+            return new HtmlTag("script") { InnerText = JSResources.WFUtilitiesJquery }.Render();
         }
-        /// <summary>
-        /// This method can be used if WFUtilitiesJquery.js is not included in the project.<br/>
-        /// Returns a minified &lt;script&gt; tag which should be placed in &lt;head&gt; after jQuery.
-        /// </summary>
-        /// <returns>Returns a minified &lt;script&gt; tag which should be placed in &lt;head&gt; after jQuery.</returns>
-        public static string ScriptRegisterClientFunctionsMinified()
-        {
-            return JSResources.WFUtilitiesJqueryMin;
-        }
+
         /// <summary>
         /// Call this method when posting back from the JavaScript WFCallPage(); function<br/>
         /// Use Request["JSMethod"] to find a matching Page method that is decorated with WFJScriptMethod<br/>
@@ -52,51 +50,67 @@ namespace WebFormsUtilities
                 }
             }
         }
+
         /// <summary>
-        /// Validate the model against form values (not against itself).
+        /// Validate the model against form values (not against itself).<br/>
+        /// Use WFUtilities.TryValidateModel() to validate against targets other than the current HttpRequest.
         /// </summary>
-        /// <param name="WFMetaData">The metadata object which stores validation information.</param>
-        /// <param name="model">The model being validated.</param>
-        /// <param name="context">The HTTP context where form values are stored to validate.<br/>
-        /// HttpContext.Current can be used.
-        /// </param>
+        /// <typeparam name="TModel">The type of the model object to be validated.</typeparam>
+        /// <param name="wfView">The page or usercontrol implementing IWebFormsView&lt;TModel&gt;</param>
         /// <returns>Returns 'true' if the values in the form data validate successfully.</returns>
-        public static bool TryValidateModel(WFModelMetaData WFMetaData, object model, HttpContext context)
+        public static bool TryValidateModel<TModel>(IWebFormsView<TModel> wfView)
         {
-            return TryValidateModel(WFMetaData, model, "", context);
+            return TryValidateModel(wfView, null, "");
+        }
+
+        /// <summary>
+        /// Validate the model against form values (not against itself).<br/>
+        /// Use WFUtilities.TryValidateModel() to validate against targets other than the current HttpRequest.
+        /// </summary>
+        /// <typeparam name="TModel">The type of the model object to be validated.</typeparam>
+        /// <param name="wfView">The page or usercontrol implementing IWebFormsView&lt;TModel&gt;</param>
+        /// <param name="prefix">Optional. The prefix to separate different objects in form data.<br/>
+        /// ie: object1_FirstName=John, object2_FirstName=Joe</param>
+        /// <returns>Returns 'true' if the values in the form data validate successfully.</returns>
+        public static bool TryValidateModel<TModel>(IWebFormsView<TModel> wfView, string prefix)
+        {
+            return TryValidateModel(wfView, null, prefix);
         }
         /// <summary>
-        /// Validate the model against form values (not against itself).
+        /// Validate the model against form values (not against itself).<br/>
+        /// Use WFUtilities.TryValidateModel() to validate against targets other than the current HttpRequest.
         /// </summary>
-        /// <param name="WFMetaData">The metadata object which stores validation information.</param>
-        /// <param name="model">The model being validated.</param>
-        /// <param name="prefix">The prefix to separate different objects in form data.<br/>
-        /// ie: object1_FirstName=John, object2_FirstName=Joe</param>
-        /// <param name="context">The HTTP context where form values are stored to validate.<br/>
-        /// HttpContext.Current can be used.
-        /// </param>
-        /// <returns></returns>
-        public static bool TryValidateModel(WFModelMetaData WFMetaData, object model, string prefix, HttpContext context)
+        /// <typeparam name="TModel">The type of the model object to be validated.</typeparam>
+        /// <param name="wfView">The page or usercontrol implementing IWebFormsView&lt;TModel&gt;</param>
+        /// <param name="proxyClass">Optional. Validation can use this class to validate against, instead of the model class.</param>
+        /// <returns>Returns 'true' if the values in the form data validate successfully.</returns>
+        public static bool TryValidateModel<TModel>(IWebFormsView<TModel> wfView, Type proxyClass)
+        {
+            return TryValidateModel(wfView, proxyClass, "");
+        }
+
+        public static bool TryValidationModel<TModel>(IWebFormsView<TModel> wfView, XmlDataAnnotationsRuleSet ruleSet)
         {
             List<string> errors = new List<string>();
+            IWFRuleProvider ruleProvider = new WFXmlRuleSetRuleProvider(ruleSet);
+            return WFUtilities.TryValidateModel(wfView.Model, "", new WFHttpContextValueProvider(HttpContext.Current), wfView.Html.MetaData, ruleProvider);
 
-            return TryValidateModel(WFMetaData, model, prefix, context, out errors);
         }
+
         /// <summary>
-        /// Validate the model against form values (not against itself).
+        /// Validate the model against form values (not against itself).<br/>
+        /// Use WFUtilities.TryValidateModel() to validate against targets other than the current HttpRequest.
         /// </summary>
-        /// <param name="WFMetaData">The metadata object which stores validation information.</param>
-        /// <param name="model">The model being validated.</param>
-        /// <param name="prefix">The prefix to separate different objects in form data.<br/>
+        /// <typeparam name="TModel">The type of the model object to be validated.</typeparam>
+        /// <param name="wfView">The page or usercontrol implementing IWebFormsView&lt;TModel&gt;</param>
+        /// <param name="proxyClass">Optional. Validation can use this class to validate against, instead of the model class.</param>
+        /// <param name="prefix">Optional. The prefix to separate different objects in form data.<br/>
         /// ie: object1_FirstName=John, object2_FirstName=Joe</param>
-        /// <param name="context">he HTTP context where form values are stored to validate.<br/>
-        /// HttpContext.Current can be used.</param>
-        /// <param name="errors"></param>
-        /// <returns></returns>
-        public static bool TryValidateModel(WFModelMetaData WFMetaData, object model, string prefix, HttpContext context, out List<string> errors)
+        /// <returns>Returns 'true' if the values in the form data validate successfully.</returns>
+        public static bool TryValidateModel<TModel>(IWebFormsView<TModel> wfView, Type proxyClass, string prefix)
         {
-            errors = new List<string>();
-            return WFUtilities.TryValidateModel(model, prefix, context, out errors, WFMetaData);
+            List<string> errors = new List<string>();
+            return WFUtilities.TryValidateModel(wfView.Model, prefix, new WFHttpContextValueProvider(HttpContext.Current), wfView.Html.MetaData, new WFTypeRuleProvider(proxyClass));
         }
 
         /// <summary>
@@ -106,7 +120,7 @@ namespace WebFormsUtilities
         /// <returns></returns>
         public static string EnableClientValidation(WFModelMetaData WFMetaData)
         {
-            return new HtmlTag("script", new { type = "text/javascript", language = "javascript" }) { InnerText = WFUtilities.EnableClientValidationScript(WFMetaData) }.Render();
+            return WFScriptGenerator.SetupClientValidationScriptHtmlTag().Render();
         }
 
         /// <summary>
@@ -152,6 +166,7 @@ namespace WebFormsUtilities
             WFHttpContextValueProvider vp = new WFHttpContextValueProvider(request);
             UpdateModel<TModel>(vp, model, prefix, includeProperties, new string[] { });
         }
+
         /// <summary>
         /// Updates the specified model instance using values from the value provider.
         /// </summary>
@@ -162,6 +177,7 @@ namespace WebFormsUtilities
         /// <param name="excludeProperties">A list of properties to explicitly exclude from the update. These are excluded even if they are listed in the includeProperties parameter list.</param>
         public static void UpdateModel<TModel>(IWFValueProvider request, TModel model, string prefix, string[] includeProperties, string[] excludeProperties)
         {
+            if (model == null) { throw new Exception("Model cannot be null!"); }
             Type t = typeof(TModel);
             PropertyInfo[] props = t.GetProperties();
 
@@ -177,78 +193,60 @@ namespace WebFormsUtilities
                 {
                     try
                     {
-                        if (pi.PropertyType == typeof(Int32?))
+                        if (pi.PropertyType.IsEnum)
                         {
-                            if (String.IsNullOrEmpty(request.KeyValue(prefix + pi.Name).ToString()))
-                            {
-                                pi.SetValue(model, null, null);
+                            pi.SetValue(model, Enum.Parse(pi.PropertyType, request.KeyValue(prefix + pi.Name).ToString()), null);
+                        } else if (pi.PropertyType == typeof(Int32?)
+                            || pi.PropertyType == typeof(Double?)
+                            || pi.PropertyType == typeof(DateTime?)) {
+
+                            object kV = request.KeyValue(prefix + pi.Name);
+                            if(kV == null) { pi.SetValue(model, null, null); } 
+                            else {
+                                pi.SetValue(model, WFUtilities.ParseNullable(pi.PropertyType, kV.ToString()), null);
                             }
-                            else
-                            {
-                                pi.SetValue(model, int.Parse(request.KeyValue(prefix + pi.Name) as String), null);
-                            }
-                        }
-                        else if (pi.PropertyType == typeof(Double?))
-                        {
-                            if (String.IsNullOrEmpty(request.KeyValue(prefix + pi.Name) as String))
-                            {
-                                pi.SetValue(model, null, null);
-                            }
-                            else
-                            {
-                                pi.SetValue(model, double.Parse(request.KeyValue(prefix + pi.Name) as String), null);
-                            }
-                        }
-                        else if (pi.PropertyType == typeof(DateTime?))
-                        {
-                            if (String.IsNullOrEmpty(request.KeyValue(prefix + pi.Name) as String))
-                            {
-                                pi.SetValue(model, null, null);
-                            }
-                            else
-                            {
-                                pi.SetValue(model, DateTime.Parse(request.KeyValue(prefix + pi.Name) as String), null);
-                            }
-                        }
-                        else if (pi.PropertyType == typeof(Boolean?) || pi.PropertyType == typeof(bool))
-                        {
+                        } else if (pi.PropertyType == typeof(Boolean?) || pi.PropertyType == typeof(bool)) {
                             string[] trueValues = new string[] { "true", "true,false", "on" };
 
-                            if (String.IsNullOrEmpty(request.KeyValue(prefix + pi.Name) as String)) //If the value passed is empty...
+                            object kV = request.KeyValue(prefix + pi.Name);
+                            string kString = (kV == null ? "" : kV.ToString()).Trim();
+
+                            if (String.IsNullOrEmpty(kString) || kString.ToLower() == "null") //If the value passed is empty...
                             {
                                 if (pi.PropertyType == typeof(Boolean?)) //..and it is nullable, set to null.
-                                { pi.SetValue(model, null, null); }
-                                else if (pi.PropertyType == typeof(bool)) //..and not nullable, set to false.
+                                { pi.SetValue(model, null, null); } else if (pi.PropertyType == typeof(bool)) //..and not nullable, set to false.
                                 {
                                     pi.SetValue(model, false, null);
                                 }
-                            }
-                            else if ((request.KeyValue(prefix + pi.Name) as String) == "off" || (request.KeyValue(prefix + pi.Name) as String) == "false") //If the value passed is false/off...
+                            } else if (kString == "off" || kString == "false") //If the value passed is false/off...
                             {
                                 pi.SetValue(model, false, null); //...set to false.
-                            }
-                            else if (trueValues.Contains((request.KeyValue(prefix + pi.Name) as String))) //If the value passed is "true"...
+                            } else if (trueValues.Contains(kString)) //If the value passed is "true"...
                             {
                                 pi.SetValue(model, true, null); //...set to true
-                            }
-                            else
-                            {
+                            } else {
                                 //If all else fails, at least try to convert it to boolean
-                                pi.SetValue(model, Convert.ChangeType((request.KeyValue(prefix + pi.Name) as String), pi.PropertyType), null);
+                                pi.SetValue(model, Convert.ChangeType(kString, pi.PropertyType), null);
                             }
-                        }
-                        else
-                        {
+                        } else {
                             Type[] defaultTypes = new Type[] 
                             { typeof(byte), typeof(short), typeof(int), typeof(long), typeof(float), typeof(double), typeof(decimal),
                               typeof(DateTime) };
-                            if (defaultTypes.Contains(pi.PropertyType) && String.IsNullOrEmpty((request.KeyValue(prefix + pi.Name) as String)))
-                            {
-                                pi.SetValue(model, Activator.CreateInstance(pi.PropertyType), null); //Set to default value
-                            }
-                            else
-                            {
-                                pi.SetValue(model, Convert.ChangeType((request.KeyValue(prefix + pi.Name) as String), pi.PropertyType), null);
+                            if (defaultTypes.Contains(pi.PropertyType)) {
+                                object kV = request.KeyValue(prefix + pi.Name);
+                                if (kV != null && !String.IsNullOrEmpty(kV.ToString())) {
+                                    //Get the value
+                                    pi.SetValue(model, Convert.ChangeType((request.KeyValue(prefix + pi.Name).ToString()), pi.PropertyType), null);
+                                } else {
+                                    //Set default value
+                                    if (pi.PropertyType == typeof(DateTime)) {
+                                        pi.SetValue(model, default(DateTime), null);
+                                    } else {
+                                        pi.SetValue(model, Activator.CreateInstance(pi.PropertyType), null); //Set to default value
+                                    }
+                                }
+                            } else {
+                                pi.SetValue(model, Convert.ChangeType((request.KeyValue(prefix + pi.Name)), pi.PropertyType), null);
                             }
                         }
                     }

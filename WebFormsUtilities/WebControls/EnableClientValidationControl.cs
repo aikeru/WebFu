@@ -9,6 +9,7 @@ using System.Web.UI.WebControls;
 using WebFormsUtilities.DataAnnotations;
 using System.Reflection;
 using System.ComponentModel.DataAnnotations;
+using WebFormsUtilities.Json;
 
 namespace WebFormsUtilities.WebControls
 {
@@ -16,6 +17,12 @@ namespace WebFormsUtilities.WebControls
     [ToolboxData("<{0}:EnableClientValidationControl runat=server></{0}:EnableClientValidationControl>")]
     public class EnableClientValidationControl : WebControl
     {
+        public bool Unobtrusive { get; set; }
+
+        protected override void Render(HtmlTextWriter writer) {
+            //Override ASP.net's automatic <span> tag
+            RenderContents(writer);
+        }
         protected override void RenderContents(HtmlTextWriter output)
         {
 
@@ -30,8 +37,12 @@ namespace WebFormsUtilities.WebControls
                 }
                 metadata.Properties.Add(metaprop);
             }
-
-            output.Write(new HtmlTag("script", new { type = "text/javascript", language = "javascript" }) { InnerText = WFUtilities.EnableClientValidationScript(metadata) }.Render());
+            if (Unobtrusive) {
+                output.Write(WFScriptGenerator.SetupClientUnobtrusiveValidationScriptHtmlTag().Render());
+            } else {
+                output.Write(WFScriptGenerator.SetupClientValidationScriptHtmlTag().Render());
+                output.Write(new HtmlTag("script", new { type = "text/javascript", language = "javascript" }) { InnerText = WFScriptGenerator.EnableClientValidationScript(metadata) }.Render());
+            }
         }
     }
 }

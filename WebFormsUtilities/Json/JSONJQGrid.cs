@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+//using System.Web.Script.Serialization;
 
 namespace WebFormsUtilities.Json
 {
@@ -17,15 +18,29 @@ namespace WebFormsUtilities.Json
 
         public string Render()
         {
+
+            //JavaScriptSerializer jss = new JavaScriptSerializer();
+            //return jss.Serialize(new {
+            //    totalpages = TotalPages,
+            //    page = CurrentPage,
+            //    totalrecords = TotalRecords,
+            //    rows = Rows.ToList().Select(x =>
+            //        new {
+            //            i = x.Index,
+            //            cell = x.Cell
+            //        }).ToArray()
+            //}).Replace("\r", "").Replace("\n", "");
+
             var jsonData = new JSONObject(
-                new
-                {
-                    totalPages = TotalPages,
+                new {
+                    totalpages = TotalPages,
                     page = CurrentPage,
                     totalrecords = TotalRecords,
-                    rows = Rows.ToList().Select(x => 
-                        new JSONObject(new { i = x.Index,
-                            cell = x.Cell })).ToArray()
+                    rows = Rows.ToList().Select(x =>
+                        new JSONObject(new {
+                            i = x.Index,
+                            cell = x.Cell
+                        })).ToArray()
                 });
             return jsonData.Render().Replace("\r", "").Replace("\n", "");
         }

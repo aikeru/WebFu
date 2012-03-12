@@ -228,5 +228,28 @@ namespace WebFormsUtilities
             }
             return false;
         }
+
+        ///// <summary>
+        ///// Use XML escape codes for &amp;, &lt;, &gt;, &quote, &apos;.
+        ///// This method is not automatically used by HtmlTagBase.
+        ///// </summary>
+        ///// <param name="input"></param>
+        ///// <returns></returns>
+        /// <summary>
+        /// Use System.Security.SecurityElement.Escape(string); to sanitize for XML.
+        /// This method is not automatically used by HtmlTagBase.
+        /// </summary>
+        /// <param name="input">Non-XML content string to be sanitized.</param>
+        /// <returns></returns>
+        public virtual string SanitizeForMarkup(string input) {
+            //return input.Replace("&", "&amp;")
+            //        .Replace("<", "&lt;")
+            //        .Replace(">", "&gt;")
+            //        .Replace("\"", "&quot;")
+            //        .Replace("'", "&apos;");
+            //Use built-in .net function to do this:
+            return System.Security.SecurityElement.Escape(input);
+        }
+
     }
 }

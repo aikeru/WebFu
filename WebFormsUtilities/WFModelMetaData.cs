@@ -12,7 +12,14 @@ namespace WebFormsUtilities
     public class WFModelMetaData
     {
         public List<WFModelMetaProperty> Properties = new List<WFModelMetaProperty>();
+        public List<WFModelMetaClassError> ClassErrors = new List<WFModelMetaClassError>();
+        public List<string> Errors { get; set; }
         public object PageModel { get; set; }
+    }
+
+    public class WFModelMetaClassError
+    {
+        public string ErrorMessage { get; set; }
     }
 
     public class WFModelMetaProperty
