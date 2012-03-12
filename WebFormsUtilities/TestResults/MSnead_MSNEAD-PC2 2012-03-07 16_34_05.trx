@@ -1,0 +1,293 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TestRun id="0a78d91e-1589-44db-9450-16b70b79605a" name="MSnead@MSNEAD-PC2 2012-03-07 16:34:05" runUser="GAGE\MSnead" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2006">
+  <TestRunConfiguration name="Default Run Configuration" id="809df629-50a8-4b23-9481-9543d1c20a9b">
+    <Deployment runDeploymentRoot="C:\WebFormsUtilities-SVN\WebFormsUtilities\TestResults\MSnead_MSNEAD-PC2 2012-03-07 16_34_05">
+      <DeploymentItem filename="C:\WebFormsUtilities-SVN\WebFormsUtilities\bin\Debug\WebFormsUtilities.dll" />
+    </Deployment>
+    <Hosts skipUnhostableTests="false" />
+    <TestTypeSpecific />
+  </TestRunConfiguration>
+  <ResultSummary outcome="Completed">
+    <Counters total="20" executed="20" passed="20" error="0" failed="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+  </ResultSummary>
+  <Times creation="2012-03-07T16:34:05.0666364-06:00" queuing="2012-03-07T16:34:20.8225376-06:00" start="2012-03-07T16:34:21.0435502-06:00" finish="2012-03-07T16:34:22.4966333-06:00" />
+  <TestDefinitions>
+    <UnitTest name="TestClassLevelValidators" storage="c:\webformsutilities-svn\webformsutilities.tests\bin\debug\webformsutilities.tests.dll" id="77d3ba01-222f-f974-fb08-63315b9cb64c">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <DeploymentItems>
+        <DeploymentItem filename="Validator3.config" />
+      </DeploymentItems>
+      <Execution id="8d5ec34e-e79d-4f76-b695-9e91c9ed264a" />
+      <TestMethod codeBase="C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="WebFormsUtilities.Tests.XmlRuleSetTests, WebFormsUtilities.Tests" name="TestClassLevelValidators" />
+    </UnitTest>
+    <UnitTest name="TestApplyPageValues" storage="c:\webformsutilities-svn\webformsutilities.tests\bin\debug\webformsutilities.tests.dll" id="97fdba4a-6bc9-38ec-b6b3-0928a2a1668b">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <Execution id="7ed7d00d-5440-415c-9bc7-e79d2f60617e" />
+      <TestMethod codeBase="C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="WebFormsUtilities.Tests.WebControlUtilitiesTest, WebFormsUtilities.Tests" name="TestApplyPageValues" />
+    </UnitTest>
+    <UnitTest name="TryValidateModelTestPage" storage="c:\webformsutilities-svn\webformsutilities.tests\bin\debug\webformsutilities.tests.dll" id="7df5e13d-d604-9736-f146-71efa25c80e0">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <Execution id="44acc8ca-b1b1-44f9-afc7-4c71b6561cca" />
+      <TestMethod codeBase="C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="WebFormsUtilities.Tests.WFUtilitiesTest, WebFormsUtilities.Tests" name="TryValidateModelTestPage" />
+    </UnitTest>
+    <UnitTest name="HtmlInputFor" storage="c:\webformsutilities-svn\webformsutilities.tests\bin\debug\webformsutilities.tests.dll" id="ede022f0-c2ae-9448-492a-ebc8103b089a">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <Execution id="e4fb179a-665c-4d83-85c8-f2b6dca9a4de" />
+      <TestMethod codeBase="C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="WebFormsUtilities.Tests.LINQHtmlHelperMethods, WebFormsUtilities.Tests" name="HtmlInputFor" />
+    </UnitTest>
+    <UnitTest name="TryValidateModelTestAgainstModel" storage="c:\webformsutilities-svn\webformsutilities.tests\bin\debug\webformsutilities.tests.dll" id="b3cffa7b-76e5-9b5d-c609-e0a77e7c3743">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <Execution id="3029e129-3b73-457c-b263-c3de7ce6663e" />
+      <TestMethod codeBase="C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="WebFormsUtilities.Tests.WFUtilitiesTest, WebFormsUtilities.Tests" name="TryValidateModelTestAgainstModel" />
+    </UnitTest>
+    <UnitTest name="HtmlValidationMessageFor" storage="c:\webformsutilities-svn\webformsutilities.tests\bin\debug\webformsutilities.tests.dll" id="74b95aac-f1aa-6bd3-6741-37aac2d74e81">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <Execution id="01b82b75-39b5-425c-850e-4abab7ab6058" />
+      <TestMethod codeBase="C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="WebFormsUtilities.Tests.LINQHtmlHelperMethods, WebFormsUtilities.Tests" name="HtmlValidationMessageFor" />
+    </UnitTest>
+    <UnitTest name="TryValidateModelTestAJAX" storage="c:\webformsutilities-svn\webformsutilities.tests\bin\debug\webformsutilities.tests.dll" id="665d49d6-e5d3-2941-aa43-2735b0948c73">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <Execution id="4f5219ba-2c1f-4781-8bea-765ca04514fe" />
+      <TestMethod codeBase="C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="WebFormsUtilities.Tests.WFUtilitiesTest, WebFormsUtilities.Tests" name="TryValidateModelTestAJAX" />
+    </UnitTest>
+    <UnitTest name="TestWFErrorMessage" storage="c:\webformsutilities-svn\webformsutilities.tests\bin\debug\webformsutilities.tests.dll" id="cd22c5be-d15c-d59c-5049-7c8cb2a064e1">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <Execution id="120a83a4-8be6-4ad6-b147-5ccbe98cd2b5" />
+      <TestMethod codeBase="C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="WebFormsUtilities.Tests.WFUtilitiesTest, WebFormsUtilities.Tests" name="TestWFErrorMessage" />
+    </UnitTest>
+    <UnitTest name="TestXMLErrorMessage" storage="c:\webformsutilities-svn\webformsutilities.tests\bin\debug\webformsutilities.tests.dll" id="447020a9-3b30-1e58-4091-0771087819fd">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <DeploymentItems>
+        <DeploymentItem filename="Validator2.config" />
+      </DeploymentItems>
+      <Execution id="8ad0b688-7260-453d-9ff5-0ac86690553c" />
+      <TestMethod codeBase="C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="WebFormsUtilities.Tests.XmlRuleSetTests, WebFormsUtilities.Tests" name="TestXMLErrorMessage" />
+    </UnitTest>
+    <UnitTest name="TestHTMLTag" storage="c:\webformsutilities-svn\webformsutilities.tests\bin\debug\webformsutilities.tests.dll" id="47d6f4a0-b12e-7034-aa23-08ed78c4410c">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <Execution id="513e88e3-927d-46c2-9ab8-db56bc762ce4" />
+      <TestMethod codeBase="C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="WebFormsUtilities.Tests.WFUtilitiesTest, WebFormsUtilities.Tests" name="TestHTMLTag" />
+    </UnitTest>
+    <UnitTest name="TestCompare" storage="c:\webformsutilities-svn\webformsutilities.tests\bin\debug\webformsutilities.tests.dll" id="f441c976-2c67-f0d7-0be1-74d1a87299fb">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <Execution id="29ef8237-dd80-4f94-a116-8ae7942349b6" />
+      <TestMethod codeBase="C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="WebFormsUtilities.Tests.WFUtilitiesTest, WebFormsUtilities.Tests" name="TestCompare" />
+    </UnitTest>
+    <UnitTest name="TestUpdateConversion" storage="c:\webformsutilities-svn\webformsutilities.tests\bin\debug\webformsutilities.tests.dll" id="b67275ad-1674-7438-dc9d-1290895171fe">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <Execution id="7b6257ee-9bb8-4508-8a37-4381640785ef" />
+      <TestMethod codeBase="C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="WebFormsUtilities.Tests.TestConversion, WebFormsUtilities.Tests" name="TestUpdateConversion" />
+    </UnitTest>
+    <UnitTest name="TestJSONObject" storage="c:\webformsutilities-svn\webformsutilities.tests\bin\debug\webformsutilities.tests.dll" id="0e64f269-47c2-a723-be7c-12306090db64">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <Execution id="ba877443-aa32-4a02-a790-6ece2cb97436" />
+      <TestMethod codeBase="C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="WebFormsUtilities.Tests.WFUtilitiesTest, WebFormsUtilities.Tests" name="TestJSONObject" />
+    </UnitTest>
+    <UnitTest name="TestBuddyValidation" storage="c:\webformsutilities-svn\webformsutilities.tests\bin\debug\webformsutilities.tests.dll" id="9fb490c7-6450-9788-a450-e4c974a95ce5">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <Execution id="b3b1b066-788f-43ec-8b35-0a9dfff9c7dc" />
+      <TestMethod codeBase="C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="WebFormsUtilities.Tests.WFUtilitiesTest, WebFormsUtilities.Tests" name="TestBuddyValidation" />
+    </UnitTest>
+    <UnitTest name="HtmlCheckboxFor" storage="c:\webformsutilities-svn\webformsutilities.tests\bin\debug\webformsutilities.tests.dll" id="eef8986e-d556-640b-74f5-d40ddef383fa">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <Execution id="c5ce02a8-5637-47e7-81f8-8e3dd270451b" />
+      <TestMethod codeBase="C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="WebFormsUtilities.Tests.LINQHtmlHelperMethods, WebFormsUtilities.Tests" name="HtmlCheckboxFor" />
+    </UnitTest>
+    <UnitTest name="TestApplyListBoxDropDown" storage="c:\webformsutilities-svn\webformsutilities.tests\bin\debug\webformsutilities.tests.dll" id="2f5f134f-8996-4d90-6dfa-e923bea5e357">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <Execution id="9a5fd1d6-07be-4b71-aa0d-d67df9ff44dc" />
+      <TestMethod codeBase="C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="WebFormsUtilities.Tests.WebControlUtilitiesTest, WebFormsUtilities.Tests" name="TestApplyListBoxDropDown" />
+    </UnitTest>
+    <UnitTest name="TryValidateModelTestAgainstModelSuccess" storage="c:\webformsutilities-svn\webformsutilities.tests\bin\debug\webformsutilities.tests.dll" id="748b3f67-15dc-c92d-7ef3-6741514ba8e6">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <Execution id="194587f1-6cf8-4d7d-84f3-3ad6d84bf718" />
+      <TestMethod codeBase="C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="WebFormsUtilities.Tests.WFUtilitiesTest, WebFormsUtilities.Tests" name="TryValidateModelTestAgainstModelSuccess" />
+    </UnitTest>
+    <UnitTest name="TestLoadXML" storage="c:\webformsutilities-svn\webformsutilities.tests\bin\debug\webformsutilities.tests.dll" id="8b3848c9-85db-c79c-76f2-af327aa34ab3">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <DeploymentItems>
+        <DeploymentItem filename="Validator.config" />
+      </DeploymentItems>
+      <Execution id="13895aca-7122-4d95-a389-fcef8e7ad76e" />
+      <TestMethod codeBase="C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="WebFormsUtilities.Tests.XmlRuleSetTests, WebFormsUtilities.Tests" name="TestLoadXML" />
+    </UnitTest>
+    <UnitTest name="TryValidateModelTestAgainstModelClassAttribute" storage="c:\webformsutilities-svn\webformsutilities.tests\bin\debug\webformsutilities.tests.dll" id="313b5012-7fe5-b951-9cc3-dd8bceecae87">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <Execution id="49e5d2bd-60d9-44f9-a984-0b134d13fb81" />
+      <TestMethod codeBase="C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="WebFormsUtilities.Tests.WFUtilitiesTest, WebFormsUtilities.Tests" name="TryValidateModelTestAgainstModelClassAttribute" />
+    </UnitTest>
+    <UnitTest name="TestMapping" storage="c:\webformsutilities-svn\webformsutilities.tests\bin\debug\webformsutilities.tests.dll" id="7c663ac8-c796-a769-ec49-f31f52cabd46">
+      <Css projectStructure="" iteration="" />
+      <Owners>
+        <Owner name="" />
+      </Owners>
+      <Execution id="a8dedfaf-41d3-448d-b2db-66206627e26e" />
+      <TestMethod codeBase="C:\WebFormsUtilities-SVN\WebFormsUtilities.Tests\bin\Debug\WebFormsUtilities.Tests.dll" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="WebFormsUtilities.Tests.MapToAttributeTest, WebFormsUtilities.Tests" name="TestMapping" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <TestEntries>
+    <TestEntry testId="ede022f0-c2ae-9448-492a-ebc8103b089a" executionId="e4fb179a-665c-4d83-85c8-f2b6dca9a4de" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="74b95aac-f1aa-6bd3-6741-37aac2d74e81" executionId="01b82b75-39b5-425c-850e-4abab7ab6058" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eef8986e-d556-640b-74f5-d40ddef383fa" executionId="c5ce02a8-5637-47e7-81f8-8e3dd270451b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7c663ac8-c796-a769-ec49-f31f52cabd46" executionId="a8dedfaf-41d3-448d-b2db-66206627e26e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b67275ad-1674-7438-dc9d-1290895171fe" executionId="7b6257ee-9bb8-4508-8a37-4381640785ef" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="97fdba4a-6bc9-38ec-b6b3-0928a2a1668b" executionId="7ed7d00d-5440-415c-9bc7-e79d2f60617e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2f5f134f-8996-4d90-6dfa-e923bea5e357" executionId="9a5fd1d6-07be-4b71-aa0d-d67df9ff44dc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cd22c5be-d15c-d59c-5049-7c8cb2a064e1" executionId="120a83a4-8be6-4ad6-b147-5ccbe98cd2b5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b3cffa7b-76e5-9b5d-c609-e0a77e7c3743" executionId="3029e129-3b73-457c-b263-c3de7ce6663e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="748b3f67-15dc-c92d-7ef3-6741514ba8e6" executionId="194587f1-6cf8-4d7d-84f3-3ad6d84bf718" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="313b5012-7fe5-b951-9cc3-dd8bceecae87" executionId="49e5d2bd-60d9-44f9-a984-0b134d13fb81" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="665d49d6-e5d3-2941-aa43-2735b0948c73" executionId="4f5219ba-2c1f-4781-8bea-765ca04514fe" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9fb490c7-6450-9788-a450-e4c974a95ce5" executionId="b3b1b066-788f-43ec-8b35-0a9dfff9c7dc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7df5e13d-d604-9736-f146-71efa25c80e0" executionId="44acc8ca-b1b1-44f9-afc7-4c71b6561cca" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0e64f269-47c2-a723-be7c-12306090db64" executionId="ba877443-aa32-4a02-a790-6ece2cb97436" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="47d6f4a0-b12e-7034-aa23-08ed78c4410c" executionId="513e88e3-927d-46c2-9ab8-db56bc762ce4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f441c976-2c67-f0d7-0be1-74d1a87299fb" executionId="29ef8237-dd80-4f94-a116-8ae7942349b6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8b3848c9-85db-c79c-76f2-af327aa34ab3" executionId="13895aca-7122-4d95-a389-fcef8e7ad76e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="447020a9-3b30-1e58-4091-0771087819fd" executionId="8ad0b688-7260-453d-9ff5-0ac86690553c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="77d3ba01-222f-f974-fb08-63315b9cb64c" executionId="8d5ec34e-e79d-4f76-b695-9e91c9ed264a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <Results>
+    <UnitTestResult executionId="e4fb179a-665c-4d83-85c8-f2b6dca9a4de" testId="ede022f0-c2ae-9448-492a-ebc8103b089a" testName="HtmlInputFor" computerName="MSNEAD-PC2" duration="00:00:00.1446771" startTime="2012-03-07T16:34:21.1065538-06:00" endTime="2012-03-07T16:34:21.9186003-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="01b82b75-39b5-425c-850e-4abab7ab6058" testId="74b95aac-f1aa-6bd3-6741-37aac2d74e81" testName="HtmlValidationMessageFor" computerName="MSNEAD-PC2" duration="00:00:00.0092744" startTime="2012-03-07T16:34:21.9206004-06:00" endTime="2012-03-07T16:34:21.9336011-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c5ce02a8-5637-47e7-81f8-8e3dd270451b" testId="eef8986e-d556-640b-74f5-d40ddef383fa" testName="HtmlCheckboxFor" computerName="MSNEAD-PC2" duration="00:00:00.0158743" startTime="2012-03-07T16:34:21.9576025-06:00" endTime="2012-03-07T16:34:21.9776037-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a8dedfaf-41d3-448d-b2db-66206627e26e" testId="7c663ac8-c796-a769-ec49-f31f52cabd46" testName="TestMapping" computerName="MSNEAD-PC2" duration="00:00:00.0957976" startTime="2012-03-07T16:34:21.9816039-06:00" endTime="2012-03-07T16:34:22.0806095-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7b6257ee-9bb8-4508-8a37-4381640785ef" testId="b67275ad-1674-7438-dc9d-1290895171fe" testName="TestUpdateConversion" computerName="MSNEAD-PC2" duration="00:00:00.0362358" startTime="2012-03-07T16:34:22.0856098-06:00" endTime="2012-03-07T16:34:22.1246121-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7ed7d00d-5440-415c-9bc7-e79d2f60617e" testId="97fdba4a-6bc9-38ec-b6b3-0928a2a1668b" testName="TestApplyPageValues" computerName="MSNEAD-PC2" duration="00:00:00.0379026" startTime="2012-03-07T16:34:22.1296124-06:00" endTime="2012-03-07T16:34:22.1706147-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9a5fd1d6-07be-4b71-aa0d-d67df9ff44dc" testId="2f5f134f-8996-4d90-6dfa-e923bea5e357" testName="TestApplyListBoxDropDown" computerName="MSNEAD-PC2" duration="00:00:00.0079251" startTime="2012-03-07T16:34:22.1766150-06:00" endTime="2012-03-07T16:34:22.1876157-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="120a83a4-8be6-4ad6-b147-5ccbe98cd2b5" testId="cd22c5be-d15c-d59c-5049-7c8cb2a064e1" testName="TestWFErrorMessage" computerName="MSNEAD-PC2" duration="00:00:00.0088062" startTime="2012-03-07T16:34:22.1916159-06:00" endTime="2012-03-07T16:34:22.2036166-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3029e129-3b73-457c-b263-c3de7ce6663e" testId="b3cffa7b-76e5-9b5d-c609-e0a77e7c3743" testName="TryValidateModelTestAgainstModel" computerName="MSNEAD-PC2" duration="00:00:00.0067428" startTime="2012-03-07T16:34:22.2066168-06:00" endTime="2012-03-07T16:34:22.2166173-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="194587f1-6cf8-4d7d-84f3-3ad6d84bf718" testId="748b3f67-15dc-c92d-7ef3-6741514ba8e6" testName="TryValidateModelTestAgainstModelSuccess" computerName="MSNEAD-PC2" duration="00:00:00.0010614" startTime="2012-03-07T16:34:22.2206176-06:00" endTime="2012-03-07T16:34:22.2246178-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="49e5d2bd-60d9-44f9-a984-0b134d13fb81" testId="313b5012-7fe5-b951-9cc3-dd8bceecae87" testName="TryValidateModelTestAgainstModelClassAttribute" computerName="MSNEAD-PC2" duration="00:00:00.0053113" startTime="2012-03-07T16:34:22.2276180-06:00" endTime="2012-03-07T16:34:22.2356184-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4f5219ba-2c1f-4781-8bea-765ca04514fe" testId="665d49d6-e5d3-2941-aa43-2735b0948c73" testName="TryValidateModelTestAJAX" computerName="MSNEAD-PC2" duration="00:00:00.0023486" startTime="2012-03-07T16:34:22.2396186-06:00" endTime="2012-03-07T16:34:22.2446189-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b3b1b066-788f-43ec-8b35-0a9dfff9c7dc" testId="9fb490c7-6450-9788-a450-e4c974a95ce5" testName="TestBuddyValidation" computerName="MSNEAD-PC2" duration="00:00:00.0018814" startTime="2012-03-07T16:34:22.2476191-06:00" endTime="2012-03-07T16:34:22.2646201-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="44acc8ca-b1b1-44f9-afc7-4c71b6561cca" testId="7df5e13d-d604-9736-f146-71efa25c80e0" testName="TryValidateModelTestPage" computerName="MSNEAD-PC2" duration="00:00:00.0001650" startTime="2012-03-07T16:34:22.2686203-06:00" endTime="2012-03-07T16:34:22.2716205-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ba877443-aa32-4a02-a790-6ece2cb97436" testId="0e64f269-47c2-a723-be7c-12306090db64" testName="TestJSONObject" computerName="MSNEAD-PC2" duration="00:00:00.0074670" startTime="2012-03-07T16:34:22.2746206-06:00" endTime="2012-03-07T16:34:22.2856213-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="513e88e3-927d-46c2-9ab8-db56bc762ce4" testId="47d6f4a0-b12e-7034-aa23-08ed78c4410c" testName="TestHTMLTag" computerName="MSNEAD-PC2" duration="00:00:00.0042868" startTime="2012-03-07T16:34:22.2896215-06:00" endTime="2012-03-07T16:34:22.2966219-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="29ef8237-dd80-4f94-a116-8ae7942349b6" testId="f441c976-2c67-f0d7-0be1-74d1a87299fb" testName="TestCompare" computerName="MSNEAD-PC2" duration="00:00:00.0048065" startTime="2012-03-07T16:34:22.3006221-06:00" endTime="2012-03-07T16:34:22.3076225-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="13895aca-7122-4d95-a389-fcef8e7ad76e" testId="8b3848c9-85db-c79c-76f2-af327aa34ab3" testName="TestLoadXML" computerName="MSNEAD-PC2" duration="00:00:00.0131821" startTime="2012-03-07T16:34:22.3116228-06:00" endTime="2012-03-07T16:34:22.3286237-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8ad0b688-7260-453d-9ff5-0ac86690553c" testId="447020a9-3b30-1e58-4091-0771087819fd" testName="TestXMLErrorMessage" computerName="MSNEAD-PC2" duration="00:00:00.0587900" startTime="2012-03-07T16:34:22.3336240-06:00" endTime="2012-03-07T16:34:22.3966276-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8d5ec34e-e79d-4f76-b695-9e91c9ed264a" testId="77d3ba01-222f-f974-fb08-63315b9cb64c" testName="TestClassLevelValidators" computerName="MSNEAD-PC2" duration="00:00:00.0021215" startTime="2012-03-07T16:34:22.3996278-06:00" endTime="2012-03-07T16:34:22.4056281-06:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+      <Output>
+      </Output>
+    </UnitTestResult>
+  </Results>
+</TestRun>
