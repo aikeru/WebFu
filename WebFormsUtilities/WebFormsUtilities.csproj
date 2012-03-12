@@ -12,14 +12,10 @@
     <AssemblyName>WebFormsUtilities</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccProvider>
-    </SccProvider>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,6 +39,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -64,7 +61,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataAnnotations\IWFClientValidatable.cs" />
+    <Compile Include="DataAnnotations\XmlDataAnnotationsRuleSet.cs" />
+    <Compile Include="Handlers\ScriptResourceHandler.cs" />
+    <Compile Include="JScript\WFScriptGenerator.cs" />
     <Compile Include="Json\JSONJQGrid.cs" />
+    <Compile Include="RuleProviders\IWFRuleProvider.cs" />
+    <Compile Include="RuleProviders\IWFValidationProperty.cs" />
+    <Compile Include="RuleProviders\WFTypeRuleProvider.cs" />
+    <Compile Include="RuleProviders\WFXmlRuleSetProvider.cs" />
+    <Compile Include="TagProcessors\IHtmlTagPreProcessor.cs" />
+    <Compile Include="TagProcessors\WFValidationPreProcessor.cs" />
+    <Compile Include="TagTypes.cs" />
+    <Compile Include="ValueProviders\IWFValueProvider.cs" />
+    <Compile Include="ValueProviders\WFDictionaryValueProvider.cs" />
+    <Compile Include="ValueProviders\WFHttpContextValueProvider.cs" />
+    <Compile Include="ValueProviders\WFMapToAttributeValueProvider.cs" />
+    <Compile Include="ValueProviders\WFObjectValueProvider.cs" />
+    <Compile Include="ValueProviders\WFPageControlsValueProvider.cs" />
+    <Compile Include="ValueProviders\WFSmartServerControlRequestValueProvider.cs" />
     <Compile Include="WebControls\EnableClientValidationControl.cs" />
     <Compile Include="WebControls\RenderControl.cs" />
     <Compile Include="DataAnnotations\IWFValidationAttribute.cs" />
@@ -98,6 +113,7 @@
     <Compile Include="WFWebFormsView.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="XmlTag.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="JSResources.resx">
@@ -110,6 +126,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\WFUtilitiesJqueryMin.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="JScript\jqueryUnobtrusiveAjax.js" />
+    <Content Include="JScript\jqueryValidateUnobtrusive.js" />
+    <Content Include="JScript\SetupClientValidation.js" />
+    <Content Include="JScript\WFUtilitiesJquery.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
