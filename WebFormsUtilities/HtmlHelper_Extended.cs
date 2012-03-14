@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 using System.Collections;
 using System.Data.Linq;
 using System.Globalization;
-using WebFormsUtilities.MVC2;
+//using WebFormsUtilities.MVC2;
 using System.Reflection;
 using System.ComponentModel;
 
@@ -75,7 +75,7 @@ namespace WebFormsUtilities {
                     object htmlProperties,
                     HtmlHelper<TModel> htmlHelper,
                     IEnumerable<SelectListItem> selectList,
-                    string optionLabel, bool useLabel) {
+                    string optionLabel, bool useLabel, bool isChecked) {
 
             ModelMetaData mmd = ModelMetaData.FromLambdaExpression(expression, model);
 
@@ -126,12 +126,12 @@ namespace WebFormsUtilities {
 
             } else if (tagType == TagTypes.RadioButton) {
 
-                tag = new HtmlTag("input");
+                tag = new HtmlTag("input", true);
                 tag.Attr("name", mmd.PropertyName);
                 tag.Attr("id", mmd.PropertyName);
                 tag.Attr("type", "radio");
                 tag.Attr("value", GetHTMLValue(mmd.ModelAccessor()));
-                if (GetHTMLValueAsBoolean(mmd.ModelAccessor())) {
+                if (isChecked) {
                     tag.Attr("checked", "checked");
                 }
 
@@ -190,7 +190,7 @@ namespace WebFormsUtilities {
                     object htmlProperties,
                     HtmlHelper<TModel> htmlHelper) {
 
-            return GetTagFromExpression<TProperty>(tagType, expression, model, metadata, htmlProperties, htmlHelper, null, "", false);
+            return GetTagFromExpression<TProperty>(tagType, expression, model, metadata, htmlProperties, htmlHelper, null, "", false, false);
         }
 
         /// <summary>
@@ -302,8 +302,36 @@ namespace WebFormsUtilities {
         /// ie: new { Class = "cssClass", onchange = "jsFunction()" } </param>
         /// <returns></returns>
         public string RadioButtonFor<TProperty>(Expression<Func<TModel, TProperty>> expression, object htmlProperties) {
-            return GetTagFromExpression<TProperty>(TagTypes.InputBox, expression, _Model, _MetaData, htmlProperties, this).Render();
+            return GetTagFromExpression<TProperty>(TagTypes.RadioButton, expression, _Model, _MetaData, htmlProperties, this).Render();
         }
+
+
+        /// <summary>
+        /// A radiobutton with validation enabled whose value is derived from a strongly-typed lambda.
+        /// </summary>
+        /// <typeparam name="TProperty"></typeparam>
+        /// <param name="expression">An expression that identifies the property whose value will be rendered.<br/>
+        /// ie: m => m.FirstName will render the 'FirstName' property.</param>
+        /// <param name="isChecked">Whether or not the radio button is checked (selected).</param>
+        /// <returns></returns>
+        public string RadioButtonFor<TProperty>(Expression<Func<TModel, TProperty>> expression, bool isChecked) {
+            return GetTagFromExpression<TProperty>(TagTypes.RadioButton, expression, _Model, _MetaData, null, this, null, null, false, isChecked).Render();
+        }
+
+        /// <summary>
+        /// A radiobutton with validation enabled whose value is derived from a strongly-typed lambda.
+        /// </summary>
+        /// <typeparam name="TProperty"></typeparam>
+        /// <param name="expression">An expression that identifies the property whose value will be rendered.<br/>
+        /// ie: m => m.FirstName will render the 'FirstName' property.</param>
+        /// <param name="isChecked">Whether or not the radio button is checked (selected).</param>
+        /// <param name="htmlProperties">An anonymous object whose properties are applied to the element.<br/>
+        /// ie: new { Class = "cssClass", onchange = "jsFunction()" } </param>
+        /// <returns></returns>
+        public string RadioButtonFor<TProperty>(Expression<Func<TModel, TProperty>> expression, bool isChecked, object htmlProperties) {
+            return GetTagFromExpression<TProperty>(TagTypes.RadioButton, expression, _Model, _MetaData, htmlProperties, this, null, null, false, isChecked).Render();
+        }
+
         /// <summary>
         /// Creates a &lt;span&gt; tag with appropriate validation information used by client side AND server side code.<br/>
         /// 'field-validation-error' is applied if validation fails on a postback. This is used with an Html.&ltcontrol&gt;For() element.<br/>
@@ -446,7 +474,7 @@ namespace WebFormsUtilities {
         /// ie: new { Class = "cssClass", onchange = "jsFunction()" } </param>
         /// <returns></returns>
         public string DropDownListFor<TProperty>(Expression<Func<TModel, TProperty>> expression, IEnumerable<SelectListItem> selectList, object htmlProperties) {
-            return GetTagFromExpression<TProperty>(TagTypes.Select, expression, _Model, _MetaData, htmlProperties, this, selectList, "", false).Render();
+            return GetTagFromExpression<TProperty>(TagTypes.Select, expression, _Model, _MetaData, htmlProperties, this, selectList, "", false, false).Render();
         }
         /// <summary>
         /// A select tag with validation enabled whose value is derived from a strongly-typed lambda.
@@ -460,7 +488,7 @@ namespace WebFormsUtilities {
         /// ie: new { Class = "cssClass", onchange = "jsFunction()" } </param>
         /// <returns></returns>
         public string DropDownListFor<TProperty>(Expression<Func<TModel, TProperty>> expression, IEnumerable<SelectListItem> selectList, string optionLabel, object htmlProperties) {
-            return GetTagFromExpression<TProperty>(TagTypes.Select, expression, _Model, _MetaData, htmlProperties, this, selectList, optionLabel, true).Render();
+            return GetTagFromExpression<TProperty>(TagTypes.Select, expression, _Model, _MetaData, htmlProperties, this, selectList, optionLabel, true, false).Render();
         }
     }
 }

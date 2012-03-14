@@ -65,8 +65,10 @@
     <Compile Include="DataAnnotations\IWFClientValidatable.cs" />
     <Compile Include="DataAnnotations\XmlDataAnnotationsRuleSet.cs" />
     <Compile Include="Handlers\ScriptResourceHandler.cs" />
+    <Compile Include="HtmlHelper_Extended.cs" />
     <Compile Include="JScript\WFScriptGenerator.cs" />
     <Compile Include="Json\JSONJQGrid.cs" />
+    <Compile Include="ModelMetaData.cs" />
     <Compile Include="RuleProviders\IWFRuleProvider.cs" />
     <Compile Include="RuleProviders\IWFValidationProperty.cs" />
     <Compile Include="RuleProviders\WFTypeRuleProvider.cs" />
