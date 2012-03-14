@@ -42,7 +42,7 @@ namespace WebFormsUtilities {
         /// <param name="model"></param>
         /// <returns></returns>
         public static ModelMetaData FromLambdaExpression<TParameter, TValue>(Expression<Func<TParameter, TValue>> expression, TParameter model) {
-            bool isSelf = expression.NodeType == ExpressionType.Parameter;
+            bool isSelf = expression.Body.NodeType == ExpressionType.Parameter;
             string propertyName = "";
             if (expression.Body.NodeType == ExpressionType.MemberAccess
                 && expression.Body.GetType() == typeof(MemberExpression)) {
