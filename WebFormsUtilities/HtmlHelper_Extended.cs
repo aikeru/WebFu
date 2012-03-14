@@ -22,12 +22,6 @@ using System.ComponentModel;
  * The page (or calling class) must implement IWebFormsView<ModelType>, where ModelType is the type of the model used for validation and markup.
  * If you can't/don't implement this interface, use the non-lambda methods (HtmlHelper.cs)
  * 
- * These methods depend on classes in...
- *  /ExpressionUtil
- *  /MVC2
- *                         
- * These classes shouldn't be distributed as-is for any non-gage project. 
- * It may be easy to replace these classes, but I haven't tried for lack of time.
  */
 
 
