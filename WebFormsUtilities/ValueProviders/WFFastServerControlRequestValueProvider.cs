@@ -10,9 +10,9 @@ namespace WebFormsUtilities.ValueProviders {
     /// The provider will strip the asp.net prefix attached to control IDs<br/>
     /// ie: 'some$prefix$myControl' can be retrieved using only 'myControl'
     /// </summary>
-    public class WFSmartServerControlRequestValueProvider : IWFValueProvider {
+    public class WFFastServerControlRequestValueProvider : IWFValueProvider {
         Dictionary<string, string> formValues = new Dictionary<string, string>();
-        public WFSmartServerControlRequestValueProvider(HttpContext context) {
+        public WFFastServerControlRequestValueProvider(HttpContext context) {
             foreach (string key in context.Request.QueryString.AllKeys) {
                 //Grab query string values
                 if (formValues.ContainsKey(key)) {

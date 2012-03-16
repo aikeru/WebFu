@@ -17,11 +17,11 @@ namespace WebFormsUtilities
     /// Call methods from the WFPageUtilities static class. Inheriting from this class can simplify some aspects.
     /// (ie: declaring HtmlHelper)
     /// </summary>
-    public class WFPageBase : Page, IWebFormsView<object>
+    public class WFPageBase<T> : Page, IWebFormsView<T>
     {
         private WFModelMetaData _WFMetaData = new WFModelMetaData();
-        private HtmlHelper<object> _Html = null;
-        public virtual object Model { get; set; }
+        private HtmlHelper<T> _Html = null;
+        public virtual T Model { get; set; }
         public string EnableClientValidation()
         {
             return WFPageUtilities.EnableClientValidation(WFMetaData);
@@ -31,14 +31,14 @@ namespace WebFormsUtilities
             WFPageUtilities.CallJSMethod(this, Request);
         }
 
-        #region IWebFormsView<WFPageBase> Members
+        #region IWebFormsView<T> Members
 
         public object GetModel()
         {
             return Model;
         }
 
-        public void SetModel(object model)
+        public void SetModel(T model)
         {
             Model = model;
         }
@@ -56,12 +56,12 @@ namespace WebFormsUtilities
             }
         }
 
-        public HtmlHelper<object> Html
+        public HtmlHelper<T> Html
         {
             get
             {
                 if (_Html == null)
-                { _Html = new HtmlHelper<object>(this, (object)Model, WFMetaData); }
+                { _Html = new HtmlHelper<T>(this, Model, WFMetaData); }
                 return _Html;
             }
             set
@@ -78,11 +78,11 @@ namespace WebFormsUtilities
     /// Call methods from the WFPageUtilities static class. Inheriting from this class can simplify some aspects.
     /// (ie: declaring HtmlHelper)
     /// </summary>
-    public class WFUserControlBase : UserControl
+    public class WFUserControlBase<T> : UserControl, IWebFormsView<T>
     {
         private WFModelMetaData _WFMetaData = new WFModelMetaData();
-        private HtmlHelper<WFPageBase> _Html = null;
-        public virtual object Model { get; set; }
+        private HtmlHelper<T> _Html = null;
+        public virtual T Model { get; set; }
         public string EnableClientValidation()
         {
             return WFPageUtilities.EnableClientValidation(WFMetaData);
@@ -92,14 +92,14 @@ namespace WebFormsUtilities
             WFPageUtilities.CallJSMethod(this, Request);
         }
 
-        #region IWebFormsView<WFPageBase> Members
+        #region IWebFormsView<T> Members
 
         public object GetModel()
         {
             return Model;
         }
 
-        public void SetModel(object model)
+        public void SetModel(T model)
         {
             Model = model;
         }
@@ -117,12 +117,12 @@ namespace WebFormsUtilities
             }
         }
 
-        public HtmlHelper<WFPageBase> Html
+        public HtmlHelper<T> Html
         {
             get
             {
                 if (_Html == null)
-                { _Html = new HtmlHelper<WFPageBase>(this, (WFPageBase)Model, WFMetaData); }
+                { _Html = new HtmlHelper<T>(this, Model, WFMetaData); }
                 return _Html;
             }
             set

@@ -9,78 +9,12 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 using System.Web.UI.WebControls;
 using WebFormsUtilities.WebControls;
+using WebFormsUtilities.ValueProviders;
 
 namespace WebFormsUtilities
 {
     public static class WebControlUtilities
     {
-
-        public static HtmlTagBase ApplyTableItemStyleToTag(HtmlTagBase tag, TableItemStyle tis)
-        {
-            if (tis == null) { return tag; }
-
-            if (tis != null)
-            {
-                if (tis.BackColor != null)
-                {
-                    if (tis.BackColor.IsNamedColor)
-                    {
-                        tag.Attr("style", tag.Attr("style") + "background-color:" + tis.BackColor.Name + ";");
-                    }
-                    else
-                    {
-                        tag.Attr("style", tag.Attr("style") + "background-color:#" + tis.BackColor.R.ToString("X") +
-                            tis.BackColor.G.ToString("X") + tis.BackColor.B.ToString("X") + ";");
-                    }
-                }
-                if (tis.ForeColor != null)
-                {
-                    if (tis.ForeColor.IsNamedColor)
-                    {
-                        tag.Attr("style", tag.Attr("style") + "color:" + tis.BackColor.Name + ";");
-                    }
-                    else
-                    {
-                        tag.Attr("style", tag.Attr("style") + "color:#" + tis.BackColor.R.ToString("X") +
-                            tis.BackColor.G.ToString("X") + tis.BackColor.B.ToString("X") + ";");
-                    }
-                }
-                if (tis.BorderColor != null)
-                {
-                }
-                if (tis.BorderStyle != null)
-                {
-                }
-                if (tis.BorderWidth != null)
-                {
-                }
-                if (tis.CssClass != null)
-                {
-                }
-                if (tis.Font != null)
-                {
-                }
-                if (tis.Height != null)
-                {
-                }
-                if (tis.HorizontalAlign != HorizontalAlign.NotSet)
-                {
-                }
-                if (tis.VerticalAlign != VerticalAlign.NotSet)
-                {
-                }
-                if (tis.Width != null)
-                {
-                }
-
-                //tis.Wrap
-
-            }
-
-
-
-            return tag;
-        }
 
         public static Control FindControlRecursive(Control rootControl, string id)
         {
@@ -286,87 +220,72 @@ namespace WebFormsUtilities
         {
             ApplyModelToPage(pageControl, Model, "");
         }
-        public static void ApplyModelToPage(Control pageControl, object Model, string prefix)
+
+        public static void ApplyModelToPage(Control pageControl, object Model, string prefix) {
+            WFObjectValueProvider provider = new WFObjectValueProvider(Model, prefix);
+            ApplyModelToPage(pageControl, provider);
+        }
+
+        public static void ApplyModelToPage(Control pageControl, IWFValueProvider provider)
         {
             Dictionary<string, Control> webControls = FlattenPageControls(pageControl);
 
-            foreach (PropertyInfo pi in Model.GetType().GetProperties())
-            {
-                if (webControls.ContainsKey(prefix + pi.Name))
-                {
-                    Control wc = webControls[prefix + pi.Name];
-                    if (wc.GetType() == typeof(TextBox))
-                    {
-                        ((TextBox)wc).Text = (pi.GetValue(Model, null) ?? "").ToString();
-                    }
-                    else if (wc.GetType() == typeof(DropDownList))
-                    {
+            foreach (KeyValuePair<string, Control> kvp in webControls) {
+                if (provider.ContainsKey(kvp.Key)) {
+                    Control wc = kvp.Value;
+                    if (wc.GetType() == typeof(TextBox)) {
+                        ((TextBox)wc).Text = provider.KeyValue(kvp.Key, "").ToString();
+                    } else if (wc.GetType() == typeof(DropDownList)) {
                         DropDownList ddl = (DropDownList)wc;
-                        if(ddl.Items != null && ddl.Items.Count > 0)
-                        {
-                            ddl.Items.FindByValue((pi.GetValue(Model, null) ?? "").ToString());
+                        if (ddl.Items != null && ddl.Items.Count > 0) {
+                            ddl.Items.FindByValue(provider.KeyValue(kvp.Key, "").ToString());
                         }
-                    }
-                    else if (wc.GetType() == typeof(ListBox))
-                    {
+                    } else if (wc.GetType() == typeof(ListBox)) {
                         ListBox lb = (ListBox)wc;
-                        if (lb.Items != null && lb.Items.Count > 0)
-                        {
-                            lb.Items.FindByValue((pi.GetValue(Model, null) ?? "").ToString());
+                        if (lb.Items != null && lb.Items.Count > 0) {
+                            lb.Items.FindByValue(provider.KeyValue(kvp.Key, "").ToString());
                         }
-                    }
-                    else if (wc.GetType() == typeof(RadioButton))
-                    {
+                    } else if (wc.GetType() == typeof(RadioButton)) {
                         RadioButton rb = (RadioButton)wc;
-                        object val = pi.GetValue(Model, null);
-                        if (val != null)
-                        {
+                        object val = provider.KeyValue(kvp.Key);
+                        if (val != null) {
                             string valStr = val.ToString();
-                            if (String.IsNullOrEmpty(valStr))
-                            { rb.Checked = false; }
-                            else
-                            {
+                            if (String.IsNullOrEmpty(valStr)) { rb.Checked = false; } else {
                                 string[] truth = { "1", "true", "true,false" };
-                                if (truth.Contains(valStr.ToLower()))
-                                {
+                                if (truth.Contains(valStr.ToLower())) {
                                     rb.Checked = true;
                                 }
                             }
-                        }
-                        else
-                        {
+                        } else {
                             rb.Checked = false;
                         }
-                    }
-                    else if (wc.GetType() == typeof(CheckBox))
-                    {
+                    } else if (wc.GetType() == typeof(CheckBox)) {
                         CheckBox cb = (CheckBox)wc;
-                        object val = pi.GetValue(Model, null);
-                        if (val != null)
-                        {
+                        object val = provider.KeyValue(kvp.Key);
+                        if (val != null) {
                             string valStr = val.ToString();
-                            if (String.IsNullOrEmpty(valStr))
-                            { cb.Checked = false; }
-                            else
-                            {
+                            if (String.IsNullOrEmpty(valStr)) { cb.Checked = false; } else {
                                 string[] truth = { "1", "true", "true,false" };
-                                if (truth.Contains(valStr.ToLower()))
-                                {
+                                if (truth.Contains(valStr.ToLower())) {
                                     cb.Checked = true;
                                 }
                             }
-                        }
-                        else
-                        {
+                        } else {
                             cb.Checked = false;
                         }
-                    }
-                    else
-                    {
-                        throw new Exception("Error trying to apply value to control " + wc.ID + " typeof [" + wc.GetType().Name + "]. It is not in the list of types that values can be applied to.");
+                    } else {
+                        //Not a known type, does it implement IWFSetControlValue?
+                        if (kvp.Value.GetType().IsAssignableFrom(typeof(IWFSetControlValue))) {
+                            //Set it through the interface
+                            ((IWFSetControlValue)kvp.Value).SetControlValue(provider.KeyValue(kvp.Key));
+                        } else {
+                            //Not a known type and doesn't implement the interface. We don't know how to assign values to this control.
+                            throw new Exception("Error trying to apply value to control " + wc.ID + " typeof [" + wc.GetType().Name + "]. It is not a known type and does not implement IWFSetControlValue.");
+                        }
                     }
                 }
             }
+
         }
 
     }
