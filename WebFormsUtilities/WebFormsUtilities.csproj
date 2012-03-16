@@ -82,8 +82,9 @@
     <Compile Include="ValueProviders\WFMapToAttributeValueProvider.cs" />
     <Compile Include="ValueProviders\WFObjectValueProvider.cs" />
     <Compile Include="ValueProviders\WFPageControlsValueProvider.cs" />
-    <Compile Include="ValueProviders\WFSmartServerControlRequestValueProvider.cs" />
+    <Compile Include="ValueProviders\WFFastServerControlRequestValueProvider.cs" />
     <Compile Include="WebControls\EnableClientValidationControl.cs" />
+    <Compile Include="WebControls\IWFSetControlValue.cs" />
     <Compile Include="WebControls\LabelFor.cs" />
     <Compile Include="WebControls\RenderControl.cs" />
     <Compile Include="DataAnnotations\IWFValidationAttribute.cs" />

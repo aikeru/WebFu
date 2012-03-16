@@ -83,9 +83,11 @@ namespace WebFormsUtilities.WebControls
             string controlValue = WebControlUtilities.GetControlValue(validateControl);
 
             if (String.IsNullOrEmpty(XmlRuleSetName)) {
+                
+                var displayNameAttr = prop.GetCustomAttributes(typeof(DisplayNameAttribute), true).OfType<DisplayNameAttribute>().FirstOrDefault();
+                string displayName = displayNameAttr == null ? prop.Name : displayNameAttr.DisplayName;
+
                 foreach (var attr in prop.GetCustomAttributes(typeof(ValidationAttribute), true).OfType<ValidationAttribute>()) {
-                    var displayNameAttr = prop.GetCustomAttributes(typeof(DisplayNameAttribute), true).OfType<DisplayNameAttribute>().FirstOrDefault();
-                    string displayName = displayNameAttr == null ? prop.Name : displayNameAttr.DisplayName;
 
                     if (!attr.IsValid(controlValue)) {
                         this.ErrorMessage = attr.FormatErrorMessage(displayName);
