@@ -370,7 +370,8 @@ namespace WebFormsUtilities {
 
         /// <summary>
         /// Decode a post data string (ie: name=value&amp;name2=value2&amp;...) into a Dictionary&lt;string,string&gt;<br/>
-        /// This dictionary could be used like an HttpRequest, ie: requestDictionary["name"]
+        /// This dictionary could be used like an HttpRequest, ie: requestDictionary["name"]<br/>
+        /// HttpUtility.UrlDecode() is used to decode the names and values.
         /// </summary>
         /// <param name="decode"></param>
         /// <returns></returns>
@@ -380,27 +381,33 @@ namespace WebFormsUtilities {
                 string[] strs = decode.Split('&');
                 Dictionary<string, string> reqDict = new Dictionary<string, string>();
                 foreach (string s in strs) {
-                    string[] sx = s.Split('=');
-                    if (reqDict.ContainsKey(HttpContext.Current.Server.UrlDecode(sx[0]))) {
-                        if (!String.IsNullOrEmpty((reqDict[HttpContext.Current.Server.UrlDecode(sx[0])] ?? "").Trim())) {
-                            reqDict[HttpContext.Current.Server.UrlDecode(sx[0])] =
-                                reqDict[HttpContext.Current.Server.UrlDecode(sx[0])] + "," + HttpContext.Current.Server.UrlDecode(sx[1]);
-                        } else {
-                            reqDict[HttpContext.Current.Server.UrlDecode(sx[0])] = HttpContext.Current.Server.UrlDecode(sx[1]);
+                    if (!String.IsNullOrEmpty(s)) {
+                        string[] sx = s.Split('=');
+                        if (reqDict.ContainsKey(HttpUtility.UrlDecode(sx[0]))) {
+                            if (!String.IsNullOrEmpty((reqDict[HttpUtility.UrlDecode(sx[0])] ?? "").Trim())) {
+                                reqDict[HttpUtility.UrlDecode(sx[0])] =
+                                    reqDict[HttpUtility.UrlDecode(sx[0])] + "," + HttpUtility.UrlDecode(sx[1]);
+                            } else {
+                                reqDict[HttpUtility.UrlDecode(sx[0])] = HttpUtility.UrlDecode(sx[1]);
 
+                            }
+                        } else {
+                            if (sx.Length > 1) {
+                                reqDict.Add(HttpUtility.UrlDecode(sx[0]), HttpUtility.UrlDecode(sx[1]));
+                            } else {
+                                reqDict.Add(HttpUtility.UrlDecode(sx[0]), "");
+                            }
                         }
-                    } else {
-                        reqDict.Add(HttpContext.Current.Server.UrlDecode(sx[0]), HttpContext.Current.Server.UrlDecode(sx[1]));
                     }
                 }
                 return reqDict;
             } else {
                 if (decode.Contains('=')) {
                     string[] strs = decode.Split('=');
-                    return new Dictionary<string, string>() { { HttpContext.Current.Server.UrlDecode(strs[0]), 
-                                                                 HttpContext.Current.Server.UrlDecode(strs[1]) } };
+                    return new Dictionary<string, string>() { { HttpUtility.UrlDecode(strs[0]), 
+                                                                 HttpUtility.UrlDecode(strs[1]) } };
                 } else {
-                    string d = HttpContext.Current.Server.UrlDecode(decode);
+                    string d = HttpUtility.UrlDecode(decode);
                     return new Dictionary<string, string>() { { d, d } };
                 }
             }
