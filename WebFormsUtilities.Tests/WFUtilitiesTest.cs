@@ -75,6 +75,39 @@ namespace WebFormsUtilities.Tests
         //
         #endregion
 
+        [TestMethod()]
+        public void TestURLDecodeDictionary() {
+            Dictionary<string, string> request = WFUtilities.UrlDecodeDictionary("");
+            Assert.AreEqual(0, request.Count);
+            request = WFUtilities.UrlDecodeDictionary("name=value");
+            Assert.AreEqual(1, request.Count);
+            Assert.AreEqual("value", request["name"]);
+            request = WFUtilities.UrlDecodeDictionary("name=value&name2=value2");
+            Assert.AreEqual(2, request.Count);
+            Assert.AreEqual("value", request["name"]);
+            Assert.AreEqual("value2", request["name2"]);
+            request = WFUtilities.UrlDecodeDictionary("name=value&name=value2");
+            Assert.AreEqual(1, request.Count);
+            Assert.AreEqual("value,value2", request["name"]);
+            request = WFUtilities.UrlDecodeDictionary("&&name=value");
+            Assert.AreEqual(1, request.Count);
+            Assert.AreEqual("value", request["name"]);
+            request = WFUtilities.UrlDecodeDictionary("name=value&");
+            Assert.AreEqual(1, request.Count);
+            Assert.AreEqual("value", request["name"]);
+            request = WFUtilities.UrlDecodeDictionary("name&value");
+            Assert.AreEqual(2, request.Count);
+            Assert.AreEqual("", request["name"]);
+            Assert.AreEqual("", request["value"]);
+            request = WFUtilities.UrlDecodeDictionary("name&name2=value2");
+            Assert.AreEqual(2, request.Count);
+            Assert.AreEqual("", request["name"]);
+            Assert.AreEqual("value2", request["name2"]);
+            request = WFUtilities.UrlDecodeDictionary("name=value&name2");
+            Assert.AreEqual(2, request.Count);
+            Assert.AreEqual("value", request["name"]);
+            Assert.AreEqual("", request["name2"]);
+        }
 
         [TestMethod()]
         public void TestWFErrorMessage() {
