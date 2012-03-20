@@ -12,10 +12,10 @@ namespace WebFormsUtilities.TagProcessors {
             if (tagType == TagTypes.Span
                 || tagType == TagTypes.TextArea
                 || tagType == TagTypes.Label) {
-                if(!String.IsNullOrEmpty(tag.InnerText)) {
+                if (!String.IsNullOrEmpty(tag.InnerText)) {
                     tag.InnerText = HttpUtility.HtmlEncode(tag.InnerText);
                 }
-            } else if(new TagTypes[] {
+            } else if (new TagTypes[] {
                 TagTypes.Checkbox,
                 TagTypes.Hidden,
                 TagTypes.InputBox,
@@ -48,7 +48,7 @@ namespace WebFormsUtilities.TagProcessors {
             if (tagType == TagTypes.Span
                 || tagType == TagTypes.TextArea
                 || tagType == TagTypes.Label
-                || tagType == TagTypes.ValidationMessage 
+                || tagType == TagTypes.ValidationMessage
                 || tagType == TagTypes.ValidationItem) {
                 if (!String.IsNullOrEmpty(tag.InnerText)) {
                     tag.InnerText = HttpUtility.HtmlEncode(tag.InnerText);
