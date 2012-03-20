@@ -48,7 +48,7 @@ namespace WebFormsUtilities.TagProcessors {
             if (tagType == TagTypes.Span
                 || tagType == TagTypes.TextArea
                 || tagType == TagTypes.Label
-                || tagType == TagTypes.ValidationMessage
+                || tagType == TagTypes.ValidationMessage 
                 || tagType == TagTypes.ValidationItem) {
                 if (!String.IsNullOrEmpty(tag.InnerText)) {
                     tag.InnerText = HttpUtility.HtmlEncode(tag.InnerText);
