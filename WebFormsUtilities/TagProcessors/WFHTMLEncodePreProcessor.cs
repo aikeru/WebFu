@@ -11,7 +11,9 @@ namespace WebFormsUtilities.TagProcessors {
         public HtmlTag PreRenderProcess(HtmlTag tag, ref WFModelMetaData metadata, TagTypes tagType, string markupName, string reflectName, object model) {
             if (tagType == TagTypes.Span
                 || tagType == TagTypes.TextArea
-                || tagType == TagTypes.Label) {
+                || tagType == TagTypes.Label
+                || tagType == TagTypes.ValidationMessage
+                || tagType == TagTypes.ValidationItem) {
                 if (!String.IsNullOrEmpty(tag.InnerText)) {
                     tag.InnerText = HttpUtility.HtmlEncode(tag.InnerText);
                 }
@@ -20,8 +22,6 @@ namespace WebFormsUtilities.TagProcessors {
                 TagTypes.Hidden,
                 TagTypes.InputBox,
                 TagTypes.RadioButton,
-                //TagTypes.ValidationMessage,
-                //TagTypes.ValidationSummary
                     }.Contains(tagType)) {
 
                 if (!String.IsNullOrEmpty(tag.Attr("value"))) {
@@ -57,7 +57,7 @@ namespace WebFormsUtilities.TagProcessors {
                 TagTypes.Checkbox,
                 TagTypes.Hidden,
                 TagTypes.InputBox,
-                TagTypes.RadioButton
+                TagTypes.RadioButton,
                     }.Contains(tagType)) {
 
                 if (!String.IsNullOrEmpty(tag.Attr("value"))) {
