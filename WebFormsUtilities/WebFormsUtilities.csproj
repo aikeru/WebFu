@@ -74,6 +74,7 @@
     <Compile Include="RuleProviders\WFTypeRuleProvider.cs" />
     <Compile Include="RuleProviders\WFXmlRuleSetProvider.cs" />
     <Compile Include="TagProcessors\IHtmlTagPreProcessor.cs" />
+    <Compile Include="TagProcessors\WFHTMLEncodePreProcessor.cs" />
     <Compile Include="TagProcessors\WFValidationPreProcessor.cs" />
     <Compile Include="TagTypes.cs" />
     <Compile Include="ValueProviders\IWFValueProvider.cs" />

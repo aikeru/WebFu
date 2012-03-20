@@ -107,6 +107,9 @@ namespace WebFormsUtilities.Tests {
             tpc.AcceptedRules = true;
             lambdaStr = Html.CheckboxFor(p => p.AcceptedRules);
             Assert.AreEqual("<input name = \"AcceptedRules\" id = \"AcceptedRules\" type = \"checkbox\" checked = \"checked\" />", lambdaStr);
+
+            lambdaStr = Html.CheckboxFor(p => p.AcceptedRules, new { Value = "\"" });
+            Assert.AreEqual("<input name = \"AcceptedRules\" id = \"AcceptedRules\" type = \"checkbox\" checked = \"checked\" value = \"&quot;\" />", lambdaStr);
         }
 
         private IEnumerable<SelectListItem> DropDownListForNoItems() {
@@ -134,6 +137,14 @@ namespace WebFormsUtilities.Tests {
             return items;
         }
 
+        private IEnumerable<SelectListItem> DropDownListForManySelectedNeedEscape() {
+            List<SelectListItem> items = new List<SelectListItem>();
+            items.Add(new SelectListItem() { Selected = true, Text = "item1>", Value = "itemValue1>" });
+            items.Add(new SelectListItem() { Selected = true, Text = "item2>", Value = "itemValue2>" });
+            items.Add(new SelectListItem() { Selected = true, Text = "item3>", Value = "itemValue3>" });
+            return items;
+        } 
+
         [TestMethod]
         public void TestLINQDropDownListFor() {
             TestParticipantClass tpc = GetTestParticipant();
@@ -153,6 +164,9 @@ namespace WebFormsUtilities.Tests {
             Assert.AreEqual("<select id = \"LastName\" name = \"LastName\" class = \"ddlClass\"><option value = \"\">No Item Selected</option>\r\n<option value = \"itemValue1\">item1</option>\r\n<option value = \"itemValue2\" selected = \"selected\">item2</option>\r\n<option value = \"itemValue3\">item3</option>\r\n</select>\r\n", lambdaStr);
             lambdaStr = Html.DropDownListFor(p => p.LastName, DropDownListForManySelected(), "No Item Selected", new { Class = "ddlClass" });
             Assert.AreEqual("<select id = \"LastName\" name = \"LastName\" class = \"ddlClass\"><option value = \"\">No Item Selected</option>\r\n<option value = \"itemValue1\" selected = \"selected\">item1</option>\r\n<option value = \"itemValue2\" selected = \"selected\">item2</option>\r\n<option value = \"itemValue3\" selected = \"selected\">item3</option>\r\n</select>\r\n", lambdaStr);
+
+            lambdaStr = Html.DropDownListFor(p => p.LastName, DropDownListForManySelectedNeedEscape(), "No Item Selected", new { Class = "ddlClass" });
+            Assert.AreEqual("<select id = \"LastName\" name = \"LastName\" class = \"ddlClass\"><option value = \"\">No Item Selected</option>\r\n<option value = \"itemValue1&gt;\" selected = \"selected\">item1&gt;</option>\r\n<option value = \"itemValue2&gt;\" selected = \"selected\">item2&gt;</option>\r\n<option value = \"itemValue3&gt;\" selected = \"selected\">item3&gt;</option>\r\n</select>\r\n", lambdaStr);
         }
         [TestMethod]
         public void TestLINQHiddenFor() {
@@ -160,6 +174,10 @@ namespace WebFormsUtilities.Tests {
 
             string lambdaStr = Html.HiddenFor(p => p.FirstName);
             Assert.AreEqual("<input type = \"hidden\" value = \"Michael\" name = \"FirstName\" id = \"FirstName\" />", lambdaStr);
+
+            tpc.FirstName = "&>";
+            lambdaStr = Html.HiddenFor(p => p.FirstName);
+            Assert.AreEqual("<input type = \"hidden\" value = \"&amp;&gt;\" name = \"FirstName\" id = \"FirstName\" />", lambdaStr);
         }
         [TestMethod]
         public void TestLINQLabelFor() {
@@ -184,6 +202,9 @@ namespace WebFormsUtilities.Tests {
 
             lambdaStr = Html.RadioButtonFor(p => p.AcceptedRules, true, new { Class = "rbClass" });
             Assert.AreEqual("<input name = \"AcceptedRules\" id = \"AcceptedRules\" type = \"radio\" value = \"True\" checked = \"checked\" class = \"rbClass\" />", lambdaStr);
+
+            lambdaStr = Html.RadioButtonFor(p => p.AcceptedRules, true, new { Class = "rbClass", Value = "&gt;" });
+            Assert.AreEqual("<input name = \"AcceptedRules\" id = \"AcceptedRules\" type = \"radio\" value = \"&amp;gt;\" checked = \"checked\" class = \"rbClass\" />", lambdaStr);
         }
         [TestMethod]
         public void TestLINQSpanFor() {
@@ -193,6 +214,9 @@ namespace WebFormsUtilities.Tests {
             lambdaStr = Html.SpanFor(p => p.FirstName, new { Class = "spanClass" });
             Assert.AreEqual("<span id = \"FirstName\" class = \"spanClass\">Michael</span>\r\n", lambdaStr);
 
+            tpc.FirstName = "&Michael";
+            lambdaStr = Html.SpanFor(p => p.FirstName, new { Class = "spanClass" });
+            Assert.AreEqual("<span id = \"FirstName\" class = \"spanClass\">&amp;Michael</span>\r\n", lambdaStr);
         }
         [TestMethod]
         public void TestLINQTextAreaFor() {
@@ -206,6 +230,9 @@ namespace WebFormsUtilities.Tests {
             lambdaStr = Html.TextAreaFor(p => p.FirstName, new { Class = "txaClass", rows = "5", cols = "25" });
             Assert.AreEqual("<textarea cols = \"25\" rows = \"5\" name = \"FirstName\" id = \"FirstName\" class = \"txaClass\">Michael</textarea>\r\n", lambdaStr);
 
+            tpc.FirstName = "<Michael>";
+            lambdaStr = Html.TextAreaFor(p => p.FirstName, new { Class = "txaClass", rows = "5", cols = "25" });
+            Assert.AreEqual("<textarea cols = \"25\" rows = \"5\" name = \"FirstName\" id = \"FirstName\" class = \"txaClass\">&lt;Michael&gt;</textarea>\r\n", lambdaStr);
         }
         [TestMethod]
         public void TestLINQTextBoxFor() {
@@ -223,6 +250,10 @@ namespace WebFormsUtilities.Tests {
             Assert.AreEqual("<input name = \"FirstName\" id = \"FirstName\" type = \"text\" value = \"\" class = \"input-validation-error\" />", lambdaError);
 
             Html.MetaData = new WFModelMetaData(); //Reset metadata
+
+            tpc.FirstName = "&Michael";
+            lambdaStr = Html.TextBoxFor(p => p.FirstName, new { Class = "clsTxt" });
+            Assert.AreEqual("<input name = \"FirstName\" id = \"FirstName\" type = \"text\" value = \"&amp;Michael\" class = \"clsTxt\" />", lambdaStr);
         }
         [TestMethod]
         public void TestLINQValidationMessageFor() {
@@ -258,6 +289,9 @@ namespace WebFormsUtilities.Tests {
             string booltrue = Html.CheckboxFor(c => c.AcceptedRules);
             Assert.AreEqual("<input name = \"AcceptedRules\" id = \"AcceptedRules\" type = \"checkbox\" checked = \"checked\" />", booltrue);
             Html.MetaData = new WFModelMetaData(); //Reset metadata
+
+            boolnull = Html.CheckboxFor(c => c.AcceptedRules, new { Value = ">" });
+            Assert.AreEqual("<input name = \"AcceptedRules\" id = \"AcceptedRules\" type = \"checkbox\" checked = \"checked\" value = \"&gt;\" />", boolnull);
         }
 
         private TestParticipantClass _Participant = null;

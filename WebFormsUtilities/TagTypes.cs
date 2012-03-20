@@ -14,6 +14,7 @@ namespace WebFormsUtilities {
         Hidden = 6,
         Span = 7,
         ValidationSummary = 8,
-        ValidationMessage = 9
+        ValidationMessage = 9,
+        ValidationItem = 10
     }
 }

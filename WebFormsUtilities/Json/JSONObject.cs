@@ -7,6 +7,20 @@ using System.Collections;
 
 namespace WebFormsUtilities.Json
 {
+    public class JSONObjectUndefined : JSONObjectBase {
+        public JSONObjectUndefined() {
+        }
+        public override string Render() {
+            return "undefined";
+        }
+    }
+    public class JSONObjectLiteral : JSONObjectBase {
+        public JSONObjectLiteral() {
+        }
+        public override string Render() {
+            return Value.ToString();
+        }
+    }
     public class JSONObjectEmpty : JSONObjectBase
     {
         public JSONObjectEmpty()
@@ -22,25 +36,45 @@ namespace WebFormsUtilities.Json
         public JSONObject()
         {
         }
+        public JSONObject(JSONObjectBase jsonObject) {
+            //MergeWithJSONObject(jsonObject);
+            if (jsonObject != null) {
+                _InnerObject = jsonObject;
+            }
+        }
+
+        //private void MergeWithJSONObject(JSONObjectBase jsonObject) {
+        //    if (jsonObject == null) {
+        //        this.Value = null;
+        //    } else if (JSONProperties != null && JSONProperties.Count > 0) {
+        //        MergeObjectProperties(jsonObject.JSONProperties);
+        //    } else {
+        //        this.Value = jsonObject.Value;
+        //    }
+        //}
+        private JSONObjectBase _InnerObject = null;
+
         public JSONObject(object jsonProperties)
         {
-            foreach (PropertyInfo pi in jsonProperties.GetType().GetProperties())
-            {
-                object o = pi.GetValue(jsonProperties, null);
-                if (o != null)
-                {
-                    if (o.GetType().IsSubclassOf(typeof(JSONObjectBase)))
-                    {
-                        JSONProperties.Add(pi.Name, (JSONObjectBase)o);
+            if (jsonProperties == null) {
+                this.Value = null;
+            } else if (jsonProperties as JSONObjectBase != null) {
+                //MergeWithJSONObject((JSONObjectBase)jsonProperties);
+                _InnerObject = (JSONObjectBase)jsonProperties;
+            } else if(jsonProperties.GetType() == typeof(string)) {
+                Value = jsonProperties;
+            } else {
+                foreach (PropertyInfo pi in jsonProperties.GetType().GetProperties()) {
+                    object o = pi.GetValue(jsonProperties, null);
+                    if (o != null) {
+                        if (o.GetType().IsSubclassOf(typeof(JSONObjectBase))) {
+                            JSONProperties.Add(pi.Name, (JSONObjectBase)o);
+                        } else {
+                            JSONProperties.Add(pi.Name, new JSONObject() { Value = o });
+                        }
+                    } else {
+                        JSONProperties.Add(pi.Name, new JSONObject() { Value = null });
                     }
-                    else
-                    {
-                        JSONProperties.Add(pi.Name, new JSONObject() { Value = o });
-                    }
-                }
-                else
-                {
-                    JSONProperties.Add(pi.Name, new JSONObject() { Value = null });
                 }
             }
         }
@@ -64,6 +98,13 @@ namespace WebFormsUtilities.Json
             else
             {
                 JSONProperties.Add(name, new JSONObject() { Value = value });
+            }
+        }
+        public override string Render() {
+            if (_InnerObject != null) {
+                return _InnerObject.Render();
+            } else {
+                return base.Render();
             }
         }
     }
@@ -182,6 +223,19 @@ namespace WebFormsUtilities.Json
             { throw new Exception("JSON cannot contain return characters \\r \\n."); }
 
             return sb.ToString();
+        }
+
+        public virtual JSONObjectBase MergeObjectProperties<T>(Dictionary<string, T> jsonProperties) {
+            if (jsonProperties == null) { return this; }
+            if (jsonProperties.Count < 1) { return this; }
+            foreach (KeyValuePair<string, T> kvp in jsonProperties) {
+                if (JSONProperties.ContainsKey(kvp.Key.ToLower())) {
+                    JSONProperties[kvp.Key.ToLower()] = new JSONObject(jsonProperties[kvp.Key]);
+                } else {
+                    JSONProperties.Add(kvp.Key.ToLower(), new JSONObject(jsonProperties[kvp.Key]));
+                }
+            }
+            return this;
         }
     }
 }

@@ -33,6 +33,7 @@ namespace WebFormsUtilities
             _PageControl = pageControl;
 
             _PreProcessors.Add(new WFValidationPreProcessor());
+            _PreProcessors.Add(new WFHTMLEncodePreProcessor());
         }
 
         public HtmlHelper(Control pageControl, TModel model, WFModelMetaData metadata)
@@ -42,6 +43,7 @@ namespace WebFormsUtilities
             _MetaData = metadata;
 
             _PreProcessors.Add(new WFValidationPreProcessor());
+            _PreProcessors.Add(new WFHTMLEncodePreProcessor());
         }
         
         public HtmlHelper(IWebFormsView<TModel> wfv)
@@ -52,6 +54,7 @@ namespace WebFormsUtilities
             _MetaData = new WFModelMetaData();
 
             _PreProcessors.Add(new WFValidationPreProcessor());
+            _PreProcessors.Add(new WFHTMLEncodePreProcessor());
 
         }
 
@@ -136,6 +139,7 @@ namespace WebFormsUtilities
                 div.AddClass("validation-summary-valid");
                 HtmlTag ul = new HtmlTag("ul");
                 HtmlTag li = new HtmlTag("li", new { style = "display: none;" });
+                li = PreProcess(li, _MetaData, TagTypes.ValidationItem, "", "", model);
                 ul.Children.Add(li);
                 div.Children.Add(ul);
             }
