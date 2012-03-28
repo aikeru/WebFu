@@ -129,17 +129,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\WFUtilitiesJquery.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\WFUtilitiesJqueryMin.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="JScript\jqueryUnobtrusiveAjax.js" />
     <Content Include="JScript\jqueryValidateUnobtrusive.js" />
     <Content Include="JScript\SetupClientValidation.js" />
     <Content Include="JScript\WFUtilitiesJquery.js" />
-    <Content Include="Resources\jquery.validate.unobtrusive.js.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="MVC2\" />
