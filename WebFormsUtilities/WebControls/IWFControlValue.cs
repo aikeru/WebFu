@@ -5,9 +5,10 @@ using System.Text;
 
 namespace WebFormsUtilities.WebControls {
     /// <summary>
-    /// Server controls that wish to use ApplyModelToPage() can implement this interface.
+    /// Server controls that wish to use ApplyModelToPage() or DataAnnotations can implement this interface.
     /// </summary>
-    interface IWFSetControlValue {
+    interface IWFControlValue {
         void SetControlValue(object value);
+        object GetControlValue();
     }
 }
