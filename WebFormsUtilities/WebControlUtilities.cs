@@ -167,7 +167,11 @@ namespace WebFormsUtilities {
                     val = "false";
                 }
             } else {
-                throw new Exception("Error trying to interpret control value of type [" + tx.Name + "]. The type was not recognized.");
+                if (webControl as IWFControlValue != null) {
+                    return ((IWFControlValue)webControl).GetControlValue().ToString();
+                } else {
+                    throw new Exception("Error trying to interpret control value of type [" + tx.Name + "]. The type was not recognized and the control does not implement IWFControlValue.");
+                }
             }
             return val;
         }
@@ -244,12 +248,12 @@ namespace WebFormsUtilities {
                         }
                     } else {
                         //Not a known type, does it implement IWFSetControlValue?
-                        if (kvp.Value.GetType().IsAssignableFrom(typeof(IWFSetControlValue))) {
+                        if (kvp.Value.GetType().IsAssignableFrom(typeof(IWFControlValue))) {
                             //Set it through the interface
-                            ((IWFSetControlValue)kvp.Value).SetControlValue(provider.KeyValue(kvp.Key));
+                            ((IWFControlValue)kvp.Value).SetControlValue(provider.KeyValue(kvp.Key));
                         } else {
                             //Not a known type and doesn't implement the interface. We don't know how to assign values to this control.
-                            throw new Exception("Error trying to apply value to control " + wc.ID + " typeof [" + wc.GetType().Name + "]. It is not a known type and does not implement IWFSetControlValue.");
+                            throw new Exception("Error trying to apply value to control " + wc.ID + " typeof [" + wc.GetType().Name + "]. It is not a known type and does not implement IWFControlValue.");
                         }
                     }
                 }
