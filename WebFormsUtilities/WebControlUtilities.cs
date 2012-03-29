@@ -11,16 +11,12 @@ using System.Web.UI.WebControls;
 using WebFormsUtilities.WebControls;
 using WebFormsUtilities.ValueProviders;
 
-namespace WebFormsUtilities
-{
-    public static class WebControlUtilities
-    {
+namespace WebFormsUtilities {
+    public static class WebControlUtilities {
 
-        public static Control FindControlRecursive(Control rootControl, string id)
-        {
+        public static Control FindControlRecursive(Control rootControl, string id) {
             if (rootControl.ID == id) { return rootControl; }
-            foreach (Control controlToSearch in rootControl.Controls)
-            {
+            foreach (Control controlToSearch in rootControl.Controls) {
                 Control controlToReturn = FindControlRecursive(controlToSearch, id);
                 if (controlToReturn != null) { return controlToReturn; }
             }
@@ -31,23 +27,17 @@ namespace WebFormsUtilities
         /// </summary>
         /// <param name="page">The root parent control whose children will be searched.</param>
         /// <returns></returns>
-        public static List<DataAnnotationValidatorControl> FindValidators(Control rootControl)
-        {
+        public static List<DataAnnotationValidatorControl> FindValidators(Control rootControl) {
             List<DataAnnotationValidatorControl> validators = new List<DataAnnotationValidatorControl>();
-            if (rootControl.Controls != null && rootControl.Controls.Count > 0)
-            {
-                foreach (Control cx in rootControl.Controls)
-                {
+            if (rootControl.Controls != null && rootControl.Controls.Count > 0) {
+                foreach (Control cx in rootControl.Controls) {
                     //Is it a DataAnnotationValidator?
-                    if (cx.GetType() == typeof(DataAnnotationValidatorControl))
-                    {
+                    if (cx.GetType() == typeof(DataAnnotationValidatorControl)) {
                         validators.Add((DataAnnotationValidatorControl)cx);
                     }
                     //Does it have children? If so, scan them
-                    if (cx.Controls != null && cx.Controls.Count > 0)
-                    {
-                        foreach (DataAnnotationValidatorControl dvc in FindValidators(cx))
-                        {
+                    if (cx.Controls != null && cx.Controls.Count > 0) {
+                        foreach (DataAnnotationValidatorControl dvc in FindValidators(cx)) {
                             validators.Add(dvc);
                         }
                     }
@@ -77,10 +67,14 @@ namespace WebFormsUtilities
             metaproperty.MarkupName = controlValidating.UniqueID;
 
             if (String.IsNullOrEmpty(dvc.SourceTypeString)) {
-                if (sourceType == null && String.IsNullOrEmpty(dvc.XmlRuleSetName)) {
+                if (sourceType == null
+                    && String.IsNullOrEmpty(dvc.XmlRuleSetName)
+                    && dvc.Page as IWFGetValidationRulesForPage == null) {
                     throw new Exception("The SourceType and SourceTypeString properties are null/empty on one of the validator controls.\r\nPopulate either property.\r\nie: control.SourceType = typeof(Widget); OR in markup SourceTypeString=\"Assembly.Classes.Widget, Assembly\"");
                 } else if (sourceType == null && !String.IsNullOrEmpty(dvc.XmlRuleSetName)) {
                     sourceType = WFUtilities.GetRuleSetForName(dvc.XmlRuleSetName).ModelType;
+                } else if (sourceType == null && String.IsNullOrEmpty(dvc.XmlRuleSetName)) {
+                    sourceType = ((IWFGetValidationRulesForPage)dvc.Page).GetValidationClassType();
                 }
             } else {
                 try {
@@ -96,6 +90,10 @@ namespace WebFormsUtilities
                 foreach (var attr in prop.GetCustomAttributes(typeof(ValidationAttribute), true).OfType<ValidationAttribute>()) {
                     var displayNameAttr = prop.GetCustomAttributes(typeof(DisplayNameAttribute), true).OfType<DisplayNameAttribute>().FirstOrDefault();
                     string displayName = displayNameAttr == null ? prop.Name : displayNameAttr.DisplayName;
+
+                    if (attr as IWFRequireValueProviderContext != null) {
+                        ((IWFRequireValueProviderContext)attr).SetValueProvider(new WFPageControlsValueProvider(dvc.Page, ""));
+                    }
 
                     metaproperty.DisplayName = displayName;
                     metaproperty.ValidationAttributes.Add(attr);
@@ -141,74 +139,47 @@ namespace WebFormsUtilities
         /// </summary>
         /// <param name="webControl">The control whose value will be returned.</param>
         /// <returns>A string equivalent of the control's value.</returns>
-        public static string GetControlValue(Control webControl)
-        {
+        public static string GetControlValue(Control webControl) {
             string val = "";
             Type tx = webControl.GetType();
-            if (tx == typeof(TextBox))
-            {
+            if (tx == typeof(TextBox)) {
                 val = ((TextBox)webControl).Text;
-            }
-            else if (tx == typeof(DropDownList))
-            {
+            } else if (tx == typeof(DropDownList)) {
                 DropDownList ddl = (DropDownList)webControl;
-                if(ddl.SelectedItem != null)
-                { val = ddl.SelectedValue; }
-                else { val = ""; }
-            }
-            else if (tx == typeof(ListBox))
-            {
+                if (ddl.SelectedItem != null) { val = ddl.SelectedValue; } else { val = ""; }
+            } else if (tx == typeof(ListBox)) {
                 ListBox lb = (ListBox)webControl;
-                if (lb.SelectedItem != null)
-                {
+                if (lb.SelectedItem != null) {
                     val = lb.SelectedValue;
-                }
-                else
-                {
+                } else {
                     val = "";
                 }
-            }
-            else if (tx == typeof(RadioButton))
-            {
-                if (((RadioButton)webControl).Checked)
-                {
+            } else if (tx == typeof(RadioButton)) {
+                if (((RadioButton)webControl).Checked) {
                     val = "true";
-                }
-                else
-                {
+                } else {
                     val = "false";
                 }
-            }
-            else if (tx == typeof(CheckBox))
-            {
-                if (((CheckBox)webControl).Checked)
-                {
+            } else if (tx == typeof(CheckBox)) {
+                if (((CheckBox)webControl).Checked) {
                     val = "true";
-                }
-                else
-                {
+                } else {
                     val = "false";
                 }
-            }
-            else
-            {
+            } else {
                 throw new Exception("Error trying to interpret control value of type [" + tx.Name + "]. The type was not recognized.");
             }
             return val;
         }
 
-        public static Dictionary<string, Control> FlattenPageControls(Control pageControl)
-        {
+        public static Dictionary<string, Control> FlattenPageControls(Control pageControl) {
             Dictionary<string, Control> controls = new Dictionary<string, Control>();
 
-            foreach (Control cx in pageControl.Controls)
-            {
-                if (cx.ID != null)
-                {
+            foreach (Control cx in pageControl.Controls) {
+                if (cx.ID != null) {
                     controls.Add(cx.ID, cx);
                 }
-                foreach (KeyValuePair<string, Control> kvp in FlattenPageControls(cx))
-                {
+                foreach (KeyValuePair<string, Control> kvp in FlattenPageControls(cx)) {
                     controls.Add(kvp.Key, kvp.Value);
                 }
             }
@@ -216,8 +187,7 @@ namespace WebFormsUtilities
             return controls;
         }
 
-        public static void ApplyModelToPage(Control pageControl, object Model)
-        {
+        public static void ApplyModelToPage(Control pageControl, object Model) {
             ApplyModelToPage(pageControl, Model, "");
         }
 
@@ -226,8 +196,7 @@ namespace WebFormsUtilities
             ApplyModelToPage(pageControl, provider);
         }
 
-        public static void ApplyModelToPage(Control pageControl, IWFValueProvider provider)
-        {
+        public static void ApplyModelToPage(Control pageControl, IWFValueProvider provider) {
             Dictionary<string, Control> webControls = FlattenPageControls(pageControl);
 
             foreach (KeyValuePair<string, Control> kvp in webControls) {

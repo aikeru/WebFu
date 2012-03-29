@@ -26,7 +26,7 @@ namespace WebFormsUtilities.WebControls {
                 if (_sourceType == null) {
                     _sourceType = GetTypeForControl();
                 }
-                return  _sourceType; 
+                return _sourceType;
             }
             set { _sourceType = value; }
         }
@@ -83,7 +83,7 @@ namespace WebFormsUtilities.WebControls {
             return SourceType.GetProperty(_propertyName);
         }
 
-        
+
 
         public virtual Control GetTargetControl() {
             PropertyInfo prop = GetTargetProperty();
@@ -98,11 +98,15 @@ namespace WebFormsUtilities.WebControls {
         public virtual Type GetTypeForControl() {
             Type modelType = null;
             if (String.IsNullOrEmpty(SourceTypeString)) {
-                if (_sourceType == null && String.IsNullOrEmpty(XmlRuleSetName)) {
-                    throw new Exception("The SourceType and SourceTypeString properties are null/empty on one of the validator controls.\r\nPopulate either property.\r\nie: control.SourceType = typeof(Widget); OR in markup SourceTypeString=\"Assembly.Classes.Widget, Assembly\"");
+                if (_sourceType == null
+                    && String.IsNullOrEmpty(XmlRuleSetName)
+                    && this.Page as IWFGetValidationRulesForPage == null) {
+                    throw new Exception("The SourceType and SourceTypeString properties are null/empty on one of the validator controls.\r\nPopulate either property.\r\nie: control.SourceType = typeof(Widget); OR in markup SourceTypeString=\"Assembly.Classes.Widget, Assembly\"\r\nThe page can also implement IWFGetValidationRulesForPage.");
                 } else if (_sourceType == null && !String.IsNullOrEmpty(XmlRuleSetName)) {
                     //Get the type from the XmlRuleSet
                     SourceType = WFUtilities.GetRuleSetForName(XmlRuleSetName).ModelType;
+                } else if (_sourceType == null && String.IsNullOrEmpty(XmlRuleSetName)) {
+                    SourceType = ((IWFGetValidationRulesForPage)this.Page).GetValidationClassType();
                 }
 
             } else {

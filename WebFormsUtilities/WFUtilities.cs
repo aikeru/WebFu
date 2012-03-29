@@ -16,6 +16,7 @@ using System.IO;
 using System.Resources;
 using System.Linq.Expressions;
 using WebFormsUtilities.RuleProviders;
+using WebFormsUtilities.ValueProviders;
 
 namespace WebFormsUtilities {
     public static class WFUtilities {
@@ -102,6 +103,11 @@ namespace WebFormsUtilities {
                 Type oxType = o.GetType();
                 if (oxType.IsSubclassOf(typeof(ValidationAttribute))) {
                     var oVal = (ValidationAttribute)o;
+
+                    if (oVal as IWFRequireValueProviderContext != null) {
+                        ((IWFRequireValueProviderContext)oVal).SetValueProvider(new WFObjectValueProvider(model, ""));
+                    }
+
                     if (!oVal.IsValid(model)) {
                         errors.Add(oVal.FormatErrorMessage(displayName));
                     }
@@ -109,7 +115,6 @@ namespace WebFormsUtilities {
             }
             return errors.Count < 1;
         }
-
 
         /// <summary>
         /// Root TryValidateModel() method. Returns false if any validation errors are found.
@@ -139,6 +144,10 @@ namespace WebFormsUtilities {
                 if (values.ContainsKey(prefix + pi.Name)) {
                     WFModelMetaProperty metaprop = null;
                     foreach (ValidationAttribute attr in ruleProvider.GetPropertyValidationAttributes(pi.Name)) {
+
+                        if (attr as IWFRequireValueProviderContext != null) {
+                            ((IWFRequireValueProviderContext)attr).SetValueProvider(new WFObjectValueProvider(model, ""));
+                        }
 
                         string displayName = ruleProvider.GetDisplayNameForProperty(pi.Name);
                         bool isValid = false;
