@@ -63,6 +63,8 @@
   <ItemGroup>
     <Compile Include="DataAnnotations\DisplayAttribute.cs" />
     <Compile Include="DataAnnotations\IWFClientValidatable.cs" />
+    <Compile Include="DataAnnotations\IWFGetValidationRulesForPage.cs" />
+    <Compile Include="DataAnnotations\IWFRequireValueProviderContext.cs" />
     <Compile Include="DataAnnotations\XmlDataAnnotationsRuleSet.cs" />
     <Compile Include="Handlers\ScriptResourceHandler.cs" />
     <Compile Include="HtmlHelper_Extended.cs" />

@@ -22,7 +22,7 @@ namespace WebFormsUtilities {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "2.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class JSResources {
+    internal class JSResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace WebFormsUtilities {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WebFormsUtilities.JSResources", typeof(JSResources).Assembly);
@@ -51,7 +51,7 @@ namespace WebFormsUtilities {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -77,7 +77,7 @@ namespace WebFormsUtilities {
         ///
         ///    fu [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string jqueryUnobtrusiveAjax {
+        internal static string jqueryUnobtrusiveAjax {
             get {
                 return ResourceManager.GetString("jqueryUnobtrusiveAjax", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace WebFormsUtilities {
         ///    var $jQval = $.validator,
         ///   [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string jqueryValidateUnobtrusive {
+        internal static string jqueryValidateUnobtrusive {
             get {
                 return ResourceManager.GetString("jqueryValidateUnobtrusive", resourceCulture);
             }
@@ -121,7 +121,7 @@ namespace WebFormsUtilities {
         /////Most of these methods are &quot;ripped-off&quot; from Microsoft&apos;s MVC validation JavaScript and changed slightly.
         ///fun [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string SetupClientValidation {
+        internal static string SetupClientValidation {
             get {
                 return ResourceManager.GetString("SetupClientValidation", resourceCulture);
             }
@@ -129,25 +129,22 @@ namespace WebFormsUtilities {
         
         /// <summary>
         ///   Looks up a localized string similar to //WFUtilitiesJquery.js
-        ///
-        ///// WFUtilities
-        ///function WFSubmitForm(methodName) {
-        ///    var elem = $(&apos;#JSMethod&apos;);
-        ///    var elemStr = &apos;&lt;input type=&quot;hidden&quot; name=&quot;JSMethod&quot; id=&quot;JSMethod&quot; value=&quot;&apos; + methodName + &apos;&quot; /&gt;&apos;;
-        ///    if (elem[0] === undefined) {
-        ///        elem = $(&quot;form&quot;).append(elemStr);
-        ///    } else {
-        ///        elem = $(&apos;#JSMethod&apos;).replaceWith(elemStr);
-        ///    }
-        ///    (document.forms[0]).submit();
-        ///    return false;
-        ///}
-        ///
-        ///function WFEnableUpload() {
-        ///    $(&apos;form&apos;).attr(&quot;enctype&quot;, &quot;multipart/form-data&quot;);
-        ///     [rest of string was truncated]&quot;;.
+        ///(function(context) {
+        ///    var $wf = function() {
+        ///        /// &lt;summary&gt;
+        ///        /// WebFu JavaScript object. Can be accessed via $wf or webfu.
+        ///        ///&amp;#10; Functions include:
+        ///        ///&amp;#10; webfu.submitForm()
+        ///        ///&amp;#10; webfu.enableUpload()
+        ///        ///&amp;#10; webfu.callPage()
+        ///        ///&amp;#10; webfu.serializePage()
+        ///        return new $wf.fn.init(context);
+        ///    };
+        ///    //Would like to imitate jQuery here somewhat
+        ///    //$wf.fn = { &quot;webfu&quot;: &apos;0.2012.03.28&apos; };
+        ///    //$wf. [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string WFUtilitiesJquery {
+        internal static string WFUtilitiesJquery {
             get {
                 return ResourceManager.GetString("WFUtilitiesJquery", resourceCulture);
             }
