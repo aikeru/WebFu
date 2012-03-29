@@ -92,7 +92,11 @@ namespace WebFormsUtilities.Json {
                         validationRules.Add(numRule);
                     } else if (valType == typeof(RegularExpressionAttribute) || valType.IsSubclassOf((typeof(RegularExpressionAttribute)))) {
                         valRule.Attr("ValidationType", "regularExpression");
-                        valRule.Attr("ValidationParameters", new JSONObject(new { pattern = ((RegularExpressionAttribute)oVal).Pattern }));
+                        valRule.Attr("ValidationParameters", new JSONObject(new {
+                            pattern = ((RegularExpressionAttribute)oVal).Pattern
+                                .Replace("\\", "\\\\")
+                                .Replace("\"", "\\\"")
+                        }));
                     } else //Custom Validator
                     {
                         if (val as IWFClientValidatable != null) {
