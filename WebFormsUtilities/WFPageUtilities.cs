@@ -52,6 +52,32 @@ namespace WebFormsUtilities
         }
 
         /// <summary>
+        /// Validate the model against form values (not against itself).
+        /// </summary>
+        /// <typeparam name="TModel">The type of the model tied to this page</typeparam>
+        /// <param name="metadata">The metadata object which stores validation information. This usually lives on the Html object.</param>
+        /// <param name="model">The model being validated.</param>
+        /// <param name="context">The HTTP context where form values are stored to validate. This is usually HttpContext.Current.</param>
+        /// <returns>Returns 'true' if the values in the form data validate successfully.</returns>
+        public static bool TryValidateModel<TModel>(WFModelMetaData metadata, TModel model, HttpContext context) {
+            return WFUtilities.TryValidateModel(model, "", new WFHttpContextValueProvider(context), metadata, new WFTypeRuleProvider(model));
+        }
+
+        /// <summary>
+        /// Validate the model against form values (not against itself).
+        /// </summary>
+        /// <typeparam name="TModel">The type of the model tied to this page</typeparam>
+        /// <param name="metadata">The metadata object which stores validation information. This usually lives on the Html object.</param>
+        /// <param name="model">The model being validated.</param>
+        /// <param name="context">The HTTP context where form values are stored to validate. This is usually HttpContext.Current.</param>
+        /// <param name="prefix">The prefix to separate different objects in form data.<br/>
+        /// ie: object1_FirstName=John, object2_FirstName=Joe</param>
+        /// <returns>Returns 'true' if the values in the form data validate successfully.</returns>
+        public static bool TryValidateModel<TModel>(WFModelMetaData metadata, TModel model, HttpContext context, string prefix) {
+            return WFUtilities.TryValidateModel(model, prefix, new WFHttpContextValueProvider(context), metadata, new WFTypeRuleProvider(model));
+        }
+
+        /// <summary>
         /// Validate the model against form values (not against itself).<br/>
         /// Use WFUtilities.TryValidateModel() to validate against targets other than the current HttpRequest.
         /// </summary>
