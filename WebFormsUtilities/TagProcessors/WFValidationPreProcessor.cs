@@ -15,7 +15,7 @@ namespace WebFormsUtilities.TagProcessors {
                 TagTypes.Checkbox,
                 TagTypes.Hidden,
                 TagTypes.InputBox,
-                TagTypes.Label,
+                //TagTypes.Label,
                 TagTypes.RadioButton,
                 TagTypes.Select,
                 TagTypes.Span,
