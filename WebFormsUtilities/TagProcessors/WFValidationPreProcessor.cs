@@ -159,6 +159,7 @@ namespace WebFormsUtilities.TagProcessors {
             }
             if (metaprop == null) {
                 metaprop = CreateMetaProperty(markupName, targetProperty, metadata, metaprop, model, HttpContext.Current);
+                metadata.Properties.Add(metaprop);
             }
             if (metaprop.HasError) {
                 tag.AddClass("input-validation-error");

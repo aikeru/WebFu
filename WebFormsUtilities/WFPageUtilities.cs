@@ -120,7 +120,9 @@ namespace WebFormsUtilities
         /// <returns></returns>
         public static string EnableClientValidation(WFModelMetaData WFMetaData)
         {
-            return WFScriptGenerator.SetupClientValidationScriptHtmlTag().Render();
+            return
+                (new HtmlTag("script", new { type = "text/javascript", language = "javascript" }) { InnerText = WFScriptGenerator.EnableClientValidationScript(WFMetaData) }.Render()) +
+                WFScriptGenerator.SetupClientValidationScriptHtmlTag().Render();
         }
 
         /// <summary>
