@@ -114,10 +114,10 @@ namespace WebFormsUtilities.TagProcessors {
                     metaprop.MarkupName = markupName;
                     metaprop.ValidationAttributes.Add(oVal);
 
-                    if (context != null && !oVal.IsValid(context.Request[markupName])) {
-                        metaprop.HasError = true;
-                        metaprop.Errors.Add(oVal.FormatErrorMessage(displayName));
-                    }
+                    //if (context != null && !oVal.IsValid(context.Request[markupName])) {
+                    //    metaprop.HasError = true;
+                    //    metaprop.Errors.Add(oVal.FormatErrorMessage(displayName));
+                    //}
                 }
             }
 
