@@ -86,7 +86,7 @@ namespace WebFormsUtilities
         /// <returns>Returns 'true' if the values in the form data validate successfully.</returns>
         public static bool TryValidateModel<TModel>(IWebFormsView<TModel> wfView)
         {
-            return TryValidateModel(wfView, null, "");
+            return TryValidateModel(wfView, wfView.Model.GetType(), "");
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace WebFormsUtilities
             return TryValidateModel(wfView, proxyClass, "");
         }
 
-        public static bool TryValidationModel<TModel>(IWebFormsView<TModel> wfView, XmlDataAnnotationsRuleSet ruleSet)
+        public static bool TryValidateModel<TModel>(IWebFormsView<TModel> wfView, XmlDataAnnotationsRuleSet ruleSet)
         {
             List<string> errors = new List<string>();
             IWFRuleProvider ruleProvider = new WFXmlRuleSetRuleProvider(ruleSet);

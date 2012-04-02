@@ -146,7 +146,7 @@ namespace WebFormsUtilities {
                     foreach (ValidationAttribute attr in ruleProvider.GetPropertyValidationAttributes(pi.Name)) {
 
                         if (attr as IWFRequireValueProviderContext != null) {
-                            ((IWFRequireValueProviderContext)attr).SetValueProvider(new WFObjectValueProvider(model, ""));
+                            ((IWFRequireValueProviderContext)attr).SetValueProvider(values);
                         }
 
                         string displayName = ruleProvider.GetDisplayNameForProperty(pi.Name);
