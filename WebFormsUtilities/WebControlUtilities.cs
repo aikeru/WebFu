@@ -84,7 +84,7 @@ namespace WebFormsUtilities {
                 }
             }
 
-            PropertyInfo prop = sourceType.GetProperty(dvc.PropertyName);
+            PropertyInfo prop = WFUtilities.GetTargetProperty(dvc.PropertyName, sourceType);
 
             if (String.IsNullOrEmpty(dvc.XmlRuleSetName)) {
                 foreach (var attr in prop.GetCustomAttributes(typeof(ValidationAttribute), true).OfType<ValidationAttribute>()) {

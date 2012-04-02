@@ -65,7 +65,9 @@ namespace WebFormsUtilities.WebControls {
                     throw new Exception("Couldn't resolve type " + SourceTypeString + ". You may need to specify the fully qualified assembly name.");
                 }
             }
-            PropertyInfo prop = SourceType.GetProperty(_propertyName);
+
+            PropertyInfo prop = WFUtilities.GetTargetProperty(_propertyName, SourceType);
+
             Control validateControl = this.FindControl(this.ControlToValidate); //Search siblings
             if (validateControl == null) //Search page
             {

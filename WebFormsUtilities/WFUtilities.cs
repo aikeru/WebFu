@@ -465,6 +465,20 @@ namespace WebFormsUtilities {
             }
         }
 
+        internal static PropertyInfo GetTargetProperty(string strPropExpression, Type sourceType) {
+            //Walk the property tree
+            string[] props = strPropExpression.Contains(".") ? strPropExpression.Split('.') : new string[] { strPropExpression };
+            PropertyInfo pi = null;
+            Type type = sourceType;
+            foreach (string prop in props) {
+                pi = type.GetProperty(prop);
+                if (pi == null) { throw new Exception("There was a problem searching for a property: [" + prop + "]. The source type was: [" + type.Name + "] and the root type was: [" + sourceType.Name + "]"); }
+                type = pi.PropertyType;
+            }
+            return pi;
+            //return SourceType.GetProperty(_propertyName);
+        }
+
         internal static ValidationAttribute GetValidatorInstanceForXmlDataAnnotationsValidator(XmlDataAnnotationsValidator validator) {
             if (validator == null) { return null; }
             ValidationAttribute attr = null;

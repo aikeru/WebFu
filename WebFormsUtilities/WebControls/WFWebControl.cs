@@ -80,7 +80,7 @@ namespace WebFormsUtilities.WebControls {
         }
 
         public virtual PropertyInfo GetTargetProperty() {
-            return SourceType.GetProperty(_propertyName);
+            return WFUtilities.GetTargetProperty(_propertyName, SourceType);
         }
 
 
