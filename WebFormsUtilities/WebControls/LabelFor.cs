@@ -13,7 +13,7 @@ namespace WebFormsUtilities.WebControls {
             //base.RenderContents(writer);
             string dispName = "";
             PropertyInfo pi = GetTargetProperty();
-            
+            if (String.IsNullOrEmpty(PropertyName)) { throw new Exception("PropertyName must be specified on a WebFormsUtilities LabelFor server control [" + (this.ID ?? "(null ID)") + "]."); }
             if (pi == null) { throw new Exception("[" + (PropertyName ?? "null") + "] public property not found on object [" + (GetTypeForControl().Name) + "]"); }
             
             HtmlTag lbl = new HtmlTag("label", 
