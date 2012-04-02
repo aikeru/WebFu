@@ -457,6 +457,20 @@ namespace WebFormsUtilities {
         public string DropDownListFor<TProperty>(Expression<Func<TModel, TProperty>> expression, IEnumerable<SelectListItem> selectList) {
             return DropDownListFor<TProperty>(expression, selectList, null);
         }
+
+        /// <summary>
+        /// A select tag with validation enabled whose value is derived from a strongly-typed lambda.
+        /// </summary>
+        /// <typeparam name="TProperty"></typeparam>
+        /// <param name="expression">An expression that identifies the property whose value will be rendered.<br/>
+        /// ie: m => m.FirstName will render the 'FirstName' property.</param>
+        /// <param name="selectList">The items in the select tag.</param>
+        /// <param name="optionLabel">The text for the default empty item. This parameter can be null.</param>
+        /// <returns></returns>
+        public string DropDownListFor<TProperty>(Expression<Func<TModel, TProperty>> expression, IEnumerable<SelectListItem> selectList, string optionLabel) {
+            return GetTagFromExpression<TProperty>(TagTypes.Select, expression, _Model, _MetaData, null, this, selectList, optionLabel, true, false).Render();
+        }
+
         /// <summary>
         /// A select tag with validation enabled whose value is derived from a strongly-typed lambda.
         /// </summary>
