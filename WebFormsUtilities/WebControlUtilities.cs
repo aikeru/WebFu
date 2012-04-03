@@ -115,6 +115,10 @@ namespace WebFormsUtilities {
                         foreach (var validator in property.Validators) {
                             ValidationAttribute attr = WFUtilities.GetValidatorInstanceForXmlDataAnnotationsValidator(validator);
 
+                            if (attr as IWFRequireValueProviderContext != null) {
+                                ((IWFRequireValueProviderContext)attr).SetValueProvider(new WFPageControlsValueProvider(dvc.Page, ""));
+                            }
+
                             foreach (var key in validator.ValidatorAttributes.Keys) {
                                 PropertyInfo pi = attr.GetType().GetProperty(key);
                                 if (pi != null) {
