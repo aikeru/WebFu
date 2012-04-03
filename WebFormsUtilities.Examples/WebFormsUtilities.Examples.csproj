@@ -1,0 +1,236 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1EB0B514-3E60-4A58-B387-AB4AB20D718A}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WebFormsUtilities.Examples</RootNamespace>
+    <AssemblyName>WebFormsUtilities.Examples</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Extensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Web.Mobile" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Default.aspx" />
+    <Content Include="Functional\ClientSideValidation.aspx" />
+    <Content Include="Functional\CustomValidation\CustomValidationHtmlHelper.aspx" />
+    <Content Include="Functional\CustomValidation\CustomValidationServerControls.aspx" />
+    <Content Include="Global.asax" />
+    <Content Include="MyAccount\MyAccountHtmlHelper.aspx" />
+    <Content Include="MyAccount\MyAccountServerControls.aspx" />
+    <Content Include="MyAccount\MyAccountServerControlsXML.aspx" />
+    <Content Include="MyAccount\MyAccountWebForms.aspx" />
+    <Content Include="RegisterRules.xml" />
+    <Content Include="Registration\RegistrationHtmlHelper.aspx" />
+    <Content Include="Registration\RegistrationServerControls.aspx" />
+    <Content Include="Registration\RegistrationServerControlsXML.aspx" />
+    <Content Include="Registration\RegistrationThanks.aspx" />
+    <Content Include="Registration\RegistrationWebForms.aspx" />
+    <Content Include="Scripts\JSON2.js" />
+    <Content Include="Scripts\prettify.js" />
+    <Content Include="Scripts\TestScript.js" />
+    <Content Include="Scripts\WFUtilitiesJquery.js" />
+    <Content Include="styles\images\btn.png" />
+    <Content Include="styles\images\btnIn.png" />
+    <Content Include="styles\jquery.ui.all.css" />
+    <Content Include="styles\jquery.ui.tabs.css" />
+    <Content Include="styles\normalize.css" />
+    <Content Include="styles\prettify.css" />
+    <Content Include="styles\site.css" />
+    <Content Include="styles\ui.jqgrid.css" />
+    <Content Include="Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Classes\Customer.cs" />
+    <Compile Include="Default.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Functional\ClientSideValidation.aspx.cs">
+      <DependentUpon>ClientSideValidation.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Functional\ClientSideValidation.aspx.designer.cs">
+      <DependentUpon>ClientSideValidation.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Functional\CustomValidation\CustomValidationHtmlHelper.aspx.cs">
+      <DependentUpon>CustomValidationHtmlHelper.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Functional\CustomValidation\CustomValidationHtmlHelper.aspx.designer.cs">
+      <DependentUpon>CustomValidationHtmlHelper.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Functional\CustomValidation\CustomValidationServerControls.aspx.cs">
+      <DependentUpon>CustomValidationServerControls.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Functional\CustomValidation\CustomValidationServerControls.aspx.designer.cs">
+      <DependentUpon>CustomValidationServerControls.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Functional\CustomValidation\PasswordMatchValidatorAttribute.cs" />
+    <Compile Include="Functional\CustomValidation\PriceAttribute.cs" />
+    <Compile Include="Functional\CustomValidation\ValidEmail.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="MyAccount\MyAccountHtmlHelper.aspx.cs">
+      <DependentUpon>MyAccountHtmlHelper.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MyAccount\MyAccountHtmlHelper.aspx.designer.cs">
+      <DependentUpon>MyAccountHtmlHelper.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MyAccount\MyAccountServerControls.aspx.cs">
+      <DependentUpon>MyAccountServerControls.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MyAccount\MyAccountServerControls.aspx.designer.cs">
+      <DependentUpon>MyAccountServerControls.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MyAccount\MyAccountServerControlsXML.aspx.cs">
+      <DependentUpon>MyAccountServerControlsXML.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MyAccount\MyAccountServerControlsXML.aspx.designer.cs">
+      <DependentUpon>MyAccountServerControlsXML.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MyAccount\MyAccountWebForms.aspx.cs">
+      <DependentUpon>MyAccountWebForms.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MyAccount\MyAccountWebForms.aspx.designer.cs">
+      <DependentUpon>MyAccountWebForms.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Registration\RegistrationHtmlHelper.aspx.cs">
+      <DependentUpon>RegistrationHtmlHelper.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Registration\RegistrationHtmlHelper.aspx.designer.cs">
+      <DependentUpon>RegistrationHtmlHelper.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Registration\RegistrationServerControls.aspx.cs">
+      <DependentUpon>RegistrationServerControls.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Registration\RegistrationServerControls.aspx.designer.cs">
+      <DependentUpon>RegistrationServerControls.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Registration\RegistrationServerControlsXML.aspx.cs">
+      <DependentUpon>RegistrationServerControlsXML.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Registration\RegistrationServerControlsXML.aspx.designer.cs">
+      <DependentUpon>RegistrationServerControlsXML.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Registration\RegistrationThanks.aspx.cs">
+      <DependentUpon>RegistrationThanks.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Registration\RegistrationThanks.aspx.designer.cs">
+      <DependentUpon>RegistrationThanks.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Registration\RegistrationWebForms.aspx.cs">
+      <DependentUpon>RegistrationWebForms.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Registration\RegistrationWebForms.aspx.designer.cs">
+      <DependentUpon>RegistrationWebForms.aspx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WebFormsUtilities\WebFormsUtilities.csproj">
+      <Project>{E761481D-9CAD-441F-9508-72D62B5DCCAC}</Project>
+      <Name>WebFormsUtilities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Diagrams\" />
+    <Folder Include="Expiramental\" />
+    <Folder Include="Graphical\FlexiGrid\" />
+    <Folder Include="Graphical\jqGrid\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="UserControls\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\WebApplications\Microsoft.WebApplication.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>58670</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
