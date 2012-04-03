@@ -103,7 +103,8 @@ namespace WebFormsUtilities.WebControls {
                             ((IWFRequireValueProviderContext)attr).SetValueProvider(new WFPageControlsValueProvider(this.Page, ""));
                         }
 
-                        if (!String.IsNullOrEmpty(ErrorMessage)) {
+                        if (!String.IsNullOrEmpty(ErrorMessage)
+                            && String.IsNullOrEmpty(attr.ErrorMessage)) {
                             attr.ErrorMessage = ErrorMessage;
                         }
 
@@ -113,6 +114,7 @@ namespace WebFormsUtilities.WebControls {
                             string[] excludeProps = new string[] { };
                             if (attr.GetType() == typeof(StringLengthAttribute)) { excludeProps = new string[] { "maximumLength" }; }
                             if (attr.GetType() == typeof(RangeAttribute)) { excludeProps = new string[] { "minimum", "maximum" }; }
+                            if (attr.GetType() == typeof(RegularExpressionAttribute)) { excludeProps = new string[] { "pattern" }; }
                             if (!excludeProps.Contains(key)) {
                                 pi.SetValue(attr, Convert.ChangeType(val.ValidatorAttributes[key], pi.PropertyType), null);
                             }
@@ -144,6 +146,11 @@ namespace WebFormsUtilities.WebControls {
                 {
                     spn.InnerText = this.ErrorMessage;
                 }
+            }
+
+            spn.MergeObjectProperties(Attributes);
+            if (!String.IsNullOrEmpty(this.CssClass)) {
+                spn.AddClass(CssClass);
             }
 
             //base.Render(writer);

@@ -21,6 +21,10 @@ namespace WebFormsUtilities.WebControls {
             
             lbl.MergeObjectProperties(this.Attributes);
 
+            if (!String.IsNullOrEmpty(this.CssClass)) {
+                lbl.AddClass(CssClass);
+            }
+
             writer.Write(lbl.Render());
         }
     }
