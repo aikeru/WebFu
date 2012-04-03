@@ -108,21 +108,26 @@ namespace WebFormsUtilities {
                 XmlDataAnnotationsRuleSet ruleset = WFUtilities.GetRuleSetForType(sourceType, dvc.XmlRuleSetName);
                 metaproperty.DisplayName = dvc.PropertyName;
                 try {
-                    foreach (var validator in ruleset.Properties.First(p => p.PropertyName == dvc.PropertyName).Validators) {
-                        ValidationAttribute attr = WFUtilities.GetValidatorInstanceForXmlDataAnnotationsValidator(validator);
+                    //It's OK to have a DataAnnotationValidatorControl for a property that has no validation rules
+                    //defined in the XML.
+                    XmlDataAnnotationsRuleSetProperty property = ruleset.Properties.FirstOrDefault(p => p.PropertyName == dvc.PropertyName);
+                    if (property != null) {
+                        foreach (var validator in property.Validators) {
+                            ValidationAttribute attr = WFUtilities.GetValidatorInstanceForXmlDataAnnotationsValidator(validator);
 
-                        foreach (var key in validator.ValidatorAttributes.Keys) {
-                            PropertyInfo pi = attr.GetType().GetProperty(key);
-                            if (pi != null) {
-                                pi.SetValue(attr, Convert.ChangeType(validator.ValidatorAttributes[key], pi.PropertyType), null);
+                            foreach (var key in validator.ValidatorAttributes.Keys) {
+                                PropertyInfo pi = attr.GetType().GetProperty(key);
+                                if (pi != null) {
+                                    pi.SetValue(attr, Convert.ChangeType(validator.ValidatorAttributes[key], pi.PropertyType), null);
+                                }
                             }
-                        }
-                        metaproperty.ValidationAttributes.Add(attr);
-                        if (!attr.IsValid(GetControlValue(controlValidating))) {
-                            metaproperty.HasError = true;
-                            if (metaproperty.Errors == null) { metaproperty.Errors = new List<string>(); }
-                            metaproperty.Errors.Add(validator.ErrorMessage);
+                            metaproperty.ValidationAttributes.Add(attr);
+                            if (!attr.IsValid(GetControlValue(controlValidating))) {
+                                metaproperty.HasError = true;
+                                if (metaproperty.Errors == null) { metaproperty.Errors = new List<string>(); }
+                                metaproperty.Errors.Add(validator.ErrorMessage);
 
+                            }
                         }
                     }
                 } catch (Exception ex) {
