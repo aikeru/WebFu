@@ -10,7 +10,10 @@ using System.IO;
 namespace WebFormsUtilities.Handlers {
 
     //Add this to web.config to use this class:
+    // Cassini:
     //<add verb="GET,HEAD" path="WFUtilities.axd" type="WebFormsUtilities.Handlers.ScriptResourceHandler, WebFormsUtilities"/>
+    // IIS 7:
+    //<add name="WebFu" verb="GET,HEAD" path="WFUtilities.axd" type="WebFormsUtilities.Handlers.ScriptResourceHandler, WebFormsUtilities" />
     class ScriptResourceHandler : IHttpHandler {
         #region IHttpHandler Members
 
@@ -19,6 +22,7 @@ namespace WebFormsUtilities.Handlers {
         }
 
         public void ProcessRequest(HttpContext context) {
+            context.Response.ContentType = "text/javascript";
             context.Response.Cache.SetExpires(DateTime.Now.AddYears(1));
             if (!String.IsNullOrEmpty(context.Request["script"])) {
                 if (context.Request["script"] == "SetupClientValidation") {
