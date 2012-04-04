@@ -12,7 +12,7 @@ namespace WebFormsUtilities.Json {
             if (WFUtilities.HandlerRegistered) {
                 //Use the cool handler to keep excess JavaScript out of the page HTML
                 //The script will be cached (on the client) from the handler, so it should be fast!
-                return new HtmlTag("script", new { type = "text/javascript", language = "javascript", src = "WFUtilities.axd?script=SetupClientValidation" });
+                return new HtmlTag("script", new { type = "text/javascript", language = "javascript", src = "/WFUtilities.axd?script=SetupClientValidation" });
             } else {
                 //Inject the javascript right onto the page
                 //Adds to what the page must download.
@@ -25,7 +25,7 @@ namespace WebFormsUtilities.Json {
             if (WFUtilities.HandlerRegistered) {
                 //Use the cool handler to keep excess JavaScript out of the page HTML
                 //The script will be cached (on the client) from the handler, so it should be fast!
-                return new HtmlTag("script", new { type = "text/javascript", language = "javascript", src = "WFUtilities.axd?script=SetupUnobtrusiveValidation" });
+                return new HtmlTag("script", new { type = "text/javascript", language = "javascript", src = "/WFUtilities.axd?script=SetupUnobtrusiveValidation" });
                 //return new HtmlTag("script", new { type = "text/javascript", language = "javascript", src = "WFUtilities.axd?script=SetupUnobtrusiveValidationAjax" });
             } else {
                 //Inject the javascript right onto the page
