@@ -43,6 +43,24 @@ namespace WebFormsUtilities.Examples.Classes {
             return c;
         }
 
+        public static Customer LoadMockup() {
+            Customer c = new Customer();
+            c.FirstName = "Michael";
+            c.LastName = "Snead";
+            c.Address = new CustomerAddress();
+            c.Address.Address1 = "101 Someplace";
+            c.Address.Address2 = "Apt 123";
+            c.Address.City = "Houston";
+            c.Address.State = "TX";
+            c.Login = new CustomerLogin();
+            c.Login.Password = "somepassword";
+            c.Login.UserName = "MichaelUser";
+            c.SocialSecurityNumber = "123-45-6789";
+            c.Email = "michael.snead@example.com";
+
+            return c;
+        }
+
         public CustomerAddress Address { get; set; }
 
         public CustomerLogin Login { get; set; }
