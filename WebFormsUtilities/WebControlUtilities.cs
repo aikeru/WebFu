@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Web.UI.WebControls;
 using WebFormsUtilities.WebControls;
 using WebFormsUtilities.ValueProviders;
+using System.Collections;
 
 namespace WebFormsUtilities {
     public static class WebControlUtilities {
@@ -220,13 +221,28 @@ namespace WebFormsUtilities {
                     } else if (wc.GetType() == typeof(DropDownList)) {
                         DropDownList ddl = (DropDownList)wc;
                         if (ddl.Items != null && ddl.Items.Count > 0) {
-                            ddl.Items.FindByValue(provider.KeyValue(kvp.Key, "").ToString());
-                            //!!!! FIX THIS! It's not selected the ListItem for these!??!?
+                            ddl.SelectedIndex = ddl.Items.IndexOf(ddl.Items.FindByValue(provider.KeyValue(kvp.Key, "").ToString()));
                         }
                     } else if (wc.GetType() == typeof(ListBox)) {
                         ListBox lb = (ListBox)wc;
                         if (lb.Items != null && lb.Items.Count > 0) {
-                            lb.Items.FindByValue(provider.KeyValue(kvp.Key, "").ToString());
+
+                            if (lb.SelectionMode == ListSelectionMode.Single) {
+                                lb.SelectedIndex = lb.Items.IndexOf(lb.Items.FindByValue(provider.KeyValue(kvp.Key, "").ToString()));
+                            } else {
+                                object val = provider.KeyValue(kvp.Key, "");
+                                if (val != null) {
+                                    if (val as IEnumerable != null
+                                        && val.GetType() != typeof(String)) {
+                                        foreach (var x in val as IEnumerable) {
+                                            lb.Items.FindByValue(x.ToString()).Selected = true;
+                                        }
+                                    }
+                                    else {
+                                        lb.SelectedIndex = lb.Items.IndexOf(lb.Items.FindByValue(provider.KeyValue(kvp.Key, "").ToString()));
+                                    }
+                                }
+                            }
                         }
                     } else if (wc.GetType() == typeof(RadioButton)) {
                         RadioButton rb = (RadioButton)wc;
