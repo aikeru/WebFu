@@ -455,7 +455,7 @@ namespace WebFormsUtilities {
         /// <param name="selectList">The items in the select tag.</param>
         /// <returns></returns>
         public string DropDownListFor<TProperty>(Expression<Func<TModel, TProperty>> expression, IEnumerable<SelectListItem> selectList) {
-            return DropDownListFor<TProperty>(expression, selectList, null);
+            return GetTagFromExpression<TProperty>(TagTypes.Select, expression, _Model, _MetaData, null, this, selectList, "", false, false).Render();
         }
 
         /// <summary>
