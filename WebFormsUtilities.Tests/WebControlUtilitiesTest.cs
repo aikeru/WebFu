@@ -72,6 +72,50 @@ namespace WebFormsUtilities.Tests
         //}
 
         [TestMethod]
+        public void ApplyModelToPage_TextBox() {
+            TestParticipantClass testPart = new TestParticipantClass();
+            testPart.FirstName = "John";
+
+            TextBox FirstName = new TextBox() {
+                ID = "FirstName"
+            };
+
+            Page testPage = new Page();
+            testPage.Controls.Add(FirstName);
+
+            WFObjectValueProvider provider = new WFObjectValueProvider(testPart, "");
+
+            Assert.AreEqual("", ((TextBox)testPage.FindControl("FirstName")).Text);
+
+            WebControlUtilities.ApplyModelToPage(testPage, provider);
+
+            Assert.AreEqual("John", ((TextBox)testPage.FindControl("FirstName")).Text);
+
+            testPart.FirstName = "";
+
+            WebControlUtilities.ApplyModelToPage(testPage, provider);
+
+            Assert.AreEqual("", ((TextBox)testPage.FindControl("FirstName")).Text);
+
+        }
+        [TestMethod]
+        public void ApplyModelToPage_ListBox() {
+        }
+        [TestMethod]
+        public void ApplyModelToPage_DropDownList() {
+        }
+        [TestMethod]
+        public void ApplyModelToPage_RadioButton() {
+        }
+        [TestMethod]
+        public void ApplyModelTopage_CheckBox() {
+        }
+        [TestMethod]
+        public void ApplyModelToPage_IWFControlValue() {
+        }
+
+
+        [TestMethod]
         public void TestApplyPageValues()
         {
             TestParticipantClass testPart = new TestParticipantClass();
