@@ -5,7 +5,7 @@ using System.Web;
 using System.ComponentModel.DataAnnotations;
 using WebFormsUtilities.DataAnnotations;
 
-namespace WebFormsUtilities.WebTest.Models {
+namespace WebFormsUtilities.Tests.TestObjects {
     public class PriceAttribute : ValidationAttribute, IWFClientValidatable {
 
         public double MinPrice { get; set; }
@@ -47,3 +47,4 @@ namespace WebFormsUtilities.WebTest.Models {
         #endregion
     }
 }
+ 
