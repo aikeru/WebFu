@@ -12,6 +12,10 @@ using System.Collections;
 using WebFormsUtilities.Tests.Properties;
 using WebFormsUtilities.ValueProviders;
 using WebFormsUtilities.RuleProviders;
+using WebFormsUtilities.Tests.TestObjects;
+using WebFormsUtilities.WebControls;
+using System.Web.UI.WebControls;
+using System.Web.UI;
 
 
 namespace WebFormsUtilities.Tests
@@ -23,60 +27,112 @@ namespace WebFormsUtilities.Tests
     ///to contain all WFUtilitiesTest Unit Tests
     ///</summary>
     [TestClass()]
-    public class WFUtilitiesTest
-    {
+    public class WFUtilitiesTest {
+        #region WFUtilities.RegisterXMLValidationConfiguration()
+        [TestMethod]
+        [DeploymentItem("Validator.config")]
+        public void RegisterXMLValidationConfiguration_TestLoadXML() {
+            //
+            // TODO: Add test logic	here
+            //
 
+            WFUtilities.RegisterXMLValidationConfiguration(Environment.CurrentDirectory + "\\Validator.config");
 
-        private TestContext testContextInstance;
+            Assert.AreEqual(1, WFUtilities.XmlRuleSets.Count());
+            Assert.AreEqual(4, WFUtilities.XmlRuleSets[0].Properties.Count);
+            Assert.AreEqual(2, WFUtilities.XmlRuleSets[0].Properties[0].Validators.Count);
 
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
         }
 
-        #region Additional test attributes
-        // 
-        //You can use the following additional attributes as you write your tests:
-        //
-        //Use ClassInitialize to run code before running the first test in the class
-        //[ClassInitialize()]
-        //public static void MyClassInitialize(TestContext testContext)
-        //{
-        //}
-        //
-        //Use ClassCleanup to run code after all tests in a class have run
-        //[ClassCleanup()]
-        //public static void MyClassCleanup()
-        //{
-        //}
-        //
-        //Use TestInitialize to run code before running each test
-        //[TestInitialize()]
-        //public void MyTestInitialize()
-        //{
-        //}
-        //
-        //Use TestCleanup to run code after each test has run
-        //[TestCleanup()]
-        //public void MyTestCleanup()
-        //{
-        //}
-        //
+        [TestMethod]
+        [DeploymentItem("Validator2.config")]
+        public void RegisterXMLValidationConfiguration_TestXMLErrorMessage() {
+            WFUtilities.RegisterXMLValidationConfiguration(Environment.CurrentDirectory + "\\Validator2.config");
+
+            string resourceErrorMessage = Resources.FirstName_ErrorMessage_Test1;
+
+            TestParticipantClass tpc = new TestParticipantClass();
+
+            WFModelMetaData metadata = new WFModelMetaData();
+
+
+            //============================= WEB FORMS SERVER CONTROL VALIDATION =================================
+            Page p = new Page();
+            p.Controls.Add(new TextBox() { ID = "FirstName" });
+            p.Controls.Add(new DataAnnotationValidatorControl() {
+                PropertyName = "FirstName",
+                ControlToValidate = "FirstName",
+                XmlRuleSetName = "MessageFromValidator",
+                ErrorMessage = "This message from control itself."
+            });
+
+            p.Validators.Add(p.Controls[1] as IValidator);
+
+
+            (p.Controls[1] as BaseValidator).Validate();
+            Assert.AreEqual("This message from control itself.", (p.Controls[1] as DataAnnotationValidatorControl).ErrorMessage);
+
+            p = new Page();
+            p.Controls.Add(new TextBox() { ID = "FirstName" });
+            p.Controls.Add(new DataAnnotationValidatorControl() {
+                PropertyName = "FirstName",
+                ControlToValidate = "FirstName",
+                XmlRuleSetName = "MessageFromXML",
+            });
+
+            p.Validators.Add(p.Controls[1] as IValidator);
+
+
+            (p.Controls[1] as BaseValidator).Validate();
+            Assert.AreEqual("The First Name field cannot be empty.", (p.Controls[1] as DataAnnotationValidatorControl).ErrorMessage);
+
+            p = new Page();
+            p.Controls.Add(new TextBox() { ID = "FirstName" });
+            p.Controls.Add(new DataAnnotationValidatorControl() {
+                PropertyName = "FirstName",
+                ControlToValidate = "FirstName",
+                XmlRuleSetName = "MessageFromResource",
+            });
+
+            p.Validators.Add(p.Controls[1] as IValidator);
+
+
+            (p.Controls[1] as BaseValidator).Validate();
+            Assert.AreEqual("This value from resource.", (p.Controls[1] as DataAnnotationValidatorControl).ErrorMessage);
+
+            //====================== TryValidateModel ==============================
+
+            WFUtilities.TryValidateModel(tpc, "", new WFObjectValueProvider(tpc, ""), metadata, new WFXmlRuleSetRuleProvider("MessageFromValidator"));
+            Assert.AreEqual("The FirstName field is required.", metadata.Errors[0]);
+            metadata = new WFModelMetaData();
+            WFUtilities.TryValidateModel(tpc, "", new WFObjectValueProvider(tpc, ""), metadata, new WFXmlRuleSetRuleProvider("MessageFromXML"));
+            Assert.AreEqual("The First Name field cannot be empty.", metadata.Errors[0]);
+            metadata = new WFModelMetaData();
+            WFUtilities.TryValidateModel(tpc, "", new WFObjectValueProvider(tpc, ""), metadata, new WFXmlRuleSetRuleProvider("MessageFromResource"));
+            Assert.AreEqual("This value from resource.", metadata.Errors[0]);
+            metadata = new WFModelMetaData();
+
+
+        }
+
+        [TestMethod]
+        [DeploymentItem("Validator3.config")]
+        public void RegisterXMLValidationConfiguration_TestClassLevelValidators() {
+            WFUtilities.RegisterXMLValidationConfiguration(Environment.CurrentDirectory + "\\Validator3.config");
+            TestParticipantClass tpc = new TestParticipantClass();
+            tpc.Password = "onevalue";
+            tpc.ConfirmPassword = "othervalue";
+            WFModelMetaData metadata = new WFModelMetaData();
+            WFUtilities.TryValidateModel(tpc, "", new WFObjectValueProvider(tpc, ""), metadata, new WFXmlRuleSetRuleProvider("ClassLevelAttributes"));
+
+            Assert.AreEqual("Password fields must match.", metadata.Errors[0]);
+
+        }
+
         #endregion
 
         [TestMethod()]
-        public void TestURLDecodeDictionary() {
+        public void UrlDecodeDictionary_Tests() {
             Dictionary<string, string> request = WFUtilities.UrlDecodeDictionary("");
             Assert.AreEqual(0, request.Count);
             request = WFUtilities.UrlDecodeDictionary("name=value");
@@ -110,7 +166,7 @@ namespace WebFormsUtilities.Tests
         }
 
         [TestMethod()]
-        public void TestWFErrorMessage() {
+        public void TryValidateModel_ErrorMessageTests() {
             string resourceErrorMessage = Resources.FirstName_ErrorMessage_Test1;
 
             TestParticipantClass tpc = new TestParticipantClass();
@@ -132,7 +188,7 @@ namespace WebFormsUtilities.Tests
         ///A test for TryValidateModel
         ///</summary>
         [TestMethod()]
-        public void TryValidateModelTestAgainstModel()
+        public void TryValidateModel_TestAgainstModel()
         {
             TestWidget model = new TestWidget();
             Type modelType = model.GetType();
@@ -175,7 +231,7 @@ namespace WebFormsUtilities.Tests
             Assert.AreEqual(actual, false);
         }
         [TestMethod()]
-        public void TryValidateModelTestAgainstModelSuccess()
+        public void TryValidateModel_TestAgainstModelSuccess()
         {
             TestWidget model = new TestWidget();
             Type modelType = model.GetType();
@@ -203,7 +259,7 @@ namespace WebFormsUtilities.Tests
         }
 
         [TestMethod()]
-        public void TryValidateModelTestAgainstModelClassAttribute()
+        public void TryValidateModel_TestAgainstModelClassAttribute()
         {
             ClassAttributeTestWidget model = new ClassAttributeTestWidget();
             Type modelType = model.GetType();
@@ -232,7 +288,7 @@ namespace WebFormsUtilities.Tests
         }
 
         [TestMethod()]
-        public void TryValidateModelTestAJAX()
+        public void TryValidateModel_TestAJAXLikeValidation()
         {
             TestWidget model = new TestWidget();
             Type modelType = model.GetType();
@@ -264,7 +320,7 @@ namespace WebFormsUtilities.Tests
         }
 
         [TestMethod()]
-        public void TestBuddyValidation()
+        public void TryValidateModel_TestProxyClassValidation()
         {
             FriendlyClass fc = new FriendlyClass();
             fc.LastName = "onereallybiglongstringthatkeepsgoing"; // break validation
@@ -281,288 +337,20 @@ namespace WebFormsUtilities.Tests
         }
 
         [TestMethod()]
-        public void TryValidateModelTestPage()
+        public void TryValidateModel_TestPage()
         {
             //TODO: Add a unit test for this
             // Not sure how this can be tested as it uses HttpContext
             // Perhaps with a refactor the form values can be extracted
             // and the functionality can be tested separately.
-        }
-
-        [TestMethod()]
-        public void TestJSONObject()
-        {
-            JSONObject obj = new JSONObject();
-            Assert.AreEqual(obj.Render(), "null");
-            obj.Value = new JSONObjectEmpty();
-            Assert.AreEqual(obj.Render(), "{}");
-            obj.Attr("propertyName", "propertyValue");
-            Assert.AreEqual(obj.Attr("propertyName").Value, "propertyValue");
-            Assert.AreEqual(obj.Render(), "{\"propertyName\":\"propertyValue\"}");
-            obj = new JSONObject(new { property1 = "value1", property2 = 5 });
-            Assert.AreEqual(obj.Render(), "{\"property1\":\"value1\",\"property2\":5}");
-
-        }
-
-        [TestMethod()]
-        public void TestHTMLTag()
-        {
-            HtmlTag tag = new HtmlTag("tagname", true);
-            Assert.AreEqual(tag.Render(), "<tagname />");
-            tag = new HtmlTag("tagname");
-            Assert.AreEqual(tag.Render(), "<tagname></tagname>\r\n");
-            tag.InnerText = "Sometext";
-            Assert.AreEqual(tag.Render(), "<tagname>Sometext</tagname>\r\n");
-            tag.Children.Add(new HtmlTag("tag2"));
-            Assert.AreEqual(tag.Render(), "<tagname><tag2></tag2>\r\n</tagname>\r\n");
-            tag.Attr("class", "someclass");
-            Assert.AreEqual(tag.Render(), "<tagname class = \"someclass\"><tag2></tag2>\r\n</tagname>\r\n");
-            tag.AddClass("newclass");
-            Assert.AreEqual(tag.Render(), "<tagname class = \"someclass newclass\"><tag2></tag2>\r\n</tagname>\r\n");
-            tag.RemoveClass("newclass");
-            Assert.AreEqual(tag.Render(), "<tagname class = \"someclass\"><tag2></tag2>\r\n</tagname>\r\n");
-            Assert.AreEqual(tag.Attr("class"), "someclass");
-
-            Assert.AreEqual(tag.RenderBeginningOnly(), "<tagname class = \"someclass\">");
-            Assert.AreEqual(tag.RenderEndingOnly(), "</tagname>\r\n");
-            Assert.AreEqual(tag.IsClass("someclass"), true);
-
-            tag.MergeObjectProperties(new { Class = "someotherclass", type = "tagtype" });
-            Assert.AreEqual(tag.Render(), "<tagname class = \"someotherclass\" type = \"tagtype\"><tag2></tag2>\r\n</tagname>\r\n");
-        }
-
-
-
-        [TestMethod()]
-        public void TestCompare()
-        {
-            int[] num1 = new int[] { 1, 2, 3 };
-            int[] num2 = new int[] { 1, 2, 3 };
-            AssertEqualReflection(num1, num2, null, true);
-
-            int?[] num3 = new int?[] { null, new Int32?(2), new Int32?(3) };
-            int?[] num4 = new int?[] { null, new Int32?(2), new Int32?(3) };
-            AssertEqualReflection(num3, num4, null, true);
-
-            DateTime?[] num5 = new DateTime?[] { null, DateTime.Parse("1/1/2001"), DateTime.Parse("1/1/2002") };
-            DateTime?[] num6 = new DateTime?[] { null, DateTime.Parse("1/1/2001"), DateTime.Parse("1/1/2002") };
-            AssertEqualReflection(num5, num6, null, true);
-
-            object[] num7 = new object[] { 
-                new { prop1 = "somevalue", prop2 = "somevalue2" }
-            };
-            object[] num8 = new object[] {
-                new { prop1 = "somevalue", prop2 = "somevalue2" }
-            };
-            AssertEqualReflection(num7, num8, null, true);
-
-        }
-
-        public void AssertEqualReflection(object expected, object actual, string[] exclude)
-        {
-            AssertEqualReflection(expected, actual, exclude, false);
-        }
-
-        public void AssertEqualReflection(object expected, object actual, string[] exclude, bool enumerate)
-        {
-            if (expected == null && actual == null)
-            { return; }
-            Assert.AreEqual(expected.GetType(), actual.GetType());
-            if (expected.GetType().IsPrimitive)
-            {
-                Assert.AreEqual(expected, actual);
-                return;
-            }
-
-            if (enumerate && expected as IEnumerable != null)
-            {
-                List<object> index = new List<object>();
-                foreach (var x in expected as IEnumerable)
-                { index.Add(x); }
-                int counter = 0;
-                foreach (var x in actual as IEnumerable)
-                {
-                    if (counter > index.Count - 1) { Assert.Fail("expected count does not equal actual count."); }
-                    AssertEqualReflection(x, index[counter], exclude, true); counter++;
-                }
-            }
-            else
-            {
-                if (exclude == null) { exclude = new string[] { }; }
-                foreach (PropertyInfo pi in expected.GetType().GetProperties().Where(p => !exclude.Contains(p.Name)))
-                {
-                    Assert.AreEqual(pi.GetValue(expected, null), pi.GetValue(actual, null), pi.Name);
-                }
-            }
-
+            Assert.Inconclusive();
         }
 
     }
+    
 
+    
 
-    [MetadataType(typeof(BuddyClass))]
-    public partial class FriendlyClass
-    {
-        public class BuddyClass
-        {
-            [Required]
-            public string FirstName { get; set; }
-            [StringLength(10)]
-            public string LastName { get; set; }
-            public string Address1 { get; set; }
-        }
-    }
-    public partial class FriendlyClass
-    {
-        public string FirstName { get; set; } 
-        public string LastName { get; set; }
-        public string Address1 { get; set; } //No validation attributes on buddy
-        public string City { get; set; } //Not present on buddy
-    }
-
-    public class TestWidget
-    {
-        [Required(ErrorMessage = "Widget name required")]
-        public string RequiredName { get; set; }
-        [StringLength(10, ErrorMessage="Max length 10 characters")]
-        public string MaxLengthName { get; set; }
-        [Range(5, 20, ErrorMessage = "Invalid number of sprockets.")]
-        public int Sprockets { get; set; }
-        [RegularExpression("^[a-z0-9_\\+-]+(\\.[a-z0-9_\\+-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*\\.([a-z]{2,4})$", ErrorMessage = "Widget must have valid e-mail")]
-        public string Email { get; set; }
-        [Price(ErrorMessage = "Invalid price")]
-        public double Price { get; set; }
-        [Required()]
-        public string NoErrorMessage { get; set; }
-
-        public String Password { get; set; }
-        public String ConfirmPassword { get; set; }
-    }
-
-    [PropertiesMustMatch("Password", "ConfirmPassword")]
-    public class ClassAttributeTestWidget
-    {
-        [Required(ErrorMessage = "Widget name required")]
-        public string RequiredName { get; set; }
-        [StringLength(10, ErrorMessage = "Max length 10 characters")]
-        public string MaxLengthName { get; set; }
-        [Range(5, 20, ErrorMessage = "Invalid number of sprockets.")]
-        public int Sprockets { get; set; }
-        [RegularExpression("^[a-z0-9_\\+-]+(\\.[a-z0-9_\\+-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*\\.([a-z]{2,4})$", ErrorMessage = "Widget must have valid e-mail")]
-        public string Email { get; set; }
-        [Price(ErrorMessage = "Invalid price")]
-        public double Price { get; set; }
-        [Required()]
-        public string NoErrorMessage { get; set; }
-
-        public String Password { get; set; }
-        public String ConfirmPassword { get; set; }
-    }
-
-    public class PropertiesMustMatchAttribute : ValidationAttribute, IWFClientValidatable
-    {
-        public String FirstPropertyName { get; set; }
-        public String SecondPropertyName { get; set; }
-
-        public PropertiesMustMatchAttribute() {
-        }
-
-        public PropertiesMustMatchAttribute(String firstPropertyName, string secondPropertyName)
-        {
-            FirstPropertyName = firstPropertyName;
-            SecondPropertyName = secondPropertyName;
-        }
-        public override bool IsValid(object value)
-        {
-            Type objectType = value.GetType();
-            PropertyInfo[] props = objectType.GetProperties().Where(p => p.Name == FirstPropertyName ||
-                p.Name == SecondPropertyName).ToArray();
-            if (props.Count() != 2)
-            {
-                ErrorMessage = "Invalid property names or could not find properties on object " + objectType.Name;
-                return false;
-            }
-            if (props[0].GetValue(value, null).ToString()
-                .Equals(props[1].GetValue(value, null).ToString()))
-            {
-                return true;
-            }
-            //Could derive from displaynameattribute, too
-            if (String.IsNullOrEmpty(ErrorMessage)) {
-                ErrorMessage = props[0].Name + " and " + props[1].Name + " don't match.";
-            } 
-            
-            return false;
-        }
-
-        #region IWFClientValidatable Members
-
-        public IEnumerable<WFModelClientValidationRule> GetClientValidationRules() {
-            var rule = new WFModelClientValidationRule
-            {
-                ErrorMessage = ErrorMessage,
-                ValidationType = "propsmatch"
-            };
-            rule.ValidationParameters.Add("firstProp", FirstPropertyName);
-            rule.ValidationParameters.Add("secondProp", SecondPropertyName);
-            return new[] { rule };
-        }
-
-        public WFModelMetaProperty MetaProperty {
-            get {
-                throw new NotImplementedException();
-            }
-            set {
-                throw new NotImplementedException();
-            }
-        }
-
-        #endregion
-    }
-
-    public class PriceAttribute : ValidationAttribute, IWFClientValidatable
-    {
-        public double MinPrice { get; set; }
-        public override bool IsValid(object value)
-        {
-            if (value == null)
-            {
-                return true;
-            }
-            var price = Double.Parse(value.ToString());
-            if (price < MinPrice)
-            {
-                return false;
-            }
-            double cents = price - Math.Truncate(price);
-            if (cents < 0.99 || cents >= 0.995)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        #region IWFClientValidatable Members
-
-        public IEnumerable<WFModelClientValidationRule> GetClientValidationRules() {
-            var rule = new WFModelClientValidationRule {
-                ErrorMessage = ErrorMessage,
-                ValidationType = "price"
-            };
-            rule.ValidationParameters.Add("min", MinPrice);
-
-            return new[] { rule };
-        }
-
-        private WFModelMetaProperty _MetaProperty = null;
-
-        public WFModelMetaProperty MetaProperty {
-            get { return _MetaProperty; }
-            set { _MetaProperty = value; }
-        }
-
-        #endregion
-    }
+    
 
 }

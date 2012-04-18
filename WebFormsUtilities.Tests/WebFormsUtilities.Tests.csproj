@@ -62,25 +62,41 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LINQHtmlHelperMethods.cs">
+    <Compile Include="HtmlHelperTest.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="HtmlHelper_ExtendedTest.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HtmlTagTest.cs" />
+    <Compile Include="JSONObjectTest.cs" />
     <Compile Include="MapToAttributeTest.cs" />
     <Compile Include="ModelMetaDataTest.cs" />
-    <Compile Include="PriceAttribute.cs" />
+    <Compile Include="TestObjects\ClassAttributeTestWidget.cs" />
+    <Compile Include="TestObjects\FriendlyClass.cs" />
+    <Compile Include="TestObjects\JSMethodTestPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="TestObjects\PriceAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="TestConversion.cs" />
-    <Compile Include="TestValidationMarkup.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
+    <Compile Include="TestObjects\ConversionModel.cs" />
+    <Compile Include="TestObjects\PropertiesMustMatchAttribute.cs" />
+    <Compile Include="TestObjects\ProxyMessageFromConstant.cs" />
+    <Compile Include="TestObjects\ProxyMessageFromResource.cs" />
+    <Compile Include="TestObjects\ProxyMessageFromValidator.cs" />
+    <Compile Include="TestObjects\TestControlValueControl.cs" />
+    <Compile Include="TestObjects\TestInventoryObject.cs" />
+    <Compile Include="TestObjects\TestParticipantAddressClass.cs" />
+    <Compile Include="TestObjects\TestParticipantClass.cs" />
+    <Compile Include="TestObjects\TestWidget.cs" />
     <Compile Include="WebControlUtilitiesTest.cs" />
+    <Compile Include="WFPageUtilitiesTest.cs" />
     <Compile Include="WFUtilitiesTest.cs" />
-    <Compile Include="XmlRuleSetTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AuthoringTests.txt" />

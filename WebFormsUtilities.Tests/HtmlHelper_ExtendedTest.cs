@@ -3,75 +3,34 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using WebFormsUtilities.RuleProviders;
+using WebFormsUtilities.Tests.TestObjects;
 using WebFormsUtilities.ValueProviders;
+using WebFormsUtilities.RuleProviders;
 
 namespace WebFormsUtilities.Tests {
     /// <summary>
-    /// Summary description for LINQHtmlHelperMethods
+    /// Summary description for HtmlHelper_ExtendedTest
     /// </summary>
     [TestClass]
-    public class LINQHtmlHelperMethods : System.Web.UI.Page, IWebFormsView<TestParticipantClass> {
-        public LINQHtmlHelperMethods() {
-            //
-            // TODO: Add constructor logic here
-            //
-        }
+    public class HtmlHelper_ExtendedTest : System.Web.UI.Page, IWebFormsView<TestParticipantClass> {
 
         HtmlHelper<TestParticipantClass> _Html = null;
 
-        private TestContext testContextInstance;
-
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext {
-            get {
-                return testContextInstance;
-            }
-            set {
-                testContextInstance = value;
-            }
-        }
-
-        #region Additional test attributes
-        //
-        // You can use the following additional attributes as you write your tests:
-        //
-        // Use ClassInitialize to run code before running the first test in the class
-        // [ClassInitialize()]
-        // public static void MyClassInitialize(TestContext testContext) { }
-        //
-        // Use ClassCleanup to run code after all tests in a class have run
-        // [ClassCleanup()]
-        // public static void MyClassCleanup() { }
-        //
-        // Use TestInitialize to run code before running each test 
-        // [TestInitialize()]
-        // public void MyTestInitialize() { }
-        //
-        // Use TestCleanup to run code after each test has run
-        // [TestCleanup()]
-        // public void MyTestCleanup() { }
-        //
-        #endregion
-
         [TestMethod]
-        public void TestLINQProperty() {
+        public void TextBoxFor_LambdaTestProperty() {
             TestParticipantClass tpc = GetTestParticipant();
             string lambda = Html.TextBoxFor(p => p.FirstName);
             Assert.AreEqual("<input name = \"FirstName\" id = \"FirstName\" type = \"text\" value = \"Michael\" />", lambda);
 
         }
         [TestMethod]
-        public void TestLINQChildProperty() {
+        public void TextBoxFor_LambdaTestChildProperty() {
             TestParticipantClass tpc = GetTestParticipant();
             string lambdaChild = Html.TextBoxFor(p => p.Address.Address1);
             Assert.AreEqual("<input name = \"Address1\" id = \"Address1\" type = \"text\" value = \"101 somestreet\" />", lambdaChild);
         }
         [TestMethod]
-        public void TestLINQChildObject() {
+        public void TextBoxFor_LambdaTestChildObject() {
             TestParticipantClass tpc = GetTestParticipant();
             string lambdaObject = Html.TextBoxFor(p => p.Address);
             //Should evaluate to the .ToString() of the object WebFormsUtilities.Tests.TestParticipantAddressClass
@@ -79,7 +38,7 @@ namespace WebFormsUtilities.Tests {
         }
 
         [TestMethod]
-        public void TestLINQChildObjectNull() {
+        public void TextBoxFor_LambdaTestChildObjectNull() {
             TestParticipantClass tpc = GetTestParticipant();
             tpc.Address = null;
             string lambdaObject = Html.TextBoxFor(p => p.Address);
@@ -88,7 +47,7 @@ namespace WebFormsUtilities.Tests {
         }
 
         [TestMethod]
-        public void TestLINQPropertyNull() {
+        public void TextBoxFor_LambdaTestPropertyNull() {
             TestParticipantClass tpc = GetTestParticipant();
             tpc.FirstName = null;
             string lambdaObject = Html.TextBoxFor(p => p.FirstName);
@@ -98,7 +57,7 @@ namespace WebFormsUtilities.Tests {
 
 
         [TestMethod]
-        public void TestLINQCheckBoxFor() {
+        public void CheckBoxFor_LambdaTest() {
             TestParticipantClass tpc = GetTestParticipant();
             tpc.AcceptedRules = false;
             string lambdaStr = Html.CheckboxFor(p => p.AcceptedRules);
@@ -143,10 +102,10 @@ namespace WebFormsUtilities.Tests {
             items.Add(new SelectListItem() { Selected = true, Text = "item2>", Value = "itemValue2>" });
             items.Add(new SelectListItem() { Selected = true, Text = "item3>", Value = "itemValue3>" });
             return items;
-        } 
+        }
 
         [TestMethod]
-        public void TestLINQDropDownListFor() {
+        public void DropDownListFor_LambdaTest() {
             TestParticipantClass tpc = GetTestParticipant();
 
             string lambdaStr = Html.DropDownListFor(p => p.LastName, DropDownListForNoneSelected());
@@ -169,7 +128,7 @@ namespace WebFormsUtilities.Tests {
             Assert.AreEqual("<select id = \"LastName\" name = \"LastName\" class = \"ddlClass\"><option value = \"\">No Item Selected</option>\r\n<option value = \"itemValue1&gt;\" selected = \"selected\">item1&gt;</option>\r\n<option value = \"itemValue2&gt;\" selected = \"selected\">item2&gt;</option>\r\n<option value = \"itemValue3&gt;\" selected = \"selected\">item3&gt;</option>\r\n</select>\r\n", lambdaStr);
         }
         [TestMethod]
-        public void TestLINQHiddenFor() {
+        public void HiddenFor_LambdaTest() {
             TestParticipantClass tpc = GetTestParticipant();
 
             string lambdaStr = Html.HiddenFor(p => p.FirstName);
@@ -180,14 +139,14 @@ namespace WebFormsUtilities.Tests {
             Assert.AreEqual("<input type = \"hidden\" value = \"&amp;&gt;\" name = \"FirstName\" id = \"FirstName\" />", lambdaStr);
         }
         [TestMethod]
-        public void TestLINQLabelFor() {
+        public void LabelFor_LambdaTest() {
             TestParticipantClass tpc = GetTestParticipant();
 
             string lambdaStr = Html.LabelFor(p => p.FirstName);
             Assert.AreEqual("<label for = \"FirstName\">FirstName</label>\r\n", lambdaStr);
         }
         [TestMethod]
-        public void TestLINQRadioButtonFor() {
+        public void RadioButtonFor_LambdaTest() {
             TestParticipantClass tpc = GetTestParticipant();
             tpc.AcceptedRules = false;
             string lambdaStr = Html.RadioButtonFor(p => p.AcceptedRules);
@@ -207,7 +166,7 @@ namespace WebFormsUtilities.Tests {
             Assert.AreEqual("<input name = \"AcceptedRules\" id = \"AcceptedRules\" type = \"radio\" value = \"&amp;gt;\" checked = \"checked\" class = \"rbClass\" />", lambdaStr);
         }
         [TestMethod]
-        public void TestLINQSpanFor() {
+        public void SpanFor_LambdaTest() {
             TestParticipantClass tpc = GetTestParticipant();
             string lambdaStr = Html.SpanFor(p => p.FirstName);
             Assert.AreEqual("<span id = \"FirstName\">Michael</span>\r\n", lambdaStr);
@@ -219,7 +178,7 @@ namespace WebFormsUtilities.Tests {
             Assert.AreEqual("<span id = \"FirstName\" class = \"spanClass\">&amp;Michael</span>\r\n", lambdaStr);
         }
         [TestMethod]
-        public void TestLINQTextAreaFor() {
+        public void TextAreaFor_LambdaTest() {
             TestParticipantClass tpc = GetTestParticipant();
             string lambdaStr = Html.TextAreaFor(p => p.FirstName);
             Assert.AreEqual("<textarea cols = \"20\" rows = \"2\" name = \"FirstName\" id = \"FirstName\">Michael</textarea>\r\n", lambdaStr);
@@ -235,7 +194,7 @@ namespace WebFormsUtilities.Tests {
             Assert.AreEqual("<textarea cols = \"25\" rows = \"5\" name = \"FirstName\" id = \"FirstName\" class = \"txaClass\">&lt;Michael&gt;</textarea>\r\n", lambdaStr);
         }
         [TestMethod]
-        public void TestLINQTextBoxFor() {
+        public void TextBoxFor_LambdaTest() {
             TestParticipantClass tpc = GetTestParticipant();
             string lambdaStr = Html.TextBoxFor(p => p.FirstName);
             Assert.AreEqual("<input name = \"FirstName\" id = \"FirstName\" type = \"text\" value = \"Michael\" />", lambdaStr);
@@ -256,7 +215,7 @@ namespace WebFormsUtilities.Tests {
             Assert.AreEqual("<input name = \"FirstName\" id = \"FirstName\" type = \"text\" value = \"&amp;Michael\" class = \"clsTxt\" />", lambdaStr);
         }
         [TestMethod]
-        public void TestLINQValidationMessageFor() {
+        public void ValidationMessageFor_LambdaTest() {
             TestParticipantClass tpc = GetTestParticipant();
 
             string vmfOK = Html.ValidationMessageFor(m => m.FirstName);
@@ -274,7 +233,7 @@ namespace WebFormsUtilities.Tests {
 
 
         [TestMethod]
-        public void HtmlCheckboxFor() {
+        public void CheckboxFor_LambdaTest() {
 
             TestParticipantClass tpc = GetTestParticipant();
             //AcceptedRules should be null (since it's a property and has not been set, even though it is non-nullable)

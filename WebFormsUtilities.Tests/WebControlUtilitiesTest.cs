@@ -7,6 +7,8 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.ComponentModel.DataAnnotations;
 using WebFormsUtilities.ValueProviders;
+using WebFormsUtilities.Tests.TestObjects;
+using WebFormsUtilities.WebControls;
 
 namespace WebFormsUtilities.Tests
 {
@@ -16,76 +18,24 @@ namespace WebFormsUtilities.Tests
     [TestClass]
     public class WebControlUtilitiesTest
     {
-        public WebControlUtilitiesTest()
-        {
-            //
-            // TODO: Add constructor logic here
-            //
-        }
-
-        private TestContext testContextInstance;
-
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
-        }
-
-        #region Additional test attributes
-        //
-        // You can use the following additional attributes as you write your tests:
-        //
-        // Use ClassInitialize to run code before running the first test in the class
-        // [ClassInitialize()]
-        // public static void MyClassInitialize(TestContext testContext) { }
-        //
-        // Use ClassCleanup to run code after all tests in a class have run
-        // [ClassCleanup()]
-        // public static void MyClassCleanup() { }
-        //
-        // Use TestInitialize to run code before running each test 
-        // [TestInitialize()]
-        // public void MyTestInitialize() { }
-        //
-        // Use TestCleanup to run code after each test has run
-        // [TestCleanup()]
-        // public void MyTestCleanup() { }
-        //
-        #endregion
-
-        //[TestMethod]
-        //public void TestMethod1()
-        //{
-        //    //
-        //    // TODO: Add test logic	here
-        //    //
-        //}
+        #region WebControlUtilities.ApplyModelToPage()
 
         [TestMethod]
         public void ApplyModelToPage_TextBox() {
             TestParticipantClass testPart = new TestParticipantClass();
-            testPart.FirstName = "John";
-
+            WFObjectValueProvider provider = new WFObjectValueProvider(testPart, "");
+            Page testPage = new Page();
             TextBox FirstName = new TextBox() {
                 ID = "FirstName"
             };
-
-            Page testPage = new Page();
             testPage.Controls.Add(FirstName);
 
-            WFObjectValueProvider provider = new WFObjectValueProvider(testPart, "");
+            //Apply null value (since it is a property initial state should be null)
+            WebControlUtilities.ApplyModelToPage(testPage, provider);
 
             Assert.AreEqual("", ((TextBox)testPage.FindControl("FirstName")).Text);
+
+            testPart.FirstName = "John";
 
             WebControlUtilities.ApplyModelToPage(testPage, provider);
 
@@ -100,23 +50,205 @@ namespace WebFormsUtilities.Tests
         }
         [TestMethod]
         public void ApplyModelToPage_ListBox() {
+
+            //Test applying a string property to ListBox
+            TestParticipantClass testPart = new TestParticipantClass();
+            WFObjectValueProvider provider = new WFObjectValueProvider(testPart, "");
+            Page testPage = new Page();
+            ListBox FirstName = new ListBox() {
+                ID = "FirstName"
+            };
+            testPage.Controls.Add(FirstName);
+            
+            //null property value to empty listbox
+            WebControlUtilities.ApplyModelToPage(testPage, provider);
+
+            //null property value to listbox with empty item, but other selected
+            FirstName.Items.Add(new ListItem("John", "1") { Selected = true });
+            FirstName.Items.Add(new ListItem("Mark", "2"));
+            FirstName.Items.Add(new ListItem("Joe", "3"));
+            FirstName.Items.Add(new ListItem("Select a Name", ""));
+
+            WebControlUtilities.ApplyModelToPage(testPage, provider);
+
+            Assert.AreEqual(3, FirstName.SelectedIndex);
+
+            //specific value
+
+            testPart.FirstName = "2"; //go by value, not by text
+
+            WebControlUtilities.ApplyModelToPage(testPage, provider);
+
+            Assert.AreEqual(1, FirstName.SelectedIndex);
+
+            testPart.FirstName = "NonExistantValue";
+
+            WebControlUtilities.ApplyModelToPage(testPage, provider);
+
+            Assert.AreEqual(-1, FirstName.SelectedIndex);
+
+            //test multiple values
+
+            testPage.Controls.Remove(FirstName);
+
+            testPart.LuckyNumbers = new int[] { 1, 3 };
+
+            ListBox LuckyNumbers = new ListBox();
+            LuckyNumbers.Items.Add(new ListItem("1", "1"));
+            LuckyNumbers.Items.Add(new ListItem("2", "2"));
+            LuckyNumbers.Items.Add(new ListItem("3", "3"));
+            LuckyNumbers.Items.Add(new ListItem("4", "4"));
+            LuckyNumbers.Items.Add(new ListItem("5", "5"));
+
+            //multiple values while in single mode
+            LuckyNumbers.SelectionMode = ListSelectionMode.Single;
+            LuckyNumbers.ID = "LuckyNumbers";
+            testPage.Controls.Add(LuckyNumbers);
+
+            WebControlUtilities.ApplyModelToPage(testPage, provider);
+            //because we are in single mode, the array shouldn't be enumerated
+            //returns "System.Int32[]..."
+            Assert.AreEqual(-1, LuckyNumbers.SelectedIndex);
+
+            //now change to multiple mode. Both items in the array should be selected.
+            //No other items should be selected.
+            LuckyNumbers.SelectionMode = ListSelectionMode.Multiple;
+
+            WebControlUtilities.ApplyModelToPage(testPage, provider);
+
+            foreach(ListItem li in LuckyNumbers.Items) {
+                if(!li.Selected && testPart.LuckyNumbers.Contains(int.Parse(li.Value))) {
+                    Assert.Fail("Item " + li.Value + " should be selected.");
+                } else if (li.Selected && !testPart.LuckyNumbers.Contains(int.Parse(li.Value))) {
+                    Assert.Fail("Item " + li.Value + " should not be selected.");
+                }
+            }
+            
+
         }
         [TestMethod]
         public void ApplyModelToPage_DropDownList() {
+
+            //Test applying a string property to ListBox
+            TestParticipantClass testPart = new TestParticipantClass();
+            WFObjectValueProvider provider = new WFObjectValueProvider(testPart, "");
+            Page testPage = new Page();
+            DropDownList FirstName = new DropDownList() {
+                ID = "FirstName"
+            };
+            testPage.Controls.Add(FirstName);
+
+            //null property value to empty listbox
+            WebControlUtilities.ApplyModelToPage(testPage, provider);
+
+            //null property value to listbox with empty item, but other selected
+            FirstName.Items.Add(new ListItem("John", "1") { Selected = true });
+            FirstName.Items.Add(new ListItem("Mark", "2"));
+            FirstName.Items.Add(new ListItem("Joe", "3"));
+            FirstName.Items.Add(new ListItem("Select a Name", ""));
+
+            WebControlUtilities.ApplyModelToPage(testPage, provider);
+
+            Assert.AreEqual(3, FirstName.SelectedIndex);
+
+            //specific value
+
+            testPart.FirstName = "2"; //go by value, not by text
+
+            WebControlUtilities.ApplyModelToPage(testPage, provider);
+
+            Assert.AreEqual(1, FirstName.SelectedIndex);
+
+            testPart.FirstName = "NonExistantValue";
+
+            WebControlUtilities.ApplyModelToPage(testPage, provider);
+
+            //different from listbox. This should have the first item in the list selected
+            //because a dropdownlist even though set to "-1" cannot have "no item selected"
+
+            Assert.AreEqual(0, FirstName.SelectedIndex);
+
+
         }
         [TestMethod]
         public void ApplyModelToPage_RadioButton() {
+
+            TestParticipantClass testPart = new TestParticipantClass();
+            WFObjectValueProvider provider = new WFObjectValueProvider(testPart, "");
+            Page testPage = new Page();
+            RadioButton AcceptedRules = new RadioButton() {
+                ID = "AcceptedRules"
+            };
+            testPage.Controls.Add(AcceptedRules);
+
+            WebControlUtilities.ApplyModelToPage(testPage, provider);
+
+            Assert.IsFalse(AcceptedRules.Checked);
+
+            testPart.AcceptedRules = false;
+            WebControlUtilities.ApplyModelToPage(testPage, provider);
+
+            Assert.IsFalse(AcceptedRules.Checked);
+
+            testPart.AcceptedRules = true;
+            WebControlUtilities.ApplyModelToPage(testPage, provider);
+
+            Assert.IsTrue(AcceptedRules.Checked);
+
         }
         [TestMethod]
         public void ApplyModelTopage_CheckBox() {
+
+            TestParticipantClass testPart = new TestParticipantClass();
+            WFObjectValueProvider provider = new WFObjectValueProvider(testPart, "");
+            Page testPage = new Page();
+            CheckBox AcceptedRules = new CheckBox() {
+                ID = "AcceptedRules"
+            };
+            testPage.Controls.Add(AcceptedRules);
+
+            WebControlUtilities.ApplyModelToPage(testPage, provider);
+
+            Assert.IsFalse(AcceptedRules.Checked);
+
+            testPart.AcceptedRules = false;
+            WebControlUtilities.ApplyModelToPage(testPage, provider);
+
+            Assert.IsFalse(AcceptedRules.Checked);
+
+            testPart.AcceptedRules = true;
+            WebControlUtilities.ApplyModelToPage(testPage, provider);
+
+            Assert.IsTrue(AcceptedRules.Checked);
+
+
         }
         [TestMethod]
         public void ApplyModelToPage_IWFControlValue() {
+
+            TestParticipantClass testPart = new TestParticipantClass();
+            WFObjectValueProvider provider = new WFObjectValueProvider(testPart, "");
+            Page testPage = new Page();
+            TestControlValueControl testControl = new TestControlValueControl() {
+                ID = "FirstName"
+            };
+            testPage.Controls.Add(testControl);
+
+            WebControlUtilities.ApplyModelToPage(testPage, provider);
+
+            Assert.AreEqual("", testControl.ControlValue);
+
+            testPart.FirstName = "Sam";
+
+            WebControlUtilities.ApplyModelToPage(testPage, provider);
+
+            Assert.AreEqual("Sam", testControl.ControlValue);
+
         }
 
 
         [TestMethod]
-        public void TestApplyPageValues()
+        public void ApplyModelToPage_MultipleTests()
         {
             TestParticipantClass testPart = new TestParticipantClass();
 
@@ -154,7 +286,7 @@ namespace WebFormsUtilities.Tests
                
         }
         [TestMethod]
-        public void TestApplyListBoxDropDown()
+        public void ApplyModelToPage_ListBoxDropDownAdditionalTests()
         {
             ListBox lbItems = new ListBox() { ID = "Inventory" };
             lbItems.Items.Add(new ListItem() { Text = "Item1", Value = "1" });
@@ -212,56 +344,76 @@ namespace WebFormsUtilities.Tests
 
 
         }
+        #endregion
 
-    }
+        #region WebControlUtilities.FindControlRecursive()
 
-    public class TestParticipantClass
-    {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public int Points { get; set; }
-        public int ParticipantGroupID { get; set; }
-        public List<TestInventoryObject> Inventory { get; set; }
-        public TestParticipantAddressClass Address { get; set; }
-        public DateTime? BirthDate { get; set; }
-        public DateTime LastModified { get; set; }
-        public DateTime DateCreated { get; set; }
-        public int[] LuckyNumbers { get; set; }
-        public string[] LuckyPhrases { get; set; }
-        public DateTime? NullDate1 { get; set; }
-        public DateTime? NullDate2 { get; set; }
-        public DateTime? NullDate3 { get; set; }
+        [TestMethod]
+        public void FindControlRecursiveTest() {
+            Page p = new Page();
+            TextBox testControl = new TextBox() { ID = "testControl1" };
+            TextBox testControl2 = new TextBox() { ID = "testControl2" };
+            TextBox testControl3 = new TextBox() { ID = "testControl3" };
+            TextBox testControl4 = new TextBox() { ID = "testControl4" };
 
-        public decimal Price { get; set; }
+            p.Controls.Add(testControl);
+            Panel panel1 = new Panel();
+            Panel panel2 = new Panel();
 
-        public string Password { get; set; }
-        public string ConfirmPassword { get; set; }
+            panel1.Controls.Add(testControl2);
+            panel2.Controls.Add(testControl3);
 
-        public bool AcceptedRules { get; set; }
-    }
+            p.Controls.Add(panel1);
+            p.Controls.Add(panel2);
 
-    public class ProxyMessageFromValidator {
-        [Required]
-        public string FirstName { get; set; }
-    }
-    public class ProxyMessageFromConstant {
-        [Required(ErrorMessage="This is a constant error.")]
-        public string FirstName { get; set; }
-    }
-    public class ProxyMessageFromResource {
-        [Required(ErrorMessageResourceName = "FirstName_ErrorMessage_Test1", ErrorMessageResourceType = typeof(WebFormsUtilities.Tests.Properties.Resources))]
-        public string FirstName { get; set; }
-    }
+            Assert.IsNotNull(WebControlUtilities.FindControlRecursive(p, "testControl1"));
+            Assert.IsNotNull(WebControlUtilities.FindControlRecursive(p, "testControl2"));
+            Assert.IsNotNull(WebControlUtilities.FindControlRecursive(p, "testControl3"));
 
-    public class TestParticipantAddressClass
-    {
-        public string Address1 { get; set; }
-        public string City { get; set; }
-        public int PhoneNumber { get; set; }
-    }
-    public class TestInventoryObject
-    {
-        public int ID { get; set; }
-        public string Name { get; set; }
+            Assert.IsNull(WebControlUtilities.FindControlRecursive(panel1, "testControl1"));
+            Assert.IsNotNull(WebControlUtilities.FindControlRecursive(panel1, "testControl2"));
+
+        }
+
+        #endregion
+
+        #region WebControlUtilities.FindValidators()
+
+        [TestMethod]
+        public void FindValidatorsTest() {
+            Page p = new Page();
+            DataAnnotationValidatorControl testControl = new DataAnnotationValidatorControl() { ID = "testControl1" };
+            DataAnnotationValidatorControl testControl2 = new DataAnnotationValidatorControl() { ID = "testControl2" };
+            DataAnnotationValidatorControl testControl3 = new DataAnnotationValidatorControl() { ID = "testControl3" };
+            DataAnnotationValidatorControl testControl4 = new DataAnnotationValidatorControl() { ID = "testControl4" };
+
+            p.Controls.Add(testControl);
+            Panel panel1 = new Panel();
+            Panel panel2 = new Panel();
+
+            panel1.Controls.Add(testControl2);
+            panel2.Controls.Add(testControl3);
+
+            p.Controls.Add(panel1);
+            p.Controls.Add(panel2);
+
+            Assert.IsNotNull(WebControlUtilities.FindControlRecursive(p, "testControl1"));
+            Assert.IsNotNull(WebControlUtilities.FindControlRecursive(p, "testControl2"));
+            Assert.IsNotNull(WebControlUtilities.FindControlRecursive(p, "testControl3"));
+
+            Assert.IsNull(WebControlUtilities.FindControlRecursive(panel1, "testControl1"));
+            Assert.IsNotNull(WebControlUtilities.FindControlRecursive(panel1, "testControl2"));
+        }
+
+        #endregion
+
+        //TODO: Write these tests
+
+        #region WebControlUtilities.FlattenPageControls()
+        #endregion
+        #region WebControlUtilities.GetControlValue()
+        #endregion
+        #region WebControlUtilities.GetMetaPropertyFromValidator()
+        #endregion
     }
 }
