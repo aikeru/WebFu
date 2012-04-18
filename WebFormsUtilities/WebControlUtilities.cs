@@ -274,7 +274,7 @@ namespace WebFormsUtilities {
                         }
                     } else {
                         //Not a known type, does it implement IWFControlValue?
-                        if(kvp.Value.GetType() as IWFControlValue != null) {
+                        if(wc as IWFControlValue != null) {
                             //Set it through the interface
                             ((IWFControlValue)kvp.Value).SetControlValue(provider.KeyValue(kvp.Key));
                         } else {
