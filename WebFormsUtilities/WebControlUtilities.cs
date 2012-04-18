@@ -273,8 +273,8 @@ namespace WebFormsUtilities {
                             cb.Checked = false;
                         }
                     } else {
-                        //Not a known type, does it implement IWFSetControlValue?
-                        if (kvp.Value.GetType().IsAssignableFrom(typeof(IWFControlValue))) {
+                        //Not a known type, does it implement IWFControlValue?
+                        if(kvp.Value.GetType() as IWFControlValue != null) {
                             //Set it through the interface
                             ((IWFControlValue)kvp.Value).SetControlValue(provider.KeyValue(kvp.Key));
                         } else {
