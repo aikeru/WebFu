@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Default.aspx" />
+    <Content Include="ExposeWebMethods\ExposeWebMethodsExample.aspx" />
     <Content Include="Functional\ClientSideValidation.aspx" />
     <Content Include="Functional\CustomValidation\CustomValidationHtmlHelper.aspx" />
     <Content Include="Functional\CustomValidation\CustomValidationServerControls.aspx" />
@@ -97,6 +98,13 @@
     </Compile>
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ExposeWebMethods\ExposeWebMethodsExample.aspx.cs">
+      <DependentUpon>ExposeWebMethodsExample.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExposeWebMethods\ExposeWebMethodsExample.aspx.designer.cs">
+      <DependentUpon>ExposeWebMethodsExample.aspx</DependentUpon>
     </Compile>
     <Compile Include="Functional\ClientSideValidation.aspx.cs">
       <DependentUpon>ClientSideValidation.aspx</DependentUpon>

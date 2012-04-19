@@ -51,6 +51,7 @@
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -87,6 +88,7 @@
     <Compile Include="ValueProviders\WFPageControlsValueProvider.cs" />
     <Compile Include="ValueProviders\WFFastServerControlRequestValueProvider.cs" />
     <Compile Include="WebControls\EnableClientValidationControl.cs" />
+    <Compile Include="WebControls\ExposeWebMethodsControl.cs" />
     <Compile Include="WebControls\IWFControlValue.cs" />
     <Compile Include="WebControls\LabelFor.cs" />
     <Compile Include="WebControls\RenderControl.cs" />
