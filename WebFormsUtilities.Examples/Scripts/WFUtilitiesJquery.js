@@ -65,6 +65,7 @@
             }
         }
         $.ajax({ type: "POST", url: pageMethodURL, data: args.data, contentType: "application/json; charset=utf-8",
+            async: args.async,
             dataType: "json",
             success: function(a, b, c) {
                 if (args.success != undefined && args.success != null) {
@@ -101,12 +102,13 @@
         });
         return retStr;
     }
+    context.$wf = context.$wf || $wf;
+    context.webfu = context.webfu || $wf;
 
     $wf.submitForm = WFSubmitForm;
     $wf.enableUpload = WFEnableUpload;
     $wf.callPage = WFCallPage;
     $wf.serializePage = WFSerializePage;
 
-    context.$wf = context.$wf || $wf;
-    context.webfu = context.webfu || $wf;
+
 })(this);
