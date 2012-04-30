@@ -39,7 +39,6 @@
                                               ControlToValidate="SocialSecurityNumber"
                                               PropertyName="SocialSecurityNumber" />  
         <br />
-        <!-- Properties from the Customer.Address object have a PropertyName of Address.* -->
         <WebFu:LabelFor ID="Address1Label" 
                         runat="server" 
                         TargetControl="Address1"
@@ -80,7 +79,6 @@
                                               ControlToValidate="State"
                                               PropertyName="Address.State" />  
         <br />
-        <!-- Properties from the Customer.Login object have a PropertyName of Login.* -->
         <WebFu:LabelFor ID="UserNameLabel" 
                         runat="server" 
                         TargetControl="UserName"
@@ -111,12 +109,10 @@
                                               ControlToValidate="ConfirmPassword"
                                               PropertyName="Login.ConfirmPassword" />
         <br />
-        <!-- WebFormsUtilities plays nice with server controls -->
         <asp:Button ID="btnSubmit" runat="server" Text="Submit" OnClick="btnSubmit_OnClick" /><br />
         <asp:Label ID="lblState" runat="server" Text="Initial State"></asp:Label>
         <br />
     </div>
-    <!-- This is required for client-side validation. Run this at the end of the form -->
     <WebFu:EnableClientValidationControl runat="server" />
     </form>
 </body>
