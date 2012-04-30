@@ -23,7 +23,7 @@ namespace WebFormsUtilities
         public virtual T Model { get; set; }
         public string EnableClientValidation()
         {
-            return WFPageUtilities.EnableClientValidation(WFMetaData);
+            return WFPageUtilities.EnableClientValidation(WFMetaData, this.Form.ClientID);
         }
         public void CallJSMethod()
         {

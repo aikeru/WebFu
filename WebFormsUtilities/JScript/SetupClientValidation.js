@@ -144,7 +144,12 @@ function __WFU_EnableClientValidation(validationContext) {
     };
 
     // register callbacks with our AJAX system
-    var formElement = document.getElementById(validationContext.FormId);
+    var formElement;
+    if (validationContext.FormId === "") {
+        formElement = document.forms[0];
+    } else {
+        formElement = document.getElementById(validationContext.FormId);
+    }
     var registeredValidatorCallbacks = formElement.validationCallbacks;
     if (!registeredValidatorCallbacks) {
         registeredValidatorCallbacks = [];
