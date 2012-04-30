@@ -51,11 +51,16 @@ namespace WebFormsUtilities.Json {
                 JSONObject field = new JSONObject();
                 field.Attr("FieldName", prop.MarkupName);
                 field.Attr("ReplaceValidationMessageContents", true);
+
+                //Remove $'s which jQuery doesn't like in ID's
+                string spanID = "";
                 if (!String.IsNullOrEmpty(prop.OverriddenSpanID)) {
-                    field.Attr("ValidationMessageId", prop.OverriddenSpanID);
+                    spanID = prop.OverriddenSpanID;
                 } else {
-                    field.Attr("ValidationMessageId", prop.MarkupName + "_validationMessage");
+                    spanID = prop.MarkupName + "_validationMessage";
                 }
+                spanID = spanID.Replace("$", @"\\$");
+                field.Attr("ValidationMessageId", spanID);
 
                 List<JSONObject> validationRules = new List<JSONObject>();
                 foreach (object oVal in prop.ValidationAttributes) {
@@ -133,7 +138,7 @@ namespace WebFormsUtilities.Json {
                 field.Attr("ValidationRules", validationRules);
                 fields.Add(field);
             }
-            JSONObject jo = new JSONObject(new { Fields = fields, FormId = formId, ReplaceValidationSummary = false });          
+            JSONObject jo = new JSONObject(new { Fields = fields, FormId = formId, ReplaceValidationSummary = false });
 
             sb.Append(jo.Render());
 
