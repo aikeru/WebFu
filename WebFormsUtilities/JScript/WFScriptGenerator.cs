@@ -41,7 +41,7 @@ namespace WebFormsUtilities.Json {
         /// </summary>
         /// <param name="metadata"></param>
         /// <returns></returns>
-        public static string EnableClientValidationScript(WFModelMetaData metadata) {
+        public static string EnableClientValidationScript(WFModelMetaData metadata, string formId) {
             StringBuilder sb = new StringBuilder();
             sb.Append("if(!window.wfuClientValidationMetadata) { window.wfuClientValidationMetadata = []; }\r\n");
             sb.Append("window.wfuClientValidationMetadata.push(");
@@ -133,7 +133,7 @@ namespace WebFormsUtilities.Json {
                 field.Attr("ValidationRules", validationRules);
                 fields.Add(field);
             }
-            JSONObject jo = new JSONObject(new { Fields = fields, FormId = "form1", ReplaceValidationSummary = false });
+            JSONObject jo = new JSONObject(new { Fields = fields, FormId = formId, ReplaceValidationSummary = false });          
 
             sb.Append(jo.Render());
 

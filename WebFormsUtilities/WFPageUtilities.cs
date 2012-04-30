@@ -139,15 +139,20 @@ namespace WebFormsUtilities
             return WFUtilities.TryValidateModel(wfView.Model, prefix, new WFHttpContextValueProvider(HttpContext.Current), wfView.Html.MetaData, new WFTypeRuleProvider(proxyClass));
         }
 
+
+        public static string EnableClientValidation(WFModelMetaData WFMetaData) {
+            return EnableClientValidation(WFMetaData, "");
+        }
+
         /// <summary>
         /// !! MUST be run at the end of the form in markup. !!
         /// Outputs a script tag containing JavaScript code to enable validation on client side.
         /// </summary>
         /// <returns></returns>
-        public static string EnableClientValidation(WFModelMetaData WFMetaData)
+        public static string EnableClientValidation(WFModelMetaData WFMetaData, string formId)
         {
             return
-                (new HtmlTag("script", new { type = "text/javascript", language = "javascript" }) { InnerText = WFScriptGenerator.EnableClientValidationScript(WFMetaData) }.Render()) +
+                (new HtmlTag("script", new { type = "text/javascript", language = "javascript" }) { InnerText = WFScriptGenerator.EnableClientValidationScript(WFMetaData, formId) }.Render()) +
                 WFScriptGenerator.SetupClientValidationScriptHtmlTag().Render();
         }
 

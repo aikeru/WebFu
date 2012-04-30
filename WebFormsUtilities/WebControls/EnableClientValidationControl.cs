@@ -19,6 +19,8 @@ namespace WebFormsUtilities.WebControls
     {
         public bool Unobtrusive { get; set; }
 
+        public string TargetFormClientID { get; set; }
+
         protected override void Render(HtmlTextWriter writer) {
             //Override ASP.net's automatic <span> tag
             RenderContents(writer);
@@ -41,7 +43,13 @@ namespace WebFormsUtilities.WebControls
                 output.Write(WFScriptGenerator.SetupClientUnobtrusiveValidationScriptHtmlTag().Render());
             } else {
                 output.Write(WFScriptGenerator.SetupClientValidationScriptHtmlTag().Render());
-                output.Write(new HtmlTag("script", new { type = "text/javascript", language = "javascript" }) { InnerText = WFScriptGenerator.EnableClientValidationScript(metadata) }.Render());
+                string targetid = "";
+                if (String.IsNullOrEmpty(TargetFormClientID)) {
+                    targetid = this.Page.Form.ClientID;
+                } else {
+                    targetid = TargetFormClientID;
+                }
+                output.Write(new HtmlTag("script", new { type = "text/javascript", language = "javascript" }) { InnerText = WFScriptGenerator.EnableClientValidationScript(metadata, targetid) }.Render());
             }
         }
     }
