@@ -12,7 +12,9 @@
     <form id="form1" runat="server">
     <div>
         <!-- The first 4 properties come from the Customer object. The DataAnnotation rules
-             used are determined from the Page implementing the IWFGetValidationRulesForPage -->
+             used are determined from the Page implementing the IWFGetValidationRulesForPage 
+                                                                                            /-->
+             
         <WebFu:LabelFor ID="FirstNameLabel" runat="server" TargetControl="FirstName" PropertyName="FirstName" /> :
         <asp:TextBox ID="FirstName" runat="server" />
         <WebFu:DataAnnotationValidatorControl ID="DataAnnotationValidatorControl1"
