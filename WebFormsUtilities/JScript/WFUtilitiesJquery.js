@@ -87,7 +87,7 @@
         ///<returns>Returns a string in the form of (ie: name=value&amp;name2=value2...)</returns>
         var retStr = "";
         var selector = $(':input');
-        if (includeViewState === true) {
+        if (includeViewState === undefined || includeViewState !== true) {
             selector = selector.not('#__VIEWSTATE,#__EVENTVALIDATION,#__EVENTTARGET,#__EVENTARGUMENT');
         }
         selector.each(function() {
