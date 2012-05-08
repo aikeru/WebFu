@@ -27,7 +27,7 @@ namespace WebFormsUtilities
         }
 
         /// <summary>
-        /// Call this method when posting back from the JavaScript WFCallPage(); function<br/>
+        /// Call this method when posting back from the JavaScript webfu.callPage(); function<br/>
         /// Use Request["JSMethod"] to find a matching Page method that is decorated with WFJScriptMethod<br/>
         /// This prevents methods from being called by JavaScript unless explicitly opt-in.<br/>
         /// The method must accept an [object] and an [EventArgs]. As of this compile, these will be empty.<br/>

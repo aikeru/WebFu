@@ -7,7 +7,7 @@ namespace WebFormsUtilities
 {
     /// <summary>
     /// Specify that this method is safe/intended to invoke via JavaScript.<br/>
-    /// Call methods decorated with this attribute via JavaScript WFCallPage(); function.
+    /// Call methods decorated with this attribute via JavaScript webfu.callPage(); function.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
     public class WFJScriptMethodAttribute : Attribute
