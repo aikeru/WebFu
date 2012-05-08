@@ -114,7 +114,12 @@ function __WFU_CreateValidationOptions(validationFields) {
 }
 function __WFU_EnableClientValidation(validationContext) {
     // this represents the form containing elements to be validated
-    var theForm = $("#" + validationContext.FormId);
+    var theForm;
+    if (validationContext.FormId === "") {
+        theForm = $('form').first();
+    } else {
+        theForm = $("#" + validationContext.FormId);
+    }
 
     var fields = validationContext.Fields;
     var rulesObj = __WFU_CreateValidationOptions(fields);
