@@ -12,17 +12,14 @@ using WebFormsUtilities.DataAnnotations;
 using WebFormsUtilities.RuleProviders;
 using WebFormsUtilities.ValueProviders;
 
-namespace WebFormsUtilities
-{
-    public static class WFPageUtilities
-    {
+namespace WebFormsUtilities {
+    public static class WFPageUtilities {
         /// <summary>
         /// This method can be used if WFUtilitiesJquery.js is not included in the project.<br/>
         /// Returns a &lt;script&gt; tag which should be placed in &lt;head&gt; after jQuery.
         /// </summary>
         /// <returns>Returns a &lt;script&gt; tag which should be placed in &lt;head&gt; after jQuery.</returns>
-        public static string ScriptRegisterClientFunctions()
-        {
+        public static string ScriptRegisterClientFunctions() {
             return new HtmlTag("script") { InnerText = JSResources.WFUtilitiesJquery }.Render();
         }
 
@@ -32,20 +29,14 @@ namespace WebFormsUtilities
         /// This prevents methods from being called by JavaScript unless explicitly opt-in.<br/>
         /// The method must accept an [object] and an [EventArgs]. As of this compile, these will be empty.<br/>
         /// </summary>
-        public static void CallJSMethod(Control pageControl, HttpRequest request)
-        {
-            if (!String.IsNullOrEmpty(request["JSMethod"]))
-            {
+        public static void CallJSMethod(Control pageControl, HttpRequest request) {
+            if (!String.IsNullOrEmpty(request["JSMethod"])) {
                 MethodInfo mi = pageControl.GetType().GetMethod(request["JSMethod"], BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                if (mi != null)
-                {
-                    if (mi.GetCustomAttributes(typeof(WFJScriptMethodAttribute), false).Length > 0)
-                    {
+                if (mi != null) {
+                    if (mi.GetCustomAttributes(typeof(WFJScriptMethodAttribute), false).Length > 0) {
                         mi.Invoke(pageControl, new object[] { null, new EventArgs() });
                     }
-                }
-                else
-                {
+                } else {
                     throw new Exception("No matching method " + request["JSMethod"] + " that is marked with [WFJScriptMethod] attribute.");
                 }
             }
@@ -84,8 +75,7 @@ namespace WebFormsUtilities
         /// <typeparam name="TModel">The type of the model object to be validated.</typeparam>
         /// <param name="wfView">The page or usercontrol implementing IWebFormsView&lt;TModel&gt;</param>
         /// <returns>Returns 'true' if the values in the form data validate successfully.</returns>
-        public static bool TryValidateModel<TModel>(IWebFormsView<TModel> wfView)
-        {
+        public static bool TryValidateModel<TModel>(IWebFormsView<TModel> wfView) {
             return TryValidateModel(wfView, wfView.Model.GetType(), "");
         }
 
@@ -98,8 +88,7 @@ namespace WebFormsUtilities
         /// <param name="prefix">Optional. The prefix to separate different objects in form data.<br/>
         /// ie: object1_FirstName=John, object2_FirstName=Joe</param>
         /// <returns>Returns 'true' if the values in the form data validate successfully.</returns>
-        public static bool TryValidateModel<TModel>(IWebFormsView<TModel> wfView, string prefix)
-        {
+        public static bool TryValidateModel<TModel>(IWebFormsView<TModel> wfView, string prefix) {
             return TryValidateModel(wfView, null, prefix);
         }
         /// <summary>
@@ -110,13 +99,11 @@ namespace WebFormsUtilities
         /// <param name="wfView">The page or usercontrol implementing IWebFormsView&lt;TModel&gt;</param>
         /// <param name="proxyClass">Optional. Validation can use this class to validate against, instead of the model class.</param>
         /// <returns>Returns 'true' if the values in the form data validate successfully.</returns>
-        public static bool TryValidateModel<TModel>(IWebFormsView<TModel> wfView, Type proxyClass)
-        {
+        public static bool TryValidateModel<TModel>(IWebFormsView<TModel> wfView, Type proxyClass) {
             return TryValidateModel(wfView, proxyClass, "");
         }
 
-        public static bool TryValidateModel<TModel>(IWebFormsView<TModel> wfView, XmlDataAnnotationsRuleSet ruleSet)
-        {
+        public static bool TryValidateModel<TModel>(IWebFormsView<TModel> wfView, XmlDataAnnotationsRuleSet ruleSet) {
             List<string> errors = new List<string>();
             IWFRuleProvider ruleProvider = new WFXmlRuleSetRuleProvider(ruleSet);
             return WFUtilities.TryValidateModel(wfView.Model, "", new WFHttpContextValueProvider(HttpContext.Current), wfView.Html.MetaData, ruleProvider);
@@ -133,8 +120,7 @@ namespace WebFormsUtilities
         /// <param name="prefix">Optional. The prefix to separate different objects in form data.<br/>
         /// ie: object1_FirstName=John, object2_FirstName=Joe</param>
         /// <returns>Returns 'true' if the values in the form data validate successfully.</returns>
-        public static bool TryValidateModel<TModel>(IWebFormsView<TModel> wfView, Type proxyClass, string prefix)
-        {
+        public static bool TryValidateModel<TModel>(IWebFormsView<TModel> wfView, Type proxyClass, string prefix) {
             List<string> errors = new List<string>();
             return WFUtilities.TryValidateModel(wfView.Model, prefix, new WFHttpContextValueProvider(HttpContext.Current), wfView.Html.MetaData, new WFTypeRuleProvider(proxyClass));
         }
@@ -149,8 +135,7 @@ namespace WebFormsUtilities
         /// Outputs a script tag containing JavaScript code to enable validation on client side.
         /// </summary>
         /// <returns></returns>
-        public static string EnableClientValidation(WFModelMetaData WFMetaData, string formId)
-        {
+        public static string EnableClientValidation(WFModelMetaData WFMetaData, string formId) {
             return
                 (new HtmlTag("script", new { type = "text/javascript", language = "javascript" }) { InnerText = WFScriptGenerator.EnableClientValidationScript(WFMetaData, formId) }.Render()) +
                 WFScriptGenerator.SetupClientValidationScriptHtmlTag().Render();
@@ -161,8 +146,7 @@ namespace WebFormsUtilities
         /// </summary>
         /// <typeparam name="TModel">The type of model object</typeparam>
         /// <param name="model">The model instance to update</param>
-        public static void UpdateModel<TModel>(HttpRequest request, TModel model)
-        {
+        public static void UpdateModel<TModel>(HttpRequest request, TModel model) {
             UpdateModel<TModel>(request, model, "");
         }
         /// <summary>
@@ -171,8 +155,7 @@ namespace WebFormsUtilities
         /// <typeparam name="TModel">The type of model object</typeparam>
         /// <param name="model">The model instance to update</param>
         /// <param name="prefix">The prefix to use when looking up values in the value provider</param>
-        public static void UpdateModel<TModel>(HttpRequest request, TModel model, string prefix)
-        {
+        public static void UpdateModel<TModel>(HttpRequest request, TModel model, string prefix) {
             WFHttpContextValueProvider vp = new WFHttpContextValueProvider(request);
             UpdateModel<TModel>(vp, model, prefix, null, new string[] { });
         }
@@ -182,8 +165,7 @@ namespace WebFormsUtilities
         /// <typeparam name="TModel">The type of model object</typeparam>
         /// <param name="model">The model instance to update</param>
         /// <param name="includeProperties">A list of properties of the model to update</param>
-        public static void UpdateModel<TModel>(HttpRequest request, TModel model, string[] includeProperties)
-        {
+        public static void UpdateModel<TModel>(HttpRequest request, TModel model, string[] includeProperties) {
             WFHttpContextValueProvider vp = new WFHttpContextValueProvider(request);
             UpdateModel<TModel>(vp, model, "", includeProperties, new string[] { });
         }
@@ -194,8 +176,7 @@ namespace WebFormsUtilities
         /// <param name="model">The model instance to update</param>
         /// <param name="prefix">The prefix to use when looking up values in the value provider</param>
         /// <param name="includeProperties">A list of properties of the model to update</param>
-        public static void UpdateModel<TModel>(HttpRequest request, TModel model, string prefix, string[] includeProperties)
-        {
+        public static void UpdateModel<TModel>(HttpRequest request, TModel model, string prefix, string[] includeProperties) {
             WFHttpContextValueProvider vp = new WFHttpContextValueProvider(request);
             UpdateModel<TModel>(vp, model, prefix, includeProperties, new string[] { });
         }
@@ -208,18 +189,15 @@ namespace WebFormsUtilities
         /// <param name="prefix">The prefix to use when looking up values in the value provider.</param>
         /// <param name="includeProperties">A list of properties of the model to update.</param>
         /// <param name="excludeProperties">A list of properties to explicitly exclude from the update. These are excluded even if they are listed in the includeProperties parameter list.</param>
-        public static void UpdateModel<TModel>(IWFValueProvider valueprovider, TModel model, string prefix, string[] includeProperties, string[] excludeProperties)
-        {
+        public static void UpdateModel<TModel>(IWFValueProvider valueprovider, TModel model, string prefix, string[] includeProperties, string[] excludeProperties) {
             if (model == null) { throw new Exception("Model cannot be null!"); }
             Type t = typeof(TModel);
             PropertyInfo[] props = t.GetProperties();
 
             //var query = props.AsQueryable();
             var query = valueprovider.GetPropertyEnumerator();
-            if (includeProperties != null)
-            { query = query.Where(p => includeProperties.Contains(p)); }
-            if (excludeProperties != null && excludeProperties.Length > 0)
-            { query = query.Where(p => !excludeProperties.Contains(p)); }
+            if (includeProperties != null) { query = query.Where(p => includeProperties.Contains(p)); }
+            if (excludeProperties != null && excludeProperties.Length > 0) { query = query.Where(p => !excludeProperties.Contains(p)); }
 
             foreach (string s in query) {
                 string propExpression = s;
@@ -227,25 +205,25 @@ namespace WebFormsUtilities
                 if (!String.IsNullOrEmpty(prefix) && s.StartsWith(prefix)) {
                     //If there is a prefix, and it is found in this string, remove it
                     propExpression = s.Substring(prefix.Length);
-                }            
+                }
                 //Use the resulting string to find the target property without the prefix
                 PropertyInfo pi = WFUtilities.GetTargetProperty(propExpression, t, true);
                 if (pi != null) {
                     try {
                         if (pi.PropertyType.IsEnum) {
-                            pi.SetValue(model, Enum.Parse(pi.PropertyType, valueprovider.KeyValue(prefix + pi.Name).ToString()), null);
+                            pi.SetValue(model, Enum.Parse(pi.PropertyType, valueprovider.KeyValue(prefix + s).ToString()), null);
                         } else if (pi.PropertyType == typeof(Int32?)
                             || pi.PropertyType == typeof(Double?)
                             || pi.PropertyType == typeof(DateTime?)) {
 
-                            object kV = valueprovider.KeyValue(prefix + pi.Name);
+                            object kV = valueprovider.KeyValue(prefix + s);
                             if (kV == null) { pi.SetValue(model, null, null); } else {
                                 pi.SetValue(model, WFUtilities.ParseNullable(pi.PropertyType, kV.ToString()), null);
                             }
                         } else if (pi.PropertyType == typeof(Boolean?) || pi.PropertyType == typeof(bool)) {
                             string[] trueValues = new string[] { "true", "true,false", "on" };
 
-                            object kV = valueprovider.KeyValue(prefix + pi.Name);
+                            object kV = valueprovider.KeyValue(prefix + s);
                             string kString = (kV == null ? "" : kV.ToString()).Trim();
 
                             if (String.IsNullOrEmpty(kString) || kString.ToLower() == "null") //If the value passed is empty...
@@ -270,10 +248,10 @@ namespace WebFormsUtilities
                             { typeof(byte), typeof(short), typeof(int), typeof(long), typeof(float), typeof(double), typeof(decimal),
                               typeof(DateTime) };
                             if (defaultTypes.Contains(pi.PropertyType)) {
-                                object kV = valueprovider.KeyValue(prefix + pi.Name);
+                                object kV = valueprovider.KeyValue(prefix + s);
                                 if (kV != null && !String.IsNullOrEmpty(kV.ToString())) {
                                     //Get the value
-                                    pi.SetValue(model, Convert.ChangeType((valueprovider.KeyValue(prefix + pi.Name).ToString()), pi.PropertyType), null);
+                                    pi.SetValue(model, Convert.ChangeType((valueprovider.KeyValue(prefix + s).ToString()), pi.PropertyType), null);
                                 } else {
                                     //Set default value
                                     if (pi.PropertyType == typeof(DateTime)) {
@@ -283,11 +261,11 @@ namespace WebFormsUtilities
                                     }
                                 }
                             } else {
-                                pi.SetValue(model, Convert.ChangeType((valueprovider.KeyValue(prefix + pi.Name)), pi.PropertyType), null);
+                                pi.SetValue(model, Convert.ChangeType((valueprovider.KeyValue(prefix + s)), pi.PropertyType), null);
                             }
                         }
                     } catch (Exception ex) {
-                        throw new Exception("Can't cast type of property [" + pi.Name + "] value supplied [" + (valueprovider.KeyValue(prefix + pi.Name) ?? "null/empty").ToString() + "]");
+                        throw new Exception("Can't cast type of property [" + s + "] value supplied [" + (valueprovider.KeyValue(prefix + s) ?? "null/empty").ToString() + "]");
                     }
                 }
             }
