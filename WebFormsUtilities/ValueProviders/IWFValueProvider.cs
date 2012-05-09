@@ -33,6 +33,16 @@ namespace WebFormsUtilities
         /// <param name="defaultValue">The default value to return if null/empty.</param>
         /// <returns>Returns an object.</returns>
         object KeyValue(string keyName, object defaultValue);
+
+        /// <summary>
+        /// Allows to walk through all the properties provided by this value provider.<br/>
+        /// IE: A Dictionary provider would walk through all dictionary keys.<br/>
+        ///     An HttpContext provider would walk through all form value keys.<br/>
+        ///     An Object provider would walk through all applicable PropertyInfo.Name's.
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<String> GetPropertyEnumerator();
+
     }
 
 }

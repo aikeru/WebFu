@@ -82,6 +82,10 @@ namespace WebFormsUtilities.ValueProviders {
             }
         }
 
+        public IEnumerable<String> GetPropertyEnumerator() {
+            return _PropertyMapDictionary.Keys.AsEnumerable<String>();
+        }
+
         #endregion
     }
 
