@@ -65,6 +65,9 @@ namespace WebFormsUtilities.ValueProviders {
             return WebControlUtilities.GetControlValue(_WebControls[keyName]);
         }
 
+        public IEnumerable<String> GetPropertyEnumerator() {
+            return _WebControls.Keys.AsEnumerable<String>();
+        }
         #endregion
     }
 }

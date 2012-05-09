@@ -58,6 +58,19 @@ namespace WebFormsUtilities.Tests {
         #region WFPageUtilities.UpdateModel()
 
         [TestMethod]
+        public void UpdateModel_WFDictionaryValueProvider() {
+            Dictionary<string, string> valueDict = new Dictionary<string, string>();
+
+            WFDictionaryValueProvider vp = new WFDictionaryValueProvider(valueDict);
+
+            DestinationModel dm = new DestinationModel();
+
+            WFPageUtilities.UpdateModel(vp, typeof(DestinationModel), "", null, null);
+
+
+        }
+
+        [TestMethod]
         public void UpdateModel_ValueConversionTests() {
             ConversionModel cm = new ConversionModel();
             WFObjectValueProvider provider = new WFObjectValueProvider(cm, "");

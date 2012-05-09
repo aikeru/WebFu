@@ -62,6 +62,9 @@ namespace WebFormsUtilities.ValueProviders {
             return pi.GetValue(_Model, null);
         }
 
+        public IEnumerable<String> GetPropertyEnumerator() {
+            return _Properties.Select(p => p.Name).AsEnumerable<String>();
+        }
         #endregion
     }
 }

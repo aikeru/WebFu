@@ -38,6 +38,10 @@ namespace WebFormsUtilities.ValueProviders {
             return _Request.Form[keyName];
         }
 
+        public IEnumerable<String> GetPropertyEnumerator() {
+            return _Request.Form.AllKeys.AsEnumerable<String>();
+        }
+
         #endregion
     }
 }
