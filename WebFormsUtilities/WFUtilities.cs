@@ -481,10 +481,12 @@ namespace WebFormsUtilities {
             Type type = sourceType;
             foreach (string prop in props) {
                 pi = type.GetProperty(prop);
-                if (!ignoreMissing) {
-                    if (pi == null) { throw new Exception("There was a problem searching for a property: [" + prop + "]. The source type was: [" + type.Name + "] and the root type was: [" + sourceType.Name + "]"); }
-                } else {
-                    return null;
+                if (pi == null) {
+                    if (!ignoreMissing) {
+                        throw new Exception("There was a problem searching for a property: [" + prop + "]. The source type was: [" + type.Name + "] and the root type was: [" + sourceType.Name + "]");
+                    } else {
+                        return null;
+                    }
                 }
                 type = pi.PropertyType;
             }
