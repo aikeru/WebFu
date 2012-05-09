@@ -465,18 +465,41 @@ namespace WebFormsUtilities {
             }
         }
 
-        internal static PropertyInfo GetTargetProperty(string strPropExpression, Type sourceType) {
+
+        /// <summary>
+        /// Will throw an exception if "ignoreMissing" is false.<br/>
+        /// If "ignoreMissing" is true, will return null if the PropertyInfo cannot be found.
+        /// </summary>
+        /// <param name="strPropExpression"></param>
+        /// <param name="sourceType"></param>
+        /// <param name="ignoreMissing"></param>
+        /// <returns></returns>
+        internal static PropertyInfo GetTargetProperty(string strPropExpression, Type sourceType, bool ignoreMissing) {
             //Walk the property tree
             string[] props = strPropExpression.Contains(".") ? strPropExpression.Split('.') : new string[] { strPropExpression };
             PropertyInfo pi = null;
             Type type = sourceType;
             foreach (string prop in props) {
                 pi = type.GetProperty(prop);
-                if (pi == null) { throw new Exception("There was a problem searching for a property: [" + prop + "]. The source type was: [" + type.Name + "] and the root type was: [" + sourceType.Name + "]"); }
+                if (!ignoreMissing) {
+                    if (pi == null) { throw new Exception("There was a problem searching for a property: [" + prop + "]. The source type was: [" + type.Name + "] and the root type was: [" + sourceType.Name + "]"); }
+                } else {
+                    return null;
+                }
                 type = pi.PropertyType;
             }
             return pi;
             //return SourceType.GetProperty(_propertyName);
+        }
+
+        /// <summary>
+        /// Will throw an exception if the target property is not found. Use the overload if this is undesirable behavior.
+        /// </summary>
+        /// <param name="strPropExpression"></param>
+        /// <param name="sourceType"></param>
+        /// <returns></returns>
+        internal static PropertyInfo GetTargetProperty(string strPropExpression, Type sourceType) {
+            return GetTargetProperty(strPropExpression, sourceType, false);
         }
 
         internal static ValidationAttribute GetValidatorInstanceForXmlDataAnnotationsValidator(XmlDataAnnotationsValidator validator) {
