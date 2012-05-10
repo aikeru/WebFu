@@ -465,6 +465,24 @@ namespace WebFormsUtilities {
             }
         }
 
+        internal static object GetTargetObject(string strPropExpression, object model) {
+            if (!strPropExpression.Contains(".")) { return model; }
+            string[] props = strPropExpression.Contains(".") ? strPropExpression.Split('.') : new string[] { strPropExpression };
+            object target = model;
+            object lastTarget = model;
+            Type type = model.GetType();
+            PropertyInfo pi = null;
+            foreach (string prop in props) {
+                if (target == null) {
+                    throw new Exception("Found a null object to update while crawling expression " + strPropExpression + " the current 'prop' is: " + prop);
+                }
+                lastTarget = target;
+                target = target.GetType().GetProperty(prop).GetValue(target, null);
+                pi = type.GetProperty(prop);
+                type = pi.PropertyType;
+            }
+            return lastTarget;
+        }
 
         /// <summary>
         /// Will throw an exception if "ignoreMissing" is false.<br/>
