@@ -208,17 +208,18 @@ namespace WebFormsUtilities {
                 }
                 //Use the resulting string to find the target property without the prefix
                 PropertyInfo pi = WFUtilities.GetTargetProperty(propExpression, t, true);
+                object targetObject = WFUtilities.GetTargetObject(propExpression, model);
                 if (pi != null) {
                     try {
                         if (pi.PropertyType.IsEnum) {
-                            pi.SetValue(model, Enum.Parse(pi.PropertyType, valueprovider.KeyValue(prefix + s).ToString()), null);
+                            pi.SetValue(targetObject, Enum.Parse(pi.PropertyType, valueprovider.KeyValue(prefix + s).ToString()), null);
                         } else if (pi.PropertyType == typeof(Int32?)
                             || pi.PropertyType == typeof(Double?)
                             || pi.PropertyType == typeof(DateTime?)) {
 
                             object kV = valueprovider.KeyValue(prefix + s);
-                            if (kV == null) { pi.SetValue(model, null, null); } else {
-                                pi.SetValue(model, WFUtilities.ParseNullable(pi.PropertyType, kV.ToString()), null);
+                            if (kV == null) { pi.SetValue(targetObject, null, null); } else {
+                                pi.SetValue(targetObject, WFUtilities.ParseNullable(pi.PropertyType, kV.ToString()), null);
                             }
                         } else if (pi.PropertyType == typeof(Boolean?) || pi.PropertyType == typeof(bool)) {
                             string[] trueValues = new string[] { "true", "true,false", "on" };
@@ -229,19 +230,19 @@ namespace WebFormsUtilities {
                             if (String.IsNullOrEmpty(kString) || kString.ToLower() == "null") //If the value passed is empty...
                             {
                                 if (pi.PropertyType == typeof(Boolean?)) //..and it is nullable, set to null.
-                                { pi.SetValue(model, null, null); } else if (pi.PropertyType == typeof(bool)) //..and not nullable, set to false.
+                                { pi.SetValue(targetObject, null, null); } else if (pi.PropertyType == typeof(bool)) //..and not nullable, set to false.
                                 {
-                                    pi.SetValue(model, false, null);
+                                    pi.SetValue(targetObject, false, null);
                                 }
                             } else if (kString == "off" || kString == "false") //If the value passed is false/off...
                             {
-                                pi.SetValue(model, false, null); //...set to false.
+                                pi.SetValue(targetObject, false, null); //...set to false.
                             } else if (trueValues.Contains(kString)) //If the value passed is "true"...
                             {
-                                pi.SetValue(model, true, null); //...set to true
+                                pi.SetValue(targetObject, true, null); //...set to true
                             } else {
                                 //If all else fails, at least try to convert it to boolean
-                                pi.SetValue(model, Convert.ChangeType(kString, pi.PropertyType), null);
+                                pi.SetValue(targetObject, Convert.ChangeType(kString, pi.PropertyType), null);
                             }
                         } else {
                             Type[] defaultTypes = new Type[] 
@@ -251,17 +252,17 @@ namespace WebFormsUtilities {
                                 object kV = valueprovider.KeyValue(prefix + s);
                                 if (kV != null && !String.IsNullOrEmpty(kV.ToString())) {
                                     //Get the value
-                                    pi.SetValue(model, Convert.ChangeType((valueprovider.KeyValue(prefix + s).ToString()), pi.PropertyType), null);
+                                    pi.SetValue(targetObject, Convert.ChangeType((valueprovider.KeyValue(prefix + s).ToString()), pi.PropertyType), null);
                                 } else {
                                     //Set default value
                                     if (pi.PropertyType == typeof(DateTime)) {
-                                        pi.SetValue(model, default(DateTime), null);
+                                        pi.SetValue(targetObject, default(DateTime), null);
                                     } else {
-                                        pi.SetValue(model, Activator.CreateInstance(pi.PropertyType), null); //Set to default value
+                                        pi.SetValue(targetObject, Activator.CreateInstance(pi.PropertyType), null); //Set to default value
                                     }
                                 }
                             } else {
-                                pi.SetValue(model, Convert.ChangeType((valueprovider.KeyValue(prefix + s)), pi.PropertyType), null);
+                                pi.SetValue(targetObject, Convert.ChangeType((valueprovider.KeyValue(prefix + s)), pi.PropertyType), null);
                             }
                         }
                     } catch (Exception ex) {
