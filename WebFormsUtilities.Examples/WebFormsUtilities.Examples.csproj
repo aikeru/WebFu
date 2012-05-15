@@ -66,6 +66,7 @@
     <Content Include="Functional\CustomValidation\CustomValidationHtmlHelper.aspx" />
     <Content Include="Functional\CustomValidation\CustomValidationServerControls.aspx" />
     <Content Include="Global.asax" />
+    <Content Include="Helpers\HtmlTagExample.aspx" />
     <Content Include="MyAccount\MyAccountHtmlHelper.aspx" />
     <Content Include="MyAccount\MyAccountServerControls.aspx" />
     <Content Include="MyAccount\MyAccountServerControlsXML.aspx" />
@@ -79,6 +80,7 @@
     <Content Include="Scripts\JSON2.js" />
     <Content Include="Scripts\prettify.js" />
     <Content Include="Scripts\TestScript.js" />
+    <Content Include="Scripts\WFHtmlTag.js" />
     <Content Include="Scripts\WFUtilitiesJquery.js" />
     <Content Include="styles\images\btn.png" />
     <Content Include="styles\images\btnIn.png" />
@@ -132,6 +134,13 @@
     <Compile Include="Functional\CustomValidation\ValidEmail.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\HtmlTagExample.aspx.cs">
+      <DependentUpon>HtmlTagExample.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Helpers\HtmlTagExample.aspx.designer.cs">
+      <DependentUpon>HtmlTagExample.aspx</DependentUpon>
     </Compile>
     <Compile Include="MyAccount\MyAccountHtmlHelper.aspx.cs">
       <DependentUpon>MyAccountHtmlHelper.aspx</DependentUpon>
@@ -210,7 +219,6 @@
     <Folder Include="Expiramental\" />
     <Folder Include="Graphical\FlexiGrid\" />
     <Folder Include="Graphical\jqGrid\" />
-    <Folder Include="Helpers\" />
     <Folder Include="UserControls\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
