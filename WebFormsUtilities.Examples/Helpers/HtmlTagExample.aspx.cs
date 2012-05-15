@@ -11,13 +11,5 @@ namespace WebFormsUtilities.Examples.Helpers {
         protected void Page_Load(object sender, EventArgs e) {
 
         }
-        public string GenerateHTMLFromCS() {
-            HtmlTag div = new HtmlTag("div", new { style = "background-color:Blue;" });
-            HtmlTag span = new HtmlTag("span") { InnerText = "This HTML was created by HtmlTag.cs" };
-            span.Attr("style", "font-style:italic; font-weight: bold;");
-            div.Children.Add(span);
-            return div.Render();
-
-        }
     }
 }
