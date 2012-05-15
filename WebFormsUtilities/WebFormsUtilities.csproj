@@ -136,6 +136,7 @@
     <Content Include="JScript\jqueryUnobtrusiveAjax.js" />
     <Content Include="JScript\jqueryValidateUnobtrusive.js" />
     <Content Include="JScript\SetupClientValidation.js" />
+    <Content Include="JScript\WFHtmlTag.js" />
     <Content Include="JScript\WFUtilitiesJquery.js" />
   </ItemGroup>
   <ItemGroup>

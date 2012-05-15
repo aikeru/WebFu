@@ -128,6 +128,27 @@ namespace WebFormsUtilities {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /*  JavaScript implementation of WebFu HtmlTag.cs
+        ///No dependance on jQuery or other WebFu scripts :)
+        ///msnead 5/10/2012
+        ///
+        ///Usage:
+        ///Functions, constructor, methods are almost identical to WebFormsUtilities.HtmlTag C# class
+        ///ie:
+        ///var tag = webfu.HtmlTag(); //creates an HTML tag
+        ///var tag = webfu.HtmlTag(&quot;input&quot;); //creates &lt;input&gt;&lt;/input&gt;
+        ///var tag = webfu.HtmlTag(&quot;br&quot;, true); //creates &lt;br /&gt;
+        ///var tag = webfu.HtmlTag(&quot;div&quot;, { style: &quot;color:red;&quot; }) //creates &lt;div style=&quot;color:red;&quot;&gt;&lt;/div&gt;
+        ///    
+        ///You can also us [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string WFHtmlTag {
+            get {
+                return ResourceManager.GetString("WFHtmlTag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to //WFUtilitiesJquery.js
         ///(function(context) {
         ///    var $wf = function() {
