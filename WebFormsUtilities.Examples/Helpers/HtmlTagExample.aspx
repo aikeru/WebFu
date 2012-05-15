@@ -19,7 +19,7 @@
         HtmlTag.cs and WFHtmlTag.js are libraries that assist in generating HTML content.<br />
         Markup generated from code-behind can be much more maintainable using this method and manipulated in an object-oriented manner.<br />
         <script src="../Scripts/WFHtmlTag.js"></script>
-        <script>
+        <script type="text/javascript" language="javascript">
             //Illustrate generating HTML from JavaScript using WFHtmlTag.js
 
             function GenerateHTMLFromJS() {
