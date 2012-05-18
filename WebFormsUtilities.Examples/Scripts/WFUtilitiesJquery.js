@@ -82,7 +82,7 @@
 
     function WFSerializePage(includeViewState) {
         ///<summary>Serialize the page into a post 'body' string. (ie: name=value&amp;name2=value2...) Will escape double-quotes.
-        ///&#10;Sample usage with jQuery.ajax might be: '{"formValues":"' + WFSerializePage() + '"}'</summary>
+        ///&#10;Sample usage with jQuery.ajax might be: '{"formValues":"' + webfu.serializePage() + '"}'</summary>
         ///<param name="includeViewState" type="bool">Optional: Whether to include WebForms __VIEWSTATE, __EVENTVALIDATION, etc.</param>
         ///<returns>Returns a string in the form of (ie: name=value&amp;name2=value2...)</returns>
         var retStr = "";
