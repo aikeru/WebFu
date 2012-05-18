@@ -112,8 +112,10 @@ namespace WebFormsUtilities.Json {
                                 foreach (var cvr in cvrs) {
                                     if (firstRule) {
                                         valRule.Attr("ValidationType", cvr.ValidationType);
-                                        foreach (KeyValuePair<string, object> kvp in cvr.ValidationParameters) {
-                                            valParms.Attr(kvp.Key, kvp.Value);
+                                        if (cvr.ValidationParameters != null) {
+                                            foreach (KeyValuePair<string, object> kvp in cvr.ValidationParameters) {
+                                                valParms.Attr(kvp.Key, kvp.Value);
+                                            }
                                         }
                                         valRule.Attr("ValidationParameters", valParms);
                                         firstRule = false;
@@ -122,9 +124,10 @@ namespace WebFormsUtilities.Json {
                                         JSONObject vrxParms = new JSONObject();
                                         vrx.Attr("ErrorMessage", cvr.ErrorMessage);
                                         vrx.Attr("ValidationType", cvr.ValidationType);
-
-                                        foreach (KeyValuePair<string, object> kvp in cvr.ValidationParameters) {
-                                            vrxParms.Attr(kvp.Key, kvp.Value);
+                                        if (cvr.ValidationParameters != null) {
+                                            foreach (KeyValuePair<string, object> kvp in cvr.ValidationParameters) {
+                                                vrxParms.Attr(kvp.Key, kvp.Value);
+                                            }
                                         }
                                         vrx.Attr("ValidationParameters", vrxParms);
                                         validationRules.Add(vrx);
