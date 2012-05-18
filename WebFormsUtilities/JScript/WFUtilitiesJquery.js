@@ -92,10 +92,21 @@
         }
         selector.each(function() {
             var name = this.name;
-            var value = $(this).val();
+            var value;
+            if (this.type && this.type.toLowerCase() === "checkbox") {
+                if (this.checked) {
+                    value = $(this).val();
+                } else {
+                    //Bail out! This checkbox should not be included.
+                    return;
+                }
+            } else {
+                value = $(this).val();
+            }
             if (name === "" || name === undefined) {
                 name = this.id;
             }
+            if (name === "") { return; } //if we can't find a name for this control, don't send it
             name = encodeURIComponent(name);
             value = encodeURIComponent(value);
             retStr += (retStr == '') ? name + '=' + value : '&' + name + '=' + value;
@@ -104,7 +115,7 @@
     }
     context.$wf = context.$wf || $wf;
     context.webfu = context.webfu || $wf;
-    
+
     $wf.submitForm = WFSubmitForm;
     $wf.enableUpload = WFEnableUpload;
     $wf.callPage = WFCallPage;
