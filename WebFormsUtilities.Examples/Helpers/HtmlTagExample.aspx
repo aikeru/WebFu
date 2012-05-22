@@ -23,12 +23,14 @@
             //Illustrate generating HTML from JavaScript using WFHtmlTag.js
 
             function GenerateHTMLFromJS() {
+            
                 var div = webfu.HtmlTag("div", { "style": "background-color:Red;" });
                 var span = webfu.HtmlTag("span")({ InnerText: "This HTML was created by WFHtmlTag.js" });
                 span.Attr("style", "font-style:italic; font-weight: bold;");
                 div.Children.Add(span);
                 div.AddClass("clsDivBox");
                 return div.Render();
+                
             }
 
             document.write(GenerateHTMLFromJS());
