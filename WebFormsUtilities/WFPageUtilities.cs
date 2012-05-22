@@ -266,7 +266,7 @@ namespace WebFormsUtilities {
                             }
                         }
                     } catch (Exception ex) {
-                        throw new Exception("Can't cast type of property [" + s + "] value supplied [" + (valueprovider.KeyValue(prefix + s) ?? "null/empty").ToString() + "]");
+                        throw new Exception("An exception occurred updating a model from property [" + s + "] value supplied [" + (valueprovider.KeyValue(prefix + s) ?? "null/empty").ToString() + "]. InnerException may have additional information. The message was: " + ex.Message, ex);
                     }
                 }
             }
