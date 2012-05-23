@@ -27,44 +27,7 @@ boolean - whether or not the tag is self closing
 object - properties of arg2 are applied to HTMLProperties
 arg3: optional, boolean, whether or not the tag is self closing
 
-htmlTag.getHTMLProperties()
-returns the HTMLProperties object
-htmlTag.setHTMLProperties(value)
-set the HTMLProperties object to value
-htmlTag.MergeObjectProperties(object)
-merge the current HTML properties with the properties on 'object'
-htmlTag.getInnerText()
-return InnerText value
-htmlTag.setInnerText(value) <-- overidden if tag has children
-set InnerText to value.  
-htmlTag.getChildren()
-return children array
-htmlTag.setChildren(value)
-set children array to value
-htmlTag.Attr(attName, attValue)
-attName - if attValue is not passed, will return the attribute that matches attName
-attValue - optional. If specified, will overwrite the attribute that matches attName with attValue.
-returns the value of attName.
-htmlTag.RenderBeginningOnly()
-returns a render of the beginning of the tag (ie: <input type="text">) without children or innertext.
-htmlTag.RenderEndingOnly()
-returns a render of the end of the tag (ie: </input>) without children or innertext.
-htmlTag.Render()
-renders the tag, all children and innertext recursively
-htmlTag.AddClass(clsName)
-add a CSS class if it does not already exist
-htmlTag.RemoveClass(clsName)
-remove a CSS class if it is present
-htmlTag.IsClass(clsName)
-return true if CSS class has been added for this tag
-htmlTag.SanitizeForMarkup(input)
-utility method to sanitize things like ampersand, greater-than, etc., returns the sanitized string.
-htmlTag.Children.Add(htmlTag)
-add an HtmlTag instance to the children of this element
-htmlTag.Children.Remove(htmlTag)
-Remove an HtmlTag instance from the children of this element    
-htmlTag.Children.RemoveAt(index)
-Remove an HtmlTag from this element at index
+See http://webfu.codeplex.com/wikipage?title=HtmlTag.js&referringTitle=Documentation for complete documentation.
 */
 
 (function(context) {
