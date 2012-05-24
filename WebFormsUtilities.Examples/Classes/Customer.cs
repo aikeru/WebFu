@@ -82,7 +82,7 @@ namespace WebFormsUtilities.Examples.Classes {
         [Required]
         public string Password { get; set; }
         [Required]
-        [PasswordMustMatch]
+        [PasswordMustMatch(ErrorMessage="Password and Confirm Password must match.")]
         public string ConfirmPassword { get; set; }
 
     }

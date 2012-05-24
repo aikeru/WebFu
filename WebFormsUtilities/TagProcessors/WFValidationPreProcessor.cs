@@ -46,7 +46,7 @@ namespace WebFormsUtilities.TagProcessors {
                 metadata.Properties.Add(metaprop);
             }
             if (metaprop.HasError) {
-                tag.AddClass("input-validation-error");
+                tag.AddClass(WFUtilities.InputValidationErrorClass);
             }
             return tag;
         }
@@ -162,7 +162,7 @@ namespace WebFormsUtilities.TagProcessors {
                 metadata.Properties.Add(metaprop);
             }
             if (metaprop.HasError) {
-                tag.AddClass("input-validation-error");
+                tag.AddClass(WFUtilities.InputValidationErrorClass);
             }
             return tag;
         }

@@ -328,7 +328,7 @@ namespace WebFormsUtilities {
 
         /// <summary>
         /// Creates a &lt;span&gt; tag with appropriate validation information used by client side AND server side code.<br/>
-        /// 'field-validation-error' is applied if validation fails on a postback. This is used with an Html.&ltcontrol&gt;For() element.<br/>
+        /// WFUtilities.FieldValidationErrorClass is applied if validation fails on a postback. This is used with an Html.&ltcontrol&gt;For() element.<br/>
         /// The property whose validation state is checked is derived from a strongly-typed lambda.
         /// </summary>
         /// <param name="expression">An expression that identifies the property whose value will be rendered.<br/>
@@ -341,7 +341,7 @@ namespace WebFormsUtilities {
         }
         /// <summary>
         /// Creates a &lt;span&gt; tag with appropriate validation information used by client side AND server side code.<br/>
-        /// 'field-validation-error' is applied if validation fails on a postback. This is used with an Html.&ltcontrol&gt;For() element.<br/>
+        /// WFUtilities.FieldValidationErrorClass is applied if validation fails on a postback. This is used with an Html.&ltcontrol&gt;For() element.<br/>
         /// The property whose validation state is checked is derived from a strongly-typed lambda.
         /// </summary>
         /// <param name="expression">An expression that identifies the property whose value will be rendered.<br/>
@@ -354,7 +354,7 @@ namespace WebFormsUtilities {
         }
         /// <summary>
         /// Creates a &lt;span&gt; tag with appropriate validation information used by client side AND server side code.<br/>
-        /// 'field-validation-error' is applied if validation fails on a postback. This is used with an Html.&ltcontrol&gt;For() element.<br/>
+        /// WFUtilities.FieldValidationErrorClass is applied if validation fails on a postback. This is used with an Html.&ltcontrol&gt;For() element.<br/>
         /// The property whose validation state is checked is derived from a strongly-typed lambda.
         /// </summary>
         /// <param name="ErrorMessage">(Optional) Override any ErrorMessage provided by resources/xml/validators with this property.</param>
@@ -377,7 +377,7 @@ namespace WebFormsUtilities {
             if (metaprop != null) {
                 if (metaprop.HasError) {
                     span.MergeObjectProperties(htmlProperties);
-                    span.AddClass("field-validation-error");
+                    span.AddClass(WFUtilities.FieldValidationErrorClass);
                     if (String.IsNullOrEmpty(ErrorMessage)) {
                         span.InnerText = metaprop.Errors.FirstOrDefault() ?? "";
                     } else {
@@ -388,7 +388,7 @@ namespace WebFormsUtilities {
             }
 
             span.MergeObjectProperties(htmlProperties);
-            span.AddClass("field-validation-valid");
+            span.AddClass(WFUtilities.FieldValidationValidClass);
 
             span = PreProcess(span, _MetaData, TagTypes.ValidationMessage,
                 metaprop != null ? metaprop.MarkupName : mmd.PropertyName,

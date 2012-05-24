@@ -135,7 +135,8 @@ namespace WebFormsUtilities.WebControls {
             //Override here, rendering the same thing, just without display:none;
             HtmlTag spn = new HtmlTag("span", new {
                 id = this.UniqueID,
-                style = "color:Red;"
+                //style = "color:Red;"
+                Class = WFUtilities.FieldValidationErrorClass
             });
             //Allow server if the validator has been checked before
             if (_HasBeenChecked && !EvaluateIsValid()) {
