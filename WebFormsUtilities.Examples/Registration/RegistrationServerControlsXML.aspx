@@ -20,11 +20,7 @@
                                               runat="server"
                                               ControlToValidate="FirstName"
                                               PropertyName="FirstName"
-                                              XmlRuleSetName="RegisterRules"
-                                              CssClass="testcssclass"
-                                              class="someclass"
-                                              attrib1="somevalue"
-                                              attrib2="somevalue" />
+                                              XmlRuleSetName="RegisterRules" />
         <br />
         <WebFu:LabelFor ID="LastNameLabel" runat="server" TargetControl="LastName" PropertyName="LastName" XmlRuleSetName="RegisterRules" /> :
         <asp:TextBox ID="LastName" runat="server" />
