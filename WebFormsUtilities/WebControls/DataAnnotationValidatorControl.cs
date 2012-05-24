@@ -31,6 +31,7 @@ namespace WebFormsUtilities.WebControls {
 
         private bool _HasBeenChecked = false;
 
+        public string HTMLTagName { get; set; }
 
         private string _XmlRuleSetName = "";
         /// <summary>
@@ -133,7 +134,15 @@ namespace WebFormsUtilities.WebControls {
         protected override void Render(HtmlTextWriter writer) {
             //Base functionality will make this hidden, causing it not to work for client validation.
             //Override here, rendering the same thing, just without display:none;
-            HtmlTag spn = new HtmlTag("span", new {
+
+            string tagName = "span";
+            if (!String.IsNullOrEmpty(HTMLTagName))
+            {
+                tagName = HTMLTagName;
+            }
+
+            HtmlTag spn = new HtmlTag(tagName, new
+            {
                 id = this.UniqueID,
                 //style = "color:Red;"
                 Class = WFUtilities.FieldValidationErrorClass

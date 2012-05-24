@@ -327,6 +327,50 @@ namespace WebFormsUtilities {
         }
 
         /// <summary>
+        /// Returns the raw text of any generated server-side validation error for this property.<br/>
+        /// This is useful if you want to override the default functionality that generates a &lt;span&gt; tag for validation error messages.
+        /// </summary>
+        /// <param name="expression">An expression that identifies the property whose value will be rendered.<br/>
+        /// ie: m => m.FirstName will render the 'FirstName' property.</param>
+        /// <returns></returns>
+        public string TextValidationMessageFor<TProperty>(Expression<Func<TModel, TProperty>> expression)
+        {
+            WFModelMetaProperty metaprop = null;
+            ModelMetaData mmd = ModelMetaData.FromLambdaExpression(expression, _Model);
+            string lcName = mmd.PropertyName.ToLower();
+            for (int i = 0; i < _MetaData.Properties.Count; i++)
+            {
+                if (_MetaData.Properties[i].MarkupName.ToLower() == lcName)
+                {
+                    metaprop = _MetaData.Properties[i];
+                    break;
+                }
+
+            }
+            if (metaprop != null)
+            {
+                if (metaprop.HasError)
+                {
+                    return metaprop.Errors.FirstOrDefault() ?? "";
+                }
+            }
+            return "";
+        }
+
+        /// <summary>
+        /// Returns the raw ID of any generated server-side validation error for this property.<br/>
+        /// This is useful if you want to override the default functionality that generates a &lt;span&gt; tag for validation error messages.
+        /// </summary>
+        /// <param name="expression">An expression that identifies the property whose value will be rendered.<br/>
+        /// ie: m => m.FirstName will render the 'FirstName' property.</param>
+        /// <returns></returns>
+        public string TextValidationMessageIDFor<TProperty>(Expression<Func<TModel, TProperty>> expression)
+        {
+            ModelMetaData mmd = ModelMetaData.FromLambdaExpression(expression, _Model);
+            return mmd.PropertyName + "_validationMessage";
+        }
+
+        /// <summary>
         /// Creates a &lt;span&gt; tag with appropriate validation information used by client side AND server side code.<br/>
         /// WFUtilities.FieldValidationErrorClass is applied if validation fails on a postback. This is used with an Html.&ltcontrol&gt;For() element.<br/>
         /// The property whose validation state is checked is derived from a strongly-typed lambda.
