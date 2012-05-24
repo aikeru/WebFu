@@ -91,7 +91,7 @@ namespace WebFormsUtilities
 
         #region ValidationSummary
         /// <summary>
-        /// Renders a div tag with id 'validationSummary'. The class is validation-summary-valid or validation-summary-errors depending on server validation.<br/>
+        /// Renders a div tag with id 'validationSummary'. The class is WFUtilities.ValidationSummaryValidClass or WFUtilities.ValidationSummaryErrorsClass depending on server validation.<br/>
         /// Errors are rendered in a &ltul&gt; child element with &gtli&lt; children.
         /// </summary>
         /// <param name="model">The model object being validated.</param>
@@ -101,7 +101,7 @@ namespace WebFormsUtilities
             return ValidationSummary(model, null);
         }
         /// <summary>
-        /// Renders a div tag with id 'validationSummary'. The class is validation-summary-valid or validation-summary-errors depending on server validation.<br/>
+        /// Renders a div tag with id 'validationSummary'. The class is WFUtilities.ValidationSummaryValidClass or WFUtilities.ValidationSummaryErrorsClass depending on server validation.<br/>
         /// Errors are rendered in a &lt;ul&gt; child element with &gt;li&lt; children.
         /// </summary>
         /// <param name="model">The model object being validated.</param>
@@ -124,7 +124,7 @@ namespace WebFormsUtilities
             HtmlTag div = new HtmlTag("div", new { id = "validationSummary" });
             if (errors.Count > 0)
             {
-                div.AddClass("validation-summary-errors");
+                div.AddClass(WFUtilities.ValidationSummaryErrorsClass);
                 HtmlTag ul = new HtmlTag("ul");
                 foreach (string err in errors)
                 {
@@ -136,7 +136,7 @@ namespace WebFormsUtilities
             }
             else
             {
-                div.AddClass("validation-summary-valid");
+                div.AddClass(WFUtilities.ValidationSummaryValidClass);
                 HtmlTag ul = new HtmlTag("ul");
                 HtmlTag li = new HtmlTag("li", new { style = "display: none;" });
                 li = PreProcess(li, _MetaData, TagTypes.ValidationItem, "", "", model);
@@ -157,39 +157,39 @@ namespace WebFormsUtilities
         #region ValidationMessageFor
         /// <summary>
         /// Creates a &lt;span&gt; tag with appropriate validation information used by client side AND server side code.<br/>
-        /// 'field-validation-error' is applied if validation fails on a postback. This is used with an Html.&ltcontrol&gt;For() element.
+        /// WFUtilities.FieldValidationErrorClass is applied if validation fails on a postback. This is used with an Html.&ltcontrol&gt;For() element.
         /// </summary>
         /// <param name="model">The model itself.</param>
         /// <param name="markupName">The markup name of the Html.&lt;control&gt;For() element.</param>
         /// <param name="propertyName">Must be the property name on the model object.</param>
-        /// <returns>Returns a span with 'field-validation-error' or 'field-validation-valid' as the class.</returns>
+        /// <returns>Returns a span with WFUtilities.FieldValidationErrorClass or WFUtilities.FieldValidationValidClass as the class.</returns>
         public string ValidationMessageFor(object model, string markupName, string propertyName)
         {
             return ValidationMessageFor(model, markupName, propertyName, "", null);
         }
         /// <summary>
         /// Creates a &lt;span&gt; tag with appropriate validation information used by client side AND server side code.<br/>
-        /// 'field-validation-error' is applied if validation fails on a postback. This is used with an Html.&ltcontrol&gt;For() element.
+        /// WFUtilities.FieldValidationErrorClass is applied if validation fails on a postback. This is used with an Html.&ltcontrol&gt;For() element.
         /// </summary>
         /// <param name="model">The model itself.</param>
         /// <param name="markupName">The markup name of the Html.&lt;control&gt;For() element.</param>
         /// <param name="propertyName">Must be the property name on the model object.</param>
         /// <param name="htmlProperties">An anonymous object whose properties are applied to the element.
         /// ie: new { Class = "cssClass", onchange = "jsFunction()" } </param>
-        /// <returns>Returns a span with 'field-validation-error' or 'field-validation-valid' as the class.</returns>
+        /// <returns>Returns a span with WFUtilities.FieldValidationErrorClass or WFUtilities.FieldValidationValidClass as the class.</returns>
         public string ValidationMessageFor(object model, string markupName, string propertyName, object htmlProperties)
         {
             return ValidationMessageFor(model, markupName, propertyName, "", htmlProperties);
         }
         /// <summary>
         /// Creates a &lt;span&gt; tag with appropriate validation information used by client side AND server side code.<br/>
-        /// 'field-validation-error' is applied if validation fails on a postback. This is used with an Html.&ltcontrol&gt;For() element.
+        /// WFUtilities.FieldValidationErrorClass is applied if validation fails on a postback. This is used with an Html.&ltcontrol&gt;For() element.
         /// </summary>
         /// <param name="model">The model itself.</param>
         /// <param name="markupName">The markup name of the Html.&lt;control&gt;For() element.</param>
         /// <param name="propertyName">Must be the property name on the model object.</param>
         /// <param name="ErrorMessage">Override the error message (use with care)</param>
-        /// <returns>Returns a span with 'field-validation-error' or 'field-validation-valid' as the class.</returns>
+        /// <returns>Returns a span with WFUtilities.FieldValidationErrorClass or WFUtilities.FieldValidationValidClass as the class.</returns>
         public string ValidationMessageFor(object model, string markupName, string propertyName, string ErrorMessage)
         {
             return ValidationMessageFor(model, markupName, propertyName, ErrorMessage, null);
@@ -198,7 +198,7 @@ namespace WebFormsUtilities
 
         /// <summary>
         /// Creates a &lt;span&gt; tag with appropriate validation information used by client side AND server side code.
-        /// 'field-validation-error' is applied if validation fails on a postback. This is used with an Html.&ltcontrol&gt;For() element.
+        /// WFUtilities.FieldValidationErrorClass is applied if validation fails on a postback. This is used with an Html.&ltcontrol&gt;For() element.
         /// </summary>
         /// <param name="model">The model itself.</param>
         /// <param name="markupName">The markup name of the Html.&lt;control&gt;For() element.</param>
@@ -206,7 +206,7 @@ namespace WebFormsUtilities
         /// <param name="ErrorMessage">Override the error message (use with care)</param>
         /// <param name="htmlProperties">An anonymous object whose properties are applied to the element.<br/>
         /// ie: new { Class = "cssClass", onchange = "jsFunction()" } </param>
-        /// <returns>Returns a span with 'field-validation-error' or 'field-validation-valid' as the class.</returns>
+        /// <returns>Returns a span with WFUtilities.FieldValidationErrorClass or WFUtilities.FieldValidationValidClass as the class.</returns>
         public string ValidationMessageFor(object model, string markupName, string propertyName, string ErrorMessage, object htmlProperties)
         {
             WFModelMetaProperty metaprop = null;
@@ -227,7 +227,7 @@ namespace WebFormsUtilities
                 if (metaprop.HasError)
                 {
                     span.MergeObjectProperties(htmlProperties);
-                    span.AddClass("field-validation-error");
+                    span.AddClass(WFUtilities.FieldValidationErrorClass);
 
                     if (String.IsNullOrEmpty(ErrorMessage))
                     {
@@ -242,7 +242,7 @@ namespace WebFormsUtilities
             }
 
             span.MergeObjectProperties(htmlProperties);
-            span.AddClass("field-validation-valid");
+            span.AddClass(WFUtilities.FieldValidationValidClass);
 
             span = PreProcess(span, _MetaData, TagTypes.ValidationMessage, markupName, propertyName, model);
 

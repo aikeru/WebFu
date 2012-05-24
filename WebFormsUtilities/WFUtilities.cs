@@ -19,7 +19,53 @@ using WebFormsUtilities.RuleProviders;
 using WebFormsUtilities.ValueProviders;
 
 namespace WebFormsUtilities {
-    public static class WFUtilities {
+    public static class WFUtilities
+    {
+
+        #region Default CSS Classes
+        private static string _FieldValidationErrorClass = "field-validation-error";
+        private static string _InputValidationErrorClass = "input-validation-error";
+        private static string _ValidationSummaryValidClass = "validation-summary-valid";
+        private static string _ValidationSummaryErrorsClass = "validation-summary-error";
+        private static string _FieldValidationValidClass = "field-validation-valid";
+        private static string _InputValidationValidClass = "input-validation-valid";
+
+        public static string FieldValidationValidClass
+        {
+            get { return WFUtilities._FieldValidationValidClass; }
+            set { WFUtilities._FieldValidationValidClass = value; }
+        }
+
+        public static string InputValidationValidClass
+        {
+            get { return WFUtilities._InputValidationValidClass; }
+            set { WFUtilities._InputValidationValidClass = value; }
+        }
+
+        public static string ValidationSummaryValidClass
+        {
+            get { return WFUtilities._ValidationSummaryValidClass; }
+            set { WFUtilities._ValidationSummaryValidClass = value; }
+        }
+
+        public static string ValidationSummaryErrorsClass
+        {
+            get { return WFUtilities._ValidationSummaryErrorsClass; }
+            set { WFUtilities._ValidationSummaryErrorsClass = value; }
+        }
+
+        public static string InputValidationErrorClass
+        {
+            get { return WFUtilities._InputValidationErrorClass; }
+            set { WFUtilities._InputValidationErrorClass = value; }
+        }
+        public static string FieldValidationErrorClass
+        {
+            get { return WFUtilities._FieldValidationErrorClass; }
+            set { WFUtilities._FieldValidationErrorClass = value; }
+        }
+        #endregion
+
         private static bool _HandlerChecked = false;
         private static bool _HandlerRegistered = false;
         public static bool HandlerRegistered {

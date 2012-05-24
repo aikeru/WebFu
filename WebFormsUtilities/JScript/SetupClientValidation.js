@@ -1,3 +1,29 @@
+this.webfu = this.webfu || {};
+webfu.validation = webfu.validation || {};
+webfu.validation.validationSummaryValidClass = webfu.validationSummaryValidClass || "validation-summary-valid";
+webfu.validation.validationSummaryErrorsClass = webfu.validationSummaryErrorsClass || "validation-summary-error";
+webfu.validation.inputValidationErrorClass = webfu.inputValidationErrorClass || "input-validation-error";
+webfu.validation.inputValidationValidClass = webfu.inputValidationValidClass || "input-validation-valid";
+webfu.validation.fieldValidationErrorClass = webfu.fieldValidationErrorClass || "field-validation-error";
+webfu.validation.fieldValidationValidClass = webfu.fieldValidationValidClass || "field-validation-valid";
+webfu.validation.errorElement = webfu.validation.errorElement || "span";
+webfu.validation.errorPlacement = webfu.validation.errorPlacement || function(error, element) {
+    var messageSpan = webfu.fieldToMessageMappings[element.attr("name")];
+    $(messageSpan).empty();
+    $(messageSpan).removeClass(webfu.validation.fieldValidationValidClass);
+    $(messageSpan).addClass(webfu.validation.fieldValidationErrorClass);
+    error.removeClass(webfu.validation.inputValidationErrorClass);
+    error.attr("_for_validation_message", messageSpan);
+    error.appendTo(messageSpan);
+};
+webfu.validation.success = webfu.validation.success || function(label) {
+    var messageSpan = $(label.attr("_for_validation_message"));
+    $(messageSpan).empty();
+    $(messageSpan).addClass(webfu.validation.fieldValidationValidClass);
+    $(messageSpan).removeClass(webfu.validation.fieldValidationErrorClass);
+};
+
+
 // register custom jQuery methods
 if (jQuery.validator) { //Only if validator plugin is loaded
     jQuery.validator.addMethod("regex", function(value, element, params) {
@@ -112,60 +138,47 @@ function __WFU_CreateValidationOptions(validationFields) {
 
     return rulesObj;
 }
+
 function __WFU_EnableClientValidation(validationContext) {
     // this represents the form containing elements to be validated
-    var theForm;
-    if (validationContext.FormId === "") {
-        theForm = $('form').first();
+    webfu.validationContext = validationContext;
+    if (webfu.validationContext.FormId === "") {
+        webfu.theForm = $('form').first();
     } else {
-        theForm = $("#" + validationContext.FormId);
+        webfu.theForm = $("#" + validationContext.FormId);
     }
 
-    var fields = validationContext.Fields;
-    var rulesObj = __WFU_CreateValidationOptions(fields);
-    var fieldToMessageMappings = __WFU_CreateFieldToValidationMessageMapping(fields);
-    var errorMessagesObj = __WFU_CreateErrorMessagesObject(fields);
+    webfu.fields = webfu.validationContext.Fields;
+    webfu.rulesObj = __WFU_CreateValidationOptions(webfu.fields);
+    webfu.fieldToMessageMappings = __WFU_CreateFieldToValidationMessageMapping(webfu.fields);
+    webfu.errorMessagesObj = __WFU_CreateErrorMessagesObject(webfu.fields);
 
-    var options = {
-        errorClass: "input-validation-error",
+    webfu.options = {
+        errorClass: webfu.inputValidationErrorClass,
         errorElement: "span",
-        errorPlacement: function(error, element) {
-            var messageSpan = fieldToMessageMappings[element.attr("name")];
-            $(messageSpan).empty();
-            $(messageSpan).removeClass("field-validation-valid");
-            $(messageSpan).addClass("field-validation-error");
-            error.removeClass("input-validation-error");
-            error.attr("_for_validation_message", messageSpan);
-            error.appendTo(messageSpan);
-        },
-        messages: errorMessagesObj,
-        rules: rulesObj,
-        success: function(label) {
-            var messageSpan = $(label.attr("_for_validation_message"));
-            $(messageSpan).empty();
-            $(messageSpan).addClass("field-validation-valid");
-            $(messageSpan).removeClass("field-validation-error");
-        }
+        errorPlacement: webfu.validation.errorPlacement,
+        messages: webfu.errorMessagesObj,
+        rules: webfu.rulesObj,
+        success: webfu.validation.success
     };
 
     // register callbacks with our AJAX system
-    var formElement;
-    if (validationContext.FormId === "") {
-        formElement = document.forms[0];
+    if (webfu.validationContext.FormId === "") {
+        webfu.formElement = document.forms[0];
     } else {
-        formElement = document.getElementById(validationContext.FormId);
+        webfu.formElement = document.getElementById(webfu.validationContext.FormId);
     }
-    var registeredValidatorCallbacks = formElement.validationCallbacks;
-    if (!registeredValidatorCallbacks) {
-        registeredValidatorCallbacks = [];
-        formElement.validationCallbacks = registeredValidatorCallbacks;
+    webfu.registeredValidatorCallbacks = webfu.formElement.validationCallbacks;
+    if (!webfu.registeredValidatorCallbacks) {
+        webfu.registeredValidatorCallbacks = [];
+        webfu.formElement.validationCallbacks = webfu.registeredValidatorCallbacks;
     }
-    registeredValidatorCallbacks.push(function() {
-        theForm.validate();
-        return theForm.valid();
+    webfu.registeredValidatorCallbacks.push(function() {
+        webfu.theForm.validate();
+        return webfu.theForm.valid();
     });
 
-    theForm.validate(options);
+    webfu.theForm.validate(webfu.options);
 }
 // need to wait for the document to signal that it is ready
 $(document).ready(function() {
