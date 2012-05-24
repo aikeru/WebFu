@@ -155,7 +155,7 @@ function __WFU_EnableClientValidation(validationContext) {
 
     webfu.options = {
         errorClass: webfu.inputValidationErrorClass,
-        errorElement: "span",
+        errorElement: webfu.validation.errorElement,
         errorPlacement: webfu.validation.errorPlacement,
         messages: webfu.errorMessagesObj,
         rules: webfu.rulesObj,
