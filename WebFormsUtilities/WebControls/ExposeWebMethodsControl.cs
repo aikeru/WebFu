@@ -74,7 +74,7 @@ namespace WebFormsUtilities.WebControls {
                 });
             }
 
-            output.Write("<script>var webfu = webfu || {}; webfu.page = " + pageJSO.Render() + ";</script>");
+            output.Write("<script>this.webfu = this.webfu || {}; webfu.page = " + pageJSO.Render() + ";</script>");
 
         }
 
