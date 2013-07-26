@@ -45,7 +45,7 @@ namespace WebFormsUtilities {
             bool isSelf = expression.Body.NodeType == ExpressionType.Parameter;
             string propertyName = "";
             if (expression.Body.NodeType == ExpressionType.MemberAccess
-                && expression.Body.GetType() == typeof(MemberExpression)) {
+                && expression.Body as MemberExpression != null) {
                 propertyName = ((MemberExpression)expression.Body).Member.Name;
             }
             return new ModelMetaData() {
