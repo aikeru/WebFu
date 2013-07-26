@@ -770,12 +770,8 @@ namespace WebFormsUtilities
         /// <param name="pg"></param>
         public void RenderControl(string controlPath, Page pg)
         {
-            StringBuilder sb = new StringBuilder();
-            StringWriter sw = new StringWriter(sb);
-            HtmlTextWriter htw = new HtmlTextWriter(sw);
             UserControl viewControl = (UserControl)pg.LoadControl(controlPath);
-            viewControl.RenderControl(htw);
-            pg.Response.Write(sb.ToString());
+            RenderControl(viewControl, pg, null, null);
         }
 
         /// <summary>
@@ -786,12 +782,7 @@ namespace WebFormsUtilities
         /// <param name="pg"></param>
         public void RenderControl(UserControl control, Page pg)
         {
-            StringBuilder sb = new StringBuilder();
-            StringWriter sw = new StringWriter(sb);
-            HtmlTextWriter htw = new HtmlTextWriter(sw);
-
-            control.RenderControl(htw);
-            pg.Response.Write(sb.ToString());
+            RenderControl(control, pg, null, null);
         }
 
         /// <summary>
@@ -803,18 +794,7 @@ namespace WebFormsUtilities
         /// <param name="model"></param>
         public void RenderControl(UserControl control, Page pg, object Model)
         {
-            PropertyInfo pi = control.GetType().GetProperties().FirstOrDefault(p => p.Name == "Model");
-            if (pi == null)
-            {
-                throw new Exception("Make sure 'Model' is a public property with a 'setter'");
-            }
-            pi.SetValue(control, Model, null);
-            StringBuilder sb = new StringBuilder();
-            StringWriter sw = new StringWriter(sb);
-            HtmlTextWriter htw = new HtmlTextWriter(sw);
-
-            control.RenderControl(htw);
-            pg.Response.Write(sb.ToString());
+            RenderControl(control, pg, Model, null);
         }
 
         /// <summary>
@@ -825,21 +805,43 @@ namespace WebFormsUtilities
         /// <param name="pg"></param>
         public void RenderControl(string controlPath, Page pg, object Model)
         {
+            UserControl viewControl = (UserControl)pg.LoadControl(controlPath);
+            RenderControl(viewControl, pg, Model, null);
+        }
+
+        public void RenderControl(string path, Page pg, object Model, object ViewBag)
+        {
+            UserControl viewControl = (UserControl)pg.LoadControl(path);
+            RenderControl(viewControl, pg, Model, ViewBag);
+        }
+        /// <summary>
+        /// Render a UserControl to the Page.Response and set Model property to the specified value.
+        /// Use Page.LoadControl(controlpath) to instantiate the control or markup will not be processed.
+        /// </summary>
+        /// <param name="controlPath">ie: ~/Controls/MyControl.ascx</param>
+        /// <param name="pg"></param>
+        public void RenderControl(UserControl control, Page pg, object Model, object ViewBag)
+        {
+            PropertyInfo pi = control.GetType().GetProperties().FirstOrDefault(p => p.Name == "Model");
+            if (pi == null && Model != null)
+            {
+                throw new Exception("Make sure 'Model' is a public property with a 'setter' for the control or page you are trying to render.");
+            }
+            pi.SetValue(control, Model, null);
+            PropertyInfo piViewBag = control.GetType().GetProperties().FirstOrDefault(p => p.Name == "ViewBag");
+            if (piViewBag != null)
+            {
+                pi.SetValue(control, ViewBag, null);
+            }
+
             StringBuilder sb = new StringBuilder();
             StringWriter sw = new StringWriter(sb);
             HtmlTextWriter htw = new HtmlTextWriter(sw);
-            UserControl viewControl = (UserControl)pg.LoadControl(controlPath);
 
-            PropertyInfo pi = viewControl.GetType().GetProperties().FirstOrDefault(p => p.Name == "Model");
-            if (pi == null)
-            {
-                throw new Exception("Make sure 'Model' is a public property with a 'setter'");
-            }
-            pi.SetValue(viewControl, Model, null);
-
-            viewControl.RenderControl(htw);
+            control.RenderControl(htw);
             pg.Response.Write(sb.ToString());
         }
+
         #endregion
 
         #region LabelFor
