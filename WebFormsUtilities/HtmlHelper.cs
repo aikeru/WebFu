@@ -833,6 +833,17 @@ namespace WebFormsUtilities
             {
                 pi.SetValue(control, ViewBag, null);
             }
+            PropertyInfo piHTML = control.GetType().GetProperties().FirstOrDefault(p => p.Name == "Html");
+            if (piHTML != null)
+            {
+                object helper = piHTML.GetValue(control, null);
+                if (helper != null)
+                {
+                    //Share MetaData with this partial view
+                    helper.GetType().GetProperty("MetaData")
+                        .SetValue(helper, MetaData, null);
+                }
+            }
 
             StringBuilder sb = new StringBuilder();
             StringWriter sw = new StringWriter(sb);
