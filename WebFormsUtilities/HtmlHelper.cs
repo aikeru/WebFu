@@ -14,7 +14,6 @@ namespace WebFormsUtilities
 {
     public partial class HtmlHelper<TModel>
     {
-        private Control _PageControl = null;
         private TModel _Model = default(TModel);
         private WFModelMetaData _MetaData = null;
 
@@ -28,34 +27,26 @@ namespace WebFormsUtilities
 
         public HtmlHelper(Control pageControl, TModel model)
         {
-            _MetaData = new WFModelMetaData();
-            _Model = model;
-            _PageControl = pageControl;
-
-            _PreProcessors.Add(new WFValidationPreProcessor());
-            _PreProcessors.Add(new WFHTMLEncodePreProcessor());
+            Initialize(model, new WFModelMetaData());
         }
 
         public HtmlHelper(Control pageControl, TModel model, WFModelMetaData metadata)
         {
-            _PageControl = pageControl;
+            Initialize(model, metadata);
+        }
+        
+        public HtmlHelper(IWebFormsView<TModel> wfv)
+        {
+            Initialize(wfv.Model, new WFModelMetaData());
+        }
+
+        private void Initialize(TModel model, WFModelMetaData metadata)
+        {
             _Model = model;
             _MetaData = metadata;
 
             _PreProcessors.Add(new WFValidationPreProcessor());
             _PreProcessors.Add(new WFHTMLEncodePreProcessor());
-        }
-        
-        public HtmlHelper(IWebFormsView<TModel> wfv)
-        {
-            _PageControl = (Control)wfv;
-            _Model = wfv.Model;
-            //_MetaData = wfv.WFMetaData;
-            _MetaData = new WFModelMetaData();
-
-            _PreProcessors.Add(new WFValidationPreProcessor());
-            _PreProcessors.Add(new WFHTMLEncodePreProcessor());
-
         }
 
         /// <summary>
