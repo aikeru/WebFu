@@ -100,10 +100,26 @@ namespace WebFormsUtilities {
         /// <param name="path">The physical path of the ascx/aspx file.</param>
         /// <param name="Model">The Model that will be used and applied to the public 'Model' property of the UserControl/Page.</param>
         /// <param name="pageInstance">pageInstance is optional and can be null.</param>
-        /// <param name="ViewBag">An object that will be passed to the control/page.</param>
+        /// <param name="ViewBag">If a public property 'ViewBag' exists on the target control/page, it will be set to this object.</param>
         /// <returns></returns>
         public static string RenderControl(string path, object Model) {
-            return RenderControl(path, Model, null);
+            return RenderControl(path, Model, null, null, null);
+        }
+
+         /// <summary>
+        /// Render a Control (.aspx, .ascx) and return it as a string, setting the Model property to Model
+        /// Use discretion when specifying the pageInstance, as some server controls will throw an error when WFPageHolder is not used.
+        /// !! You should not pass the current page as the pageInstance !! This method assumes you know what you're doing.
+        /// </summary>
+        /// <param name="path">The physical path of the ascx/aspx file.</param>
+        /// <param name="Model">The Model that will be used and applied to the public 'Model' property of the UserControl/Page.</param>
+        /// <param name="pageInstance">pageInstance is optional and can be null.</param>
+        /// <param name="ViewBag">If a public property 'ViewBag' exists on the target control/page, it will be set to this object.</param>
+        /// <param name="MetaData">A MetaData object that can be shared among all views rendered for this request.</param>
+        /// <returns></returns>
+        public static string RenderControl(string path, object Model, WFModelMetaData MetaData)
+        {
+            return RenderControl(path, Model, null, null, MetaData);
         }
 
         /// <summary>
@@ -112,7 +128,7 @@ namespace WebFormsUtilities {
         /// <param name="path">The physical path of the ascx/aspx file.</param>
         /// <param name="Model">The Model that will be used and applied to the public 'Model' property of the UserControl/Page.</param>
         /// <param name="pageInstance">pageInstance is optional and can be null.</param>
-        /// <param name="ViewBag">An object that will be passed to the control/page.</param>
+        /// <param name="ViewBag">If a public property 'ViewBag' exists on the target control/page, it will be set to this object.</param>
         /// <returns></returns>
         public static string RenderControl(string path, object Model, object ViewBag)
         {
@@ -143,7 +159,22 @@ namespace WebFormsUtilities {
         /// <returns></returns>
         public static string RenderControl(string path, object Model, System.Web.UI.Page pageInstance)
         {
-            return RenderControl(path, Model, pageInstance, null);
+            return RenderControl(path, Model, pageInstance, null, null);
+        }
+
+        /// <summary>
+        /// Render a Control (.aspx, .ascx) and return it as a string, setting the Model property to Model
+        /// Use discretion when specifying the pageInstance, as some server controls will throw an error when WFPageHolder is not used.
+        /// You should not pass the current page as the pageInstance. This method assumes you know what you're doing.
+        /// </summary>
+        /// <param name="path">The physical path of the ascx/aspx file.</param>
+        /// <param name="Model">The Model that will be used and applied to the public 'Model' property of the UserControl/Page.</param>
+        /// <param name="pageInstance">pageInstance is optional and can be null.</param>
+        /// <param name="ViewBag">If a public property 'ViewBag' exists on the target control/page, it will be set to this object.</param>
+        /// <returns></returns>
+        public static string RenderControl(string path, object Model, System.Web.UI.Page pageInstance, object ViewBag)
+        {
+            return RenderControl(path, Model, pageInstance, ViewBag, null);
         }
 
         /// <summary>
@@ -154,24 +185,42 @@ namespace WebFormsUtilities {
         /// <param name="path">The physical path of the ascx/aspx file.</param>
         /// <param name="Model">The Model that will be used and applied to the public 'Model' property of the UserControl/Page.</param>
         /// <param name="pageInstance">pageInstance is optional and can be null.</param>
-        /// <param name="ViewBag">An object that will be passed to the control/page.</param>
+        /// <param name="ViewBag">If a public property 'ViewBag' exists on the target control/page, it will be set to this object.</param>
+        /// <param name="MetaData">A MetaData object that can be shared among all views rendered for this request.</param>
         /// <returns></returns>
-        public static string RenderControl(string path, object Model, System.Web.UI.Page pageInstance, object ViewBag) {
+        public static string RenderControl(string path, object Model, System.Web.UI.Page pageInstance, object ViewBag, WFModelMetaData MetaData) {
             Page wph = pageInstance == null ? new WFPageHolder() as Page : pageInstance;
             Control ctrl = wph.LoadControl(path);
             if (ctrl == null) { return ""; }
 
             PropertyInfo pi = ctrl.GetType().GetProperties().FirstOrDefault(p => p.Name == "Model");
             if (pi == null && Model != null) {
-                throw new Exception("Make sure 'Model' is a public property with a 'setter'");
+                throw new Exception("Did not find the 'Model' property on the target page/control to render. Make sure 'Model' is a public property with a 'setter'");
             } else if (pi != null && Model != null) {
-                pi.SetValue(ctrl, Model, null);
+                try {
+                        pi.SetValue(ctrl, Model, null);
+                    } catch(Exception ex) {
+                        throw new Exception("Error assigning the source Model to the destination Model property when Rendering a control. Source type [" + Model.GetType().Name + "] and Destination type [" + pi.PropertyType.Name + "]. The inner exception may have more information.", ex);
+                    }
+                
             }
 
             PropertyInfo piViewBag = ctrl.GetType().GetProperties().FirstOrDefault(p => p.Name == "ViewBag");
             if (piViewBag != null)
             {
                 piViewBag.SetValue(ctrl, ViewBag, null);
+            }
+
+            PropertyInfo piHTML = ctrl.GetType().GetProperties().FirstOrDefault(p => p.Name == "Html");
+            if (piHTML != null)
+            {
+                object helper = piHTML.GetValue(ctrl, null);
+                if (helper != null)
+                {
+                    //Share MetaData with this partial view
+                    helper.GetType().GetProperty("MetaData")
+                        .SetValue(helper, MetaData, null);
+                }
             }
 
             wph.Controls.Add(ctrl);
