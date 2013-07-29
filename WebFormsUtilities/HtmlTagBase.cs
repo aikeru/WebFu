@@ -86,7 +86,7 @@ namespace WebFormsUtilities
             {
                 foreach (KeyValuePair<string, string> kvp in HTMLProperties)
                 {
-                    retTxt += " " + kvp.Key + " = \"" + kvp.Value + "\"";
+                    retTxt += " " + FormatAttribute(kvp);
                 }
             }
             retTxt += ">";
@@ -102,6 +102,17 @@ namespace WebFormsUtilities
             retTxt += "</" + HTMLTagName + ">\r\n";
             return retTxt;
         }
+
+        private string FormatAttribute(KeyValuePair<string, string> kvp)
+        {
+            string key = kvp.Key;
+            if (key.StartsWith("data_"))
+            {
+                key = "data-" + key.Substring("data-".Length);
+            }
+            return key + " = \"" + kvp.Value + "\"";
+        }
+
         /// <summary>
         /// Render the HTML tag and all child HTML tags (or just displaying InnerText).
         /// </summary>
@@ -116,7 +127,7 @@ namespace WebFormsUtilities
                 {
                     foreach (KeyValuePair<string, string> kvp in HTMLProperties)
                     {
-                        retTxt += " " + kvp.Key + " = \"" + kvp.Value + "\"";
+                        retTxt += " " + FormatAttribute(kvp);
                     }
                 }
                 retTxt += ">";
@@ -140,7 +151,7 @@ namespace WebFormsUtilities
                 {
                     foreach (KeyValuePair<string, string> kvp in HTMLProperties)
                     {
-                        retTxt += " " + kvp.Key + " = \"" + kvp.Value + "\"";
+                        retTxt += " " + FormatAttribute(kvp);
                     }
                 }
                 retTxt += " />";
