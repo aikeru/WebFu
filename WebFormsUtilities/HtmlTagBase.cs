@@ -108,7 +108,7 @@ namespace WebFormsUtilities
             string key = kvp.Key;
             if (key.StartsWith("data_"))
             {
-                key = "data-" + key.Substring("data-".Length);
+                key = "data-" + key.Substring("data_".Length);
             }
             return key + " = \"" + kvp.Value + "\"";
         }
